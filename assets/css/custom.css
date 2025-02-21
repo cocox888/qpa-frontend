@@ -1,0 +1,7 @@
+.image-overlay {
+    background: linear-gradient(to right,
+        rgba(132, 184, 148, 0.7) 0%,
+        rgba(132, 184, 148, 0.5) 50%,
+        rgba(168, 203, 180, 0.3) 100%
+    );
+}
