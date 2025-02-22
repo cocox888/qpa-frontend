@@ -4,18 +4,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import {Spinner, Button} from 'react-bootstrap';
+import { Spinner, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons'
-
+import { AuthenticationContext } from '@/providers/AuthenticationProvider';
+import { useAuthentication } from '@/hooks/useAthentication';
 type dataType = { email: string; password: string };
 
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false); // Track client-side rendering
+  // const { setToken } = useAuthentication();
 
   useEffect(() => {
     setIsClient(true); // Set to true once component is mounted on the client side
@@ -31,10 +33,6 @@ export default function Login() {
       password: ''
     }
   });
-
-  const gotoDashboard = () => {
-    router.push('/admin/dashboard');
-  };
 
   const onSubmit = async (data: dataType) => {
     try {
@@ -64,8 +62,20 @@ export default function Login() {
           localStorage.setItem('role', role);
           localStorage.setItem('username', username);
           localStorage.setItem('userId', userId);
+
+          if (role === 'admin') {
+            router.push('/admin/dashboard');
+          } else if (role === 'client') {
+            router.push('/client/dashboard');
+          } else if (role === 'manager') {
+            router.push('/manager/dashboard');
+          } else if (role === 'member') {
+            router.push('/member/dashboard');
+          }
+
+
         }
-      
+
       } else {
         toast.error('Invalid credentials');
       }
@@ -153,7 +163,7 @@ export default function Login() {
           type="submit"
           disabled={loading}
         >
-          {loading ? <FontAwesomeIcon icon={faSpinner} spin/>: <>Sign In</>}
+          {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : <>Sign In</>}
         </button>
 
         <p className="text-center text-gray-600 text-sm">

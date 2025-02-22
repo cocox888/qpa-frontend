@@ -198,7 +198,7 @@ const Timer = () => {
             </select>
           </div>
           <div className="px-4 h-[40px]  content-center">
-            <StopWatch />
+            {/* <StopWatch /> */}
           </div>
           <div className="ml-4 pt-1 px-2 content-center border rounded-lg bg-blue-500">
             {!timerContext.timer && (
