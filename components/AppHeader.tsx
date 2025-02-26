@@ -2,7 +2,7 @@
 import { getInitials } from '@/lib/utils/functions';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
-import DailyWorkWatch from './timer/DailyWorkWatch';
+// import DailyWorkWatch from './timer/DailyWorkWatch';
 
 const AppHeader = () => {
   const [isNotificationsMenuOpen, setNotificationsMenuOpen] = useState(false);
@@ -98,7 +98,7 @@ const AppHeader = () => {
                     />
                   </svg>
                   <div className="text-sm font-medium text-gray-900">
-                    <DailyWorkWatch />
+                    {/* <DailyWorkWatch /> */}
                   </div>
                 </div>
                 <button className="flex items-center gap-2 px-3 py-1.5 bg-brand-500 text-white rounded-lg text-sm hover:bg-brand-600 transition-colors">

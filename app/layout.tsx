@@ -4,7 +4,7 @@ import './globals.css';
 import { TimerProvider } from '@/store/timer-context';
 import { TimeTrackProvider } from '@/store/time-track-context';
 import TimeRecordProvider from './Provider';
-import AuthorizationProvider from '@/providers/AuthorizationProvider';
+import { AuthorizationProvider } from '@/providers/AuthorizationProvider';
 
 export const metadata: Metadata = {
   title: 'QPA',
@@ -26,10 +26,9 @@ export default function RootLayout({
         {/* Wrap the entire layout with the Redux Provider */}
         {/* <TimeRecordProvider> */}
         {/* <TimerProvider> */}
-        <div>
-          <AuthorizationProvider />
+        <AuthorizationProvider>
           {children}
-        </div>
+        </AuthorizationProvider>
 
 
         {/* </TimerProvider> */}

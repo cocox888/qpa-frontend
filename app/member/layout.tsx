@@ -2,7 +2,7 @@ import type React from 'react';
 import AppHeader from '@/components/AppHeader';
 import AppSidebar from '@/components/AppSidebar';
 
-export default function DashboardLayout({
+export default function MemberLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
   return (
