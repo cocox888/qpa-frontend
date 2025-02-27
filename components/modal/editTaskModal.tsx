@@ -10,6 +10,7 @@ import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
 import { useTotalTime } from '@/hooks/useTotalTime';
 import { getAllTasks } from '@/app/admin/reducers/tasks';
 import { calculateTotalTime } from '@/lib/utils/calculate';
+import { getRecentTasksAndReturnTotalTime } from '@/lib/utils/taskUtils';
 
 
 export interface TaskItem {
@@ -157,6 +158,13 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
         const res = await client('http://localhost:5173/admin/createTask', {
           body: JSON.stringify(payload)
         });
+        dispatch(getAllTasks());
+
+        getRecentTasksAndReturnTotalTime().then((totalTime) => {
+          console.log(totalTime);
+          setTotalTime(Number(totalTime));
+        })
+        
         Toast('success', 'Task Created Successfully');
         closeModal();
         setProjectID(0);
@@ -224,8 +232,11 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
       Toast('success', 'Task Updated Successfully');
 
       dispatch(getAllTasks());
-      const total = calculateTotalTime(tasks);
-      setTotalTime(total);
+
+      getRecentTasksAndReturnTotalTime().then((totalTime) => {
+        console.log(totalTime);
+        setTotalTime(Number(totalTime));
+      })
 
     } catch (error) {
       Toast('error', 'Server Error');

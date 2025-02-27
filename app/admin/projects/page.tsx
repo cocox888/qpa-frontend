@@ -118,8 +118,6 @@ export default function Projects() {
     return result;
   };
 
-  console.log(projects);
-  console.log(projectCounts);
   const closeNewProjectModal = () => {
     setCreateModal(false);
   };
@@ -135,7 +133,7 @@ export default function Projects() {
   };
 
   return (
-    <div className="pt-20 pl-64 pr-6 min-h-screen w-screen overflow-x-hidden">
+    <div className="pt-20 pl-64 pr-6 pb-20 h-screen w-screen overflow-x-hidden">
       {/* <!-- Page Header --> */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -213,7 +211,7 @@ export default function Projects() {
         <FilterBar filterEvent={handleFilter} />
 
         {/* <!-- Projects Grid --> */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto">
           {filterData().map((project, index) => (
             <div key={index}>
               {project.package_type === 'va' && (

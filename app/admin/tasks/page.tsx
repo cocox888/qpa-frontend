@@ -9,6 +9,7 @@ import { isNonEmptyArray } from '@/lib/utils/functions';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
+import { getAllProjects } from '../reducers/projects';
 
 export default function Projects() {
   const [editModal, setEditModal] = useState(false);
@@ -36,7 +37,7 @@ export default function Projects() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    // dispatch(getAllTasks());
+    dispatch(getAllProjects());
     setCount(false);
   }, [dispatch, count, editModal]);
 

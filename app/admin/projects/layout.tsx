@@ -8,8 +8,7 @@ export default function ProjectsLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div>
-  
+    <div className='w-full'>
       {children}
     </div>
   );

@@ -5,10 +5,11 @@ import { getInitials } from '@/lib/utils/functions';
 
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 // import DailyWorkWatch from './timer/DailyWorkWatch';
 import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
 import { getAllTasks } from '@/app/admin/reducers/tasks';
+import { getRecentTasksAndReturnTotalTime } from '@/lib/utils/taskUtils';
 
 const AppHeader = () => {
   const [isNotificationsMenuOpen, setNotificationsMenuOpen] = useState(false);
@@ -20,6 +21,7 @@ const AppHeader = () => {
   const profileRef = useRef<HTMLDivElement | null>(null);
 
   const { totalTime, setTotalTime } = useTotalTime();
+  const store = useStore();
 
   const handleSignOut = () => {
     localStorage.removeItem('access_token');
@@ -32,10 +34,10 @@ const AppHeader = () => {
   useEffect(() => {
     dispatch(getAllTasks());
 
-    setTimeout(() => {
-      const total = calculateTotalTime(tasks);
-      setTotalTime(total);
-    }, 1000);
+    getRecentTasksAndReturnTotalTime().then((totalTime) => {
+      console.log(totalTime);
+      setTotalTime(Number(totalTime));
+    })
 
 
     const handleOutsideClick = (event: MouseEvent) => {

@@ -43,7 +43,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
   };
   return (
     <>
-      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300">
+      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
