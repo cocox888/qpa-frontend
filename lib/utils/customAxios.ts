@@ -15,7 +15,7 @@ export const client = async (
   endpoint: string,
   { body, token, ...customConfig }: { body?: string; token?: string } = {}
 ) => {
-  const usertoken = localStorage.getItem('access_token');
+  const usertoken = localStorage.getItem('refresh_token');
 
   const config: Config = {
     method: body ? 'POST' : 'GET',
@@ -39,6 +39,7 @@ export const client = async (
 
   const res = await fetch(endpoint, config);
   const data = await res.json();
+
   // if (res.status !== 200) {
   //   return toast(data.message);
   // }

@@ -87,14 +87,14 @@ export interface TypeProject {
 export interface TypeTask {
   id?: number;
   title?: string;
-  projectId?: number;
+  project_id?: number;
   due_date?: string;
   priority?: string;
   description?: string;
-  estimated_time?: number;
+  estimated_time: number;
   state?: string;
-  taskProject?: TypeProject[];
-  taskClient?: TypeClient[];
+  taskProject?: TypeProject;
+  taskClient?: TypeClient;
   assignedTaskUser?: TypeUser[];
   taskTimeTrack?: TypeTimeTrack[];
 }

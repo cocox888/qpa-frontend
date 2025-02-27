@@ -1,10 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-
-import { TimerProvider } from '@/store/timer-context';
-import { TimeTrackProvider } from '@/store/time-track-context';
-import TimeRecordProvider from './Provider';
 import { AuthorizationProvider } from '@/providers/AuthorizationProvider';
+import { TotalTimeProvider } from '@/providers/TotalTimeProvider';
 
 export const metadata: Metadata = {
   title: 'QPA',
@@ -27,7 +24,9 @@ export default function RootLayout({
         {/* <TimeRecordProvider> */}
         {/* <TimerProvider> */}
         <AuthorizationProvider>
-          {children}
+          <TotalTimeProvider>
+            {children}
+          </TotalTimeProvider>
         </AuthorizationProvider>
 
 

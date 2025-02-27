@@ -28,7 +28,6 @@ export interface UserProps {
 
 export default function Projects() {
   const [index, setIndex] = useState(0);
-  const [count, setCount] = useState(false);
   const [detailData, setDetailData] = useState<ProjectData | null>(null);
   const [createModal, setCreateModal] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
@@ -93,7 +92,7 @@ export default function Projects() {
     fetchUsers();
 
     dispatch(getAllProjects());
-  }, [dispatch, index, count]);
+  }, [dispatch, index, createModal]);
 
   const openNewProjectModal = () => {
     setCreateModal(true);

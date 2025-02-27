@@ -5,8 +5,12 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Toast from '../toast';
 import { client } from '@/lib/utils/customAxios';
+import { useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
+import { clear } from 'console';
 
 export interface TaskItem {
+  task_id?: number;
   title?: string;
   project?: string;
   hours?: string;
@@ -33,19 +37,23 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   flag,
   data
 }) => {
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const projectsData = useSelector((state: RootState) => state.projects.projects);
   const { title } = data;
   const [projectID, setProjectID] = useState(0);
   const [taskName, setTaskName] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('low');
-  const [members, setMembers] = useState<number[]>([]);
+  const [members, setMembers] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8]);
   const [memberError, setMemberError] = useState(false);
   const [projects, setProjects] = useState<ProjectProps[]>([]);
   const [description, setDescription] = useState('');
   const [estimateHour, setEstimateHour] = useState<number>(0);
   const [estimateMinute, setEstimateMinute] = useState<number>(0);
   const [totalMembers, setTotalMembers] = useState<TypeUser[]>([]);
+  const [errorEstimate, setErrorEstimate] = useState(false);
 
+  const [editData, setEditData] = useState<TaskItem>();
   const handleProjectSelect = async (projectId: number) => {
     setProjectID(projectId);
     const token = localStorage.getItem('access_token');
@@ -59,8 +67,11 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
     });
     const data = await response.json();
     setTotalMembers(data.assignedProjectUser);
-    setMembers([]);
   };
+
+  const cleanMembers = () => {
+    setMembers([]);
+  }
 
   const {
     register,
@@ -97,13 +108,30 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
       });
       setProjects(projectArray);
     };
+    // console.log("member:" + members.includes(1));
 
     fetchProjects();
   }, []);
 
+  useEffect(() => {
+    const editData = tasks.find((task) => task.id === data.task_id);
+    setTaskName(editData?.title || "");
+    setProjectID(editData?.project_id || 0);
+    setDueDate(editData?.due_date || "");
+    setPriority(editData?.priority || "low");
+
+    handleProjectSelect(editData?.project_id || 0);
+    setMembers(editData?.assignedTaskUser?.map((user) => Number(user.id)) || []);
+    setDescription(editData?.description || "");
+    setEstimateHour(Math.floor(Number(editData?.estimated_time) / 60) || 0);
+    setEstimateMinute(Number(editData?.estimated_time) % 60 || 0);
+  }, []);
+
   const onSubmit = async () => {
     members.length === 0 ? setMemberError(true) : setMemberError(false);
-    if (members.length !== 0) {
+    estimateMinute == 0 && estimateHour == 0 ? setErrorEstimate(true) : setErrorEstimate(false);
+
+    if (members.length !== 0 && (estimateMinute !== 0 || estimateHour !== 0)) {
       try {
         const payload = {
           data: {
@@ -113,7 +141,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             priority: priority,
             description: description,
             estimated_time: estimateHour * 60 + estimateMinute,
-            state: 'todo'
+            state: 'completed'
           },
           members
         };
@@ -165,6 +193,31 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
     }
   };
 
+  const updateTask = async () => {
+    try {
+      const payload = {
+        data: {
+          id: data.task_id,
+          title: taskName,
+          projectId: projectID,
+          due_date: dueDate,
+          priority: priority,
+          description: description,
+          estimated_time: estimateHour * 60 + estimateMinute,
+          state: 'completed'
+        },
+        members
+      };
+      console.log(payload);
+      const res = await client('http://localhost:5173/admin/updateTaskbyId', {
+        body: JSON.stringify(payload)
+      });
+      Toast('success', 'Task Updated Successfully');
+    } catch (error) {
+      Toast('error', 'Server Error');
+    }
+  }
+  
   return (
     <div>
       <div
@@ -227,6 +280,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
                 className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
                 placeholder="Enter task title"
                 value={taskName}
+
                 onChange={(e) => setTaskName(e.target.value)}
               />
             </div>
@@ -244,7 +298,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
                 name="project"
                 required
                 className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
-                onChange={(e) => handleProjectSelect(Number(e.target.value))}
+                onChange={(e) => { handleProjectSelect(Number(e.target.value)); cleanMembers(); }}
                 value={projectID}
               >
                 <option value="">Select Project</option>
@@ -304,14 +358,14 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
               <div className="block text-sm font-medium text-gray-700">
                 Assign Team Members<span className="text-red-500"> *</span>
               </div>
-              {totalMembers.length === 0 ? (
+              {totalMembers?.length === 0 ? (
                 <div className="bg-gray-50 w-full h-[100px] rounded-xl text-gray-500 justify-center items-center flex">
                   <p>Please select a Project.</p>
                 </div>
               ) : (
                 <></>
               )}
-              {totalMembers.map((user, index) => (
+              {totalMembers?.map((user, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
@@ -332,7 +386,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
                       type="checkbox"
                       name="teamMembers[]"
                       value={user.id}
-                      // checked={members.includes(user.id)}
+                      checked={members.includes(Number(user.id))}
                       onChange={(e) => handleMemberSelect(e)}
                       className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
                     />
@@ -449,7 +503,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             {/* <!-- Estimated Time --> */}
             <div className="space-y-2">
               <div className="block text-sm font-medium text-gray-700">
-                Estimated Time
+                Estimated Time<span className="text-red-500"> *</span>
               </div>
               <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl">
                 <div className="flex items-center gap-2">
@@ -464,6 +518,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
                     onChange={(e) => {
                       setEstimateHour(Number(e.target.value));
                     }}
+
                   />
                   <span className="text-sm font-medium text-gray-600">hrs</span>
                 </div>
@@ -480,11 +535,15 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
                     onChange={(e) => {
                       setEstimateMinute(Number(e.target.value));
                     }}
+                    required
                   />
                   <span className="text-sm font-medium text-gray-600">
                     mins
                   </span>
                 </div>
+              </div>
+              <div className="mt-0.5 text-sm text-red-600">
+                {errorEstimate ? "Please enter estimated time" : ""}
               </div>
             </div>
           </div>
@@ -498,12 +557,25 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                className="px-6 py-2.5 text-sm font-medium text-white bg-brand-500 border border-transparent rounded-xl hover:bg-brand-600 focus:ring-2 focus:ring-brand-500/20 transition-colors"
-              >
-                Create Task
-              </button>
+
+              {
+                flag === 0 ? (<button
+                  type="submit"
+                  className="px-6 py-2.5 text-sm font-medium text-white bg-brand-500 border border-transparent rounded-xl hover:bg-brand-600 focus:ring-2 focus:ring-brand-500/20 transition-colors"
+                >
+                  Create Task
+                </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="px-6 py-2.5 text-sm font-medium text-white bg-brand-500 border border-transparent rounded-xl hover:bg-brand-600 focus:ring-2 focus:ring-brand-500/20 transition-colors"
+                    onClick={updateTask}
+                  >
+                    Update Task
+                  </button>
+                )
+              }
+
             </div>
           </div>
         </form>

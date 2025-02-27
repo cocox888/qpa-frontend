@@ -2,15 +2,9 @@
 
 import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
 import { getAllTasks } from '@/app/admin/reducers/tasks';
-import SimpleCard2 from '@/components/card/simpleCard2';
-import {
-  CompleteIcon,
-  DueIcon,
-  PendingIcon,
-  ProgressIcon
-} from '@/components/Icons/TaskIcons';
 import EditTaskModal, { type TaskItem } from '@/components/modal/editTaskModal';
 import TasklistItem from '@/components/TasklistItem';
+import { useTotalTime } from '@/hooks/useTotalTime';
 import { isNonEmptyArray } from '@/lib/utils/functions';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,6 +17,7 @@ export default function Projects() {
   const [filter, setFilter] = useState(false);
 
   const [taskData, setTaskData] = useState<TaskItem>({
+    task_id: 0,
     title: '',
     project: '',
     hours: '',
@@ -37,16 +32,28 @@ export default function Projects() {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const myTasks = useSelector((state: RootState) => state.tasks.myTasks);
 
+  const { totalTime, setTotalTime } = useTotalTime();
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     dispatch(getAllTasks());
     console.log(tasks);
     setCount(false);
+
+    const total = calculateTotalTime();
+    setTotalTime(total);
+
   }, [dispatch, count, editModal]);
 
   useEffect(() => {
 
   }, [filter]);
+
+  const calculateTotalTime = () => {
+    return  tasks.reduce((acc, item) => {
+      return acc + Number(item.estimated_time);
+    }, 0);
+  }
 
   const handleTask = (i: number, data: TaskItem) => {
     setIndex(i);
@@ -84,7 +91,7 @@ export default function Projects() {
             </p>
           </div>
           <button
-            data-new-task
+
             onClick={() => handleTask(0, {})}
             className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
           >
@@ -106,7 +113,7 @@ export default function Projects() {
         </div>
 
         {/* <!-- Stats Cards --> */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <SimpleCard2
             count={taskCounts.pending}
             title="Pending"
@@ -131,7 +138,7 @@ export default function Projects() {
             icon={DueIcon}
             color="purple"
           />
-        </div>
+        </div> */}
 
         {/* <!-- Main Content --> */}
         <div className="bg-white rounded-xl border border-gray-100">
@@ -220,7 +227,7 @@ export default function Projects() {
                 const isMyTask = myTasks.reduce((acc, item1) => {
                   const temp = item1.id == item.id ? 1 : 0;
                   return acc + temp;
-                }, 0) >=1 ;
+                }, 0) >= 1;
 
                 return (
                   <TasklistItem
@@ -228,15 +235,13 @@ export default function Projects() {
                     isMyTask={isMyTask}
                     id={item.id || 0}
                     title={String(item.title)}
-                    project={String(item.title)}
+                    project={String(item.taskProject?.title)}
                     hours={item.estimated_time || 0}
                     state={item.state || ''}
                     time={item.due_date || ''}
                     members={item.assignedTaskUser?.length || 0}
                     company={
-                      isNonEmptyArray(item.taskClient)
-                        ? item.taskClient[0].business_address || 'Undefined'
-                        : 'Undefined'
+                      item.taskClient?.business_name || "Undedined"
                     }
                     startTime={'Started:Oct 15,2024'}
                     onDetail={handleTask}

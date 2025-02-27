@@ -62,7 +62,7 @@ const taskSlice = createSlice({
         getAllTasks.fulfilled,
         (state, action: PayloadAction<TypeTask[]>) => {
           state.isFetching = false;
-
+          console.log(action.payload);
           const userID = localStorage.getItem("userId");
           const myTasks = action.payload?.filter((item) => {
             return (

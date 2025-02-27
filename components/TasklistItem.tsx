@@ -40,6 +40,7 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
   isMyTask
 }) => {
   const data = {
+    task_id:id,
     title: title,
     project: project,
     hours: hours,
@@ -83,18 +84,18 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
           {/* <!-- Top Row --> */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <input
+              {/* <input
                 type="checkbox"
                 className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-              />
+              /> */}
               <div>
                 <h3
                   className={`task-title font-medium text-gray-900 ${state === 'Completed' ? 'line-through' : ''
                     }`}
                 >
-                  {title}
+                  <span className='text-lg'>Task Title:</span> {title}
                 </h3>
-                <p className="task-project text-sm text-gray-500">{project}</p>
+                <p className="task-project text-sm text-gray-500">Project Title:  {project}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -113,7 +114,7 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span className="text-sm text-gray-500">{hours}</span>
+                <span className="text-sm text-gray-500">{Math.floor(hours / 60) }h : {hours % 60}m</span>
               </div>
               <div className="flex -space-x-2">
                 {Array.from({ length: members }, (_, index) => index + 1).map(
@@ -137,9 +138,9 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
                   : 'bg-green-50 text-green-700'
                   }  rounded-lg`}
               >
-                {state}
+                Completed
               </span>
-              <span className="text-sm text-gray-500">{time}</span>
+              {/* <span className="text-sm text-gray-500">{time}</span> */}
             </div>
           </div>
 
@@ -173,11 +174,11 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <span>{startTime}</span>
+                <span>Due Date: {time}</span>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {state === 'Completed' ? (
+              {/* {state === 'Completed' ? (
                 // biome-ignore lint/a11y/useButtonType: <explanation>
                 <button
                   className="p-1.5 text-gray-500 bg-gray-100 rounded-lg text-xs font-medium"
@@ -222,7 +223,7 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
                     )}
                   </div>
                 </div>
-              )}
+              )} */}
 
               <button
                 className="task-edit-btn p-1.5 text-gray-400 hover:text-gray-500 rounded-lg hover:bg-gray-50"

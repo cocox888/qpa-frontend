@@ -59,7 +59,9 @@ type FormData = {
 const OnboardingFlow = () => {
     const [showForm, setShowForm] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
+
     const totalSteps = 7;
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
     const [formData, setFormData] = useState<FormData>({
         // Section 1: Client Information
@@ -146,7 +148,7 @@ const OnboardingFlow = () => {
             HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
         >
     ) => {
-        e.target.focus();
+        inputRef.current?.focus();
     };
 
     const FormSection = ({ step }: { step: number }) => {
@@ -167,6 +169,7 @@ const OnboardingFlow = () => {
                             <div>
                                 <div className="block text-gray-700 mb-2">Full Name*</div>
                                 <input
+                                    
                                     type="text"
                                     name="fullName"
                                     value={formData.fullName}
