@@ -1,13 +1,16 @@
 'use client';
 
-import { TypeProject, type TypeUser } from '@/lib/types';
+import { TypeProject, TypeTask, type TypeUser } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Toast from '../toast';
 import { client } from '@/lib/utils/customAxios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
-import { clear } from 'console';
+import { useTotalTime } from '@/hooks/useTotalTime';
+import { getAllTasks } from '@/app/admin/reducers/tasks';
+import { calculateTotalTime } from '@/lib/utils/calculate';
+
 
 export interface TaskItem {
   task_id?: number;
@@ -40,6 +43,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const projectsData = useSelector((state: RootState) => state.projects.projects);
   const { title } = data;
+  const dispatch: AppDispatch = useDispatch();
   const [projectID, setProjectID] = useState(0);
   const [taskName, setTaskName] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -54,6 +58,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   const [errorEstimate, setErrorEstimate] = useState(false);
 
   const [editData, setEditData] = useState<TaskItem>();
+
+  const { totalTime, setTotalTime } = useTotalTime();
   const handleProjectSelect = async (projectId: number) => {
     setProjectID(projectId);
     const token = localStorage.getItem('access_token');
@@ -126,6 +132,9 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
     setEstimateHour(Math.floor(Number(editData?.estimated_time) / 60) || 0);
     setEstimateMinute(Number(editData?.estimated_time) % 60 || 0);
   }, []);
+
+
+
 
   const onSubmit = async () => {
     members.length === 0 ? setMemberError(true) : setMemberError(false);
@@ -213,11 +222,16 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
         body: JSON.stringify(payload)
       });
       Toast('success', 'Task Updated Successfully');
+
+      dispatch(getAllTasks());
+      const total = calculateTotalTime(tasks);
+      setTotalTime(total);
+
     } catch (error) {
       Toast('error', 'Server Error');
     }
   }
-  
+
   return (
     <div>
       <div

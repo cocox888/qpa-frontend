@@ -36,24 +36,14 @@ export default function Projects() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    dispatch(getAllTasks());
-    console.log(tasks);
+    // dispatch(getAllTasks());
     setCount(false);
-
-    const total = calculateTotalTime();
-    setTotalTime(total);
-
   }, [dispatch, count, editModal]);
 
   useEffect(() => {
 
   }, [filter]);
 
-  const calculateTotalTime = () => {
-    return  tasks.reduce((acc, item) => {
-      return acc + Number(item.estimated_time);
-    }, 0);
-  }
 
   const handleTask = (i: number, data: TaskItem) => {
     setIndex(i);

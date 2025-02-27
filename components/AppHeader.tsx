@@ -1,8 +1,14 @@
 'use client';
+import { useTotalTime } from '@/hooks/useTotalTime';
+import { calculateTotalTime } from '@/lib/utils/calculate';
 import { getInitials } from '@/lib/utils/functions';
+
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // import DailyWorkWatch from './timer/DailyWorkWatch';
+import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
+import { getAllTasks } from '@/app/admin/reducers/tasks';
 
 const AppHeader = () => {
   const [isNotificationsMenuOpen, setNotificationsMenuOpen] = useState(false);
@@ -13,12 +19,25 @@ const AppHeader = () => {
   const notificationsRef = useRef<HTMLDivElement | null>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
 
+  const { totalTime, setTotalTime } = useTotalTime();
+
   const handleSignOut = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
   };
 
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const dispatch: AppDispatch = useDispatch();
+
   useEffect(() => {
+    dispatch(getAllTasks());
+
+    setTimeout(() => {
+      const total = calculateTotalTime(tasks);
+      setTotalTime(total);
+    }, 1000);
+
+
     const handleOutsideClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
@@ -37,10 +56,13 @@ const AppHeader = () => {
     setRole(localStorage.getItem('role') || '');
     setEmail(localStorage.getItem('email') || '');
     document.addEventListener('mousedown', handleOutsideClick);
+
+
+
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -99,7 +121,7 @@ const AppHeader = () => {
                   </svg>
                   <div className="text-sm font-medium text-gray-900">
                     {/* <DailyWorkWatch /> */}
-                    
+                    {Math.floor(Number(totalTime) / 60)}h : {Number(totalTime) % 60}m
                   </div>
                 </div>
                 <button className="flex items-center gap-2 px-3 py-1.5 bg-brand-500 text-white rounded-lg text-sm hover:bg-brand-600 transition-colors">

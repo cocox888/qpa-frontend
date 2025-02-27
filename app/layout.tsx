@@ -24,9 +24,9 @@ export default function RootLayout({
         {/* <TimeRecordProvider> */}
         {/* <TimerProvider> */}
         <AuthorizationProvider>
-          <TotalTimeProvider>
-            {children}
-          </TotalTimeProvider>
+
+          {children}
+
         </AuthorizationProvider>
 
 
