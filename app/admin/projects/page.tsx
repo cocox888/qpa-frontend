@@ -13,6 +13,7 @@ import ProjectDetailModal, {
 import { useEffect, useState } from 'react';
 import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion } from "framer-motion";
 import { getAllProjects } from '@/app/admin/reducers/projects';
 
 export interface ClientProps {
@@ -25,6 +26,23 @@ export interface UserProps {
   full_name?: string;
   position?: string;
 }
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.0, // 200ms delay between items
+      // Ensures staggered children animation starts after parent is ready
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 100 }, // Start below the final position
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }, // End at the final position
+};
+
 
 export default function Projects() {
   const [index, setIndex] = useState(0);
@@ -40,7 +58,7 @@ export default function Projects() {
   const projects = useSelector((state: RootState) => state.projects.projects);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('refresh_token');
     const fetchClients = async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/clients`,
@@ -211,9 +229,14 @@ export default function Projects() {
         <FilterBar filterEvent={handleFilter} />
 
         {/* <!-- Projects Grid --> */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto">
+        <motion.div
+          className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
           {filterData().map((project, index) => (
-            <div key={index}>
+            <motion.div key={index} variants={itemVariants}>
               {project.package_type === 'va' && (
                 <VACard onClick={openProjectDetails} project={project} />
               )}
@@ -226,9 +249,10 @@ export default function Projects() {
               {project.package_type === 'wds' && (
                 <WDSCard onClick={openProjectDetails} />
               )}
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
+
       </div>
       {createModal ? (
         <>

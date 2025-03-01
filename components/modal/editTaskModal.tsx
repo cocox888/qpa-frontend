@@ -236,7 +236,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
       getRecentTasksAndReturnTotalTime().then((totalTime) => {
         console.log(totalTime);
         setTotalTime(Number(totalTime));
-      })
+      });
 
     } catch (error) {
       Toast('error', 'Server Error');

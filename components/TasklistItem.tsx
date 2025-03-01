@@ -54,25 +54,6 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
   const timerContext = useTimerContext();
   const dispatch = useDispatch();
 
-  const startTimer = () => {
-    timerContext.setTimer(true);
-    timerContext.setTaskId(id);
-    timerContext.setStartTime(new Date());
-  };
-  const stopTimer = async () => {
-    timerContext.setTimer(false);
-    const id = timerContext.taskId;
-    const value = timerContext.time;
-    const userId = timerContext.userId;
-
-    // const res=customFetch("","POST");
-
-  }
-
-  // useEffect(() => {
-  //    const myTasks = useSelector((state: RootState) => state.tasks.myTasks);
-
-  // },[]);
 
   return (
     <>

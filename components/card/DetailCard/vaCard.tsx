@@ -2,9 +2,12 @@
 // import { useState } from "react";
 'use client';
 
+import api from '@/app/api/customApi';
 import type { ProjectData } from '@/components/modal/projectDetailsModal';
 import type { TypeProject } from '@/lib/types';
 import { isNonEmptyArray } from '@/lib/utils/functions';
+import { time } from 'console';
+import { useEffect, useState } from 'react';
 
 interface VACardProps {
   onClick: (param1: number, param2: ProjectData) => void;
@@ -12,6 +15,12 @@ interface VACardProps {
 }
 
 const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
+
+  const [timeSpentToProject, setTimeSpentToProject] = useState(0);
+  const [timeSpentToday, setTimeSpentToday] = useState(0);
+  const [timeSpentWeek, setTimeSpentWeek] = useState(0);
+
+
   const data: ProjectData = {
     projectTitle: project?.title || '',
     clientName:
@@ -20,7 +29,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
       '',
     status: project?.state || '',
     dates: { due: '', renewal: '', start: project?.start_date || '' },
-    type: project?.project_type || '',
+    type: project?.package_type || '',
     progress: { used: 12, total: 20, percent: Math.floor((12 / 20) * 100) },
     teamMembers: project?.assignedProjectUser,
     details: {
@@ -38,12 +47,40 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
         'Project Management',
         'Team Coordination',
         'Process Optimization'
-      ]
-    }
+      ],
+
+    },
+    timeSpentData: {
+      timeSpentToday: timeSpentToday,
+      timeSpentWeek: timeSpentWeek
+    },
+    totalTime: project?.monthly_hours
   };
+
+  useEffect(() => {
+    try {
+      const res = api.post('/admin/getTimeDataForProject', JSON.stringify({ project_id: project?.id }))
+        .then((response) => {
+          // Handle successful response here
+          console.log('Data received:', response.data);
+          setTimeSpentToday(response.data.response.data.totalTimeForDay);
+          setTimeSpentWeek(response.data.response.data.totalTimeForWeek);
+          // You can also use the data to update state or perform other actions
+        })
+        .catch((error) => {
+          // Handle error here
+          console.error('Error fetching time data for project:', error);
+        });
+
+    } catch (e) {
+
+    }
+
+  }, []);
+
   return (
     <>
-      <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
+      <div className="bg-white flex flex-col justify-between rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
@@ -90,18 +127,17 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
               <div className="flex items-center justify-between text-sm mb-1">
                 <span className="text-gray-500">Monthly Hours</span>
                 <span className="text-gray-900 font-medium">
-                  {project?.monthly_hours}/{project?.monthly_hours} hrs
+                  {project?.monthly_hours}/{timeSpentToProject} hrs
                 </span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-1.5">
                 <div
                   className="bg-blue-500 h-1.5 rounded-full"
                   style={{
-                    width: `${
-                      ((project?.monthly_hours || 0) /
-                        (project?.monthly_hours || 1)) *
+                    width: `${((timeSpentToProject || 0) /
+                      (project?.monthly_hours || 1)) *
                       100
-                    }%`
+                      }%`
                   }}
                 />
               </div>
@@ -112,28 +148,32 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
                 <span className="text-gray-600">Current Week</span>
                 <span className="text-gray-900 font-medium">4.5 hrs used</span>
               </div>
-              <div className="flex items-center gap-2">
-                {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+              {/* <div className="flex items-center gap-2">
                 <button className="px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600">
                   Start Timer
                 </button>
-                {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                 <button className="px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-lg">
                   Add Time Log
                 </button>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex items-center justify-between">
               <div className="flex -space-x-2">
-                <img
-                  src="/images/person1.jpg"
-                  alt=""
-                  className="w-8 h-8 rounded-lg ring-2 ring-white object-cover"
-                />
-                <div className="w-8 h-8 rounded-lg bg-gray-100 ring-2 ring-white flex items-center justify-center text-xs text-gray-500">
+                {project?.assignedProjectUser?.map((item, index) => {
+                  return (
+                    <img
+                      key={item.id}
+                      src="/images/person1.png"
+                      alt=""
+                      className="w-8 h-8 rounded-lg ring-2 ring-white object-cover transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
+                    />
+                  );
+                })}
+
+                {/* <div className="w-8 h-8 rounded-lg bg-gray-100 ring-2 ring-white flex items-center justify-center text-xs text-gray-500">
                   +2
-                </div>
+                </div> */}
               </div>
               <span className="text-xs text-gray-500">Renews in 12 days</span>
             </div>

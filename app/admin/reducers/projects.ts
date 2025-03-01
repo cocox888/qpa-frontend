@@ -12,7 +12,7 @@ export const getAllProjects = createAsyncThunk(
     const data = await client(
       `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllProjects`
     );
-    // console.log(data);
+    console.log(data);
     return data;
   }
 );

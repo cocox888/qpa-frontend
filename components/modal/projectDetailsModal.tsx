@@ -28,6 +28,8 @@ export interface ProjectData {
     technologies?: string[];
     managementAreas?: string[];
   };
+  timeSpentData?: { timeSpentToday: number, timeSpentWeek: number };
+  totalTime?: number;
 }
 
 export default function ProjectDetailModal({
@@ -80,25 +82,24 @@ export default function ProjectDetailModal({
         </div>
         <div className="w-full bg-gray-100 rounded-full h-1.5">
           <div
-            className={`bg-${
-              data.type === 'va' ? 'blue' : 'indigo'
-            }-500 h-1.5 rounded-full`}
+            className={`bg-${data.type === 'va' ? 'blue' : 'indigo'
+              }-500 h-1.5 rounded-full`}
             style={{ width: `${data?.progress?.percent || 100}%` }}
           />
         </div>
         <div className="grid grid-cols-3 gap-2 mt-4">
           <div className="text-center p-2 bg-gray-50 rounded-lg">
             <div className="text-xs text-gray-500">Used Today</div>
-            <div className="text-sm font-medium text-gray-900">2.5 hrs</div>
+            <div className="text-sm font-medium text-gray-900">{data.timeSpentData?.timeSpentToday}</div>
           </div>
           <div className="text-center p-2 bg-gray-50 rounded-lg">
             <div className="text-xs text-gray-500">This Week</div>
-            <div className="text-sm font-medium text-gray-900">12.5 hrs</div>
+            <div className="text-sm font-medium text-gray-900">{data.timeSpentData?.timeSpentWeek}</div>
           </div>
           <div className="text-center p-2 bg-gray-50 rounded-lg">
             <div className="text-xs text-gray-500">Remaining</div>
             <div className="text-sm font-medium text-gray-900">
-              ${(data?.progress?.total || 0) - (data?.progress?.used || 0)} hrs
+              {data.totalTime} hrs
             </div>
           </div>
         </div>
@@ -115,18 +116,16 @@ export default function ProjectDetailModal({
     return (milestones[data?.type || ''] || []).map((milestone, index) => (
       <div
         key={index}
-        className={`text-center p-2 ${
-          index < 2 ? 'bg-green-50' : index === 2 ? 'bg-blue-50' : 'bg-gray-50'
-        } rounded-lg`}
+        className={`text-center p-2 ${index < 2 ? 'bg-green-50' : index === 2 ? 'bg-blue-50' : 'bg-gray-50'
+          } rounded-lg`}
       >
         <div
-          className={`text-xs ${
-            index < 2
+          className={`text-xs ${index < 2
               ? 'text-green-600'
               : index === 2
-              ? 'text-blue-600'
-              : 'text-gray-500'
-          }`}
+                ? 'text-blue-600'
+                : 'text-gray-500'
+            }`}
         >
           {index < 2 ? 'Complete' : index === 2 ? 'In Progress' : 'Upcoming'}
         </div>
@@ -146,9 +145,8 @@ export default function ProjectDetailModal({
         </div>
         <div className="w-full bg-gray-100 rounded-full h-1.5">
           <div
-            className={`bg-${
-              data.type === 'smm' ? 'purple' : 'rose'
-            }-500 h-1.5 rounded-full`}
+            className={`bg-${data.type === 'smm' ? 'purple' : 'rose'
+              }-500 h-1.5 rounded-full`}
             style={{ width: `${data?.progress?.percent || 100}%` }}
           />
         </div>
@@ -356,9 +354,8 @@ export default function ProjectDetailModal({
             <div className="flex items-center gap-4">
               <div
                 id="projectTypeIcon"
-                className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                  iconMap[type || ''].bg
-                }`}
+                className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconMap[type || ''].bg
+                  }`}
               >
                 {/* <!-- Icon will be inserted dynamically --> */}
                 <svg
@@ -419,9 +416,8 @@ export default function ProjectDetailModal({
               <div className="flex items-center gap-3">
                 <span
                   id="projectStatus"
-                  className={`inline-flex items-center ${
-                    statusColorMap[status || 0]
-                  } px-2.5 py-1 rounded-lg text-xs font-medium`}
+                  className={`inline-flex items-center ${statusColorMap[status || 0]
+                    } px-2.5 py-1 rounded-lg text-xs font-medium`}
                 >
                   {/* <!-- Status will be inserted dynamically --> */}
                   {status}
@@ -432,8 +428,8 @@ export default function ProjectDetailModal({
                   {dates?.due
                     ? `Due${dates?.due}`
                     : dates?.renewal
-                    ? `Renews${dates?.renewal}`
-                    : `Started ${dates?.start}`}
+                      ? `Renews${dates?.renewal}`
+                      : `Started ${dates?.start}`}
                 </span>
               </div>
               {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
@@ -513,30 +509,26 @@ export default function ProjectDetailModal({
         </div>
 
         {/* <!-- Footer --> */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4">
+        {/* <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
               <button className="text-sm text-gray-500 hover:text-gray-700 font-medium">
                 View Time Logs
               </button>
-              {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
               <button className="text-sm text-gray-500 hover:text-gray-700 font-medium">
                 View Files
               </button>
             </div>
-            <div className="flex items-center gap-3">
-              {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+            <div className="flex items-center gap-3">              
               <button className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700">
                 Archive Project
               </button>
-              {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
               <button className="px-4 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600">
                 Start Timer
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

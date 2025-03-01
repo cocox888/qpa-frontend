@@ -78,6 +78,8 @@ export interface TypeProject {
   technology?: string;
   additional_setting?: string;
   portal_access?: string;
+  totalTimeForDay?: number;
+  totalTimeForWeek?: number;
   assignedProjectUser?: TypeUser[];
   requestedProjectClient?: TypeClient[];
   projectTask?: TypeTask[];

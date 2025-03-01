@@ -119,7 +119,8 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
               : startDate3,
           additional_setting: additional.join(','),
           portal_access: portals.join(','),
-          projectTimeTrack: []
+          projectTimeTrack: [],
+          state:'In Progress'
         };
 
         switch (packageType) {

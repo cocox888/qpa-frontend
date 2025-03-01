@@ -27,6 +27,7 @@
     "chart.js": "^4.4.7",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "framer-motion": "^12.4.7",
     "gsap": "^3.12.5",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.469.0",
