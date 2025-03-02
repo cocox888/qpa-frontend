@@ -55,35 +55,35 @@ export default function Onboarding() {
 
       // Step 3: Tools and Access
       use_tools: '',
-      needAccess: 'no',
-      toolsToAccess: '',
-      fileSharingMethod: '',
+      need_access: 'no',
+      tools_to_access: '',
+      file_share_method: '',
 
       // Step 4: Communication Preferences
-      updateFrequency: '',
-      updateMethod: '',
+      update_frequency: '',
+      update_method: '',
       stakeholders: '',
 
       // Step 5: Priorities
-      priorityTasks: '',
-      startDate: '',
+      priority_tasks: '',
+      start_date: '',
 
       // Step 6: Billing & Agreements
-      billingMethod: '',
-      billingCycle: '',
-      invoiceEmail: '',
+      billing_method: '',
+      billing_cycle: '',
+      invoice_email: '',
 
       // Step 7: Emergency Contact & Agreement
-      emergencyName: '',
-      emergencyPhone: '',
-      emergencyRelationship: '',
-      digitalSignature: '',
+      emergency_contact_name: '',
+      emergency_phone: '',
+      emergency_relationship: '',
+      digital_sign: '',
       agreementDate: '',
-      agreeToTerms: false
+      agree_to_terms: false
     }
   });
 
-  const needAccessValue = watch('needAccess');
+  const need_accessValue = watch('need_access');
 
   const nextStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
@@ -528,7 +528,7 @@ export default function Onboarding() {
                 id="accessNo"
                 value="no"
                 className="form-radio text-primary"
-                {...register('needAccess')}
+                {...register('need_access')}
               />
               <label htmlFor="accessNo" className="text-gray-700">
                 No
@@ -540,7 +540,7 @@ export default function Onboarding() {
                 id="accessYes"
                 value="yes"
                 className="form-radio text-primary"
-                {...register('needAccess')}
+                {...register('need_access')}
               />
               <label htmlFor="accessYes" className="text-gray-700">
                 Yes
@@ -549,7 +549,7 @@ export default function Onboarding() {
           </div>
         </div>
 
-        {needAccessValue === 'yes' && (
+        {need_accessValue === 'yes' && (
           <div>
             <label className="block text-gray-700 mb-2 font-medium">
               Please specify which tools:
@@ -558,7 +558,7 @@ export default function Onboarding() {
               placeholder="List the tools we'll need access to"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
               rows={2}
-              {...register('toolsToAccess')}
+              {...register('tools_to_access')}
             ></textarea>
           </div>
         )}
@@ -569,7 +569,7 @@ export default function Onboarding() {
           </label>
           <select
             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
-            {...register('fileSharingMethod')}
+            {...register('file_share_method')}
           >
             <option value="">Select method</option>
             <option value="Google Drive">Google Drive</option>
@@ -602,7 +602,7 @@ export default function Onboarding() {
           </label>
           <select
             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
-            {...register('updateFrequency')}
+            {...register('update_frequency')}
           >
             <option value="">Select update frequency</option>
             <option value="Daily">Daily</option>
@@ -619,7 +619,7 @@ export default function Onboarding() {
           </label>
           <select
             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
-            {...register('updateMethod')}
+            {...register('update_method')}
           >
             <option value="">Select method</option>
             <option value="Email">Email</option>
@@ -669,7 +669,7 @@ export default function Onboarding() {
               placeholder="Describe your priority tasks"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
               rows={4}
-              {...register('priorityTasks')}
+              {...register('priority_tasks')}
             ></textarea>
           </div>
 
@@ -680,7 +680,7 @@ export default function Onboarding() {
             <input
               type="date"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('startDate')}
+              {...register('start_date')}
             />
           </div>
         </div>
@@ -706,7 +706,7 @@ export default function Onboarding() {
             </div>
             <select
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('billingMethod')}
+              {...register('billing_method')}
             >
               <option value="">Select method</option>
               <option value="Credit/Debit Card">Credit/Debit Card</option>
@@ -720,7 +720,7 @@ export default function Onboarding() {
             </div>
             <select
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('billingCycle')}
+              {...register('billing_cycle')}
             >
               <option value="">Select cycle</option>
               <option value="Weekly">Weekly</option>
@@ -736,16 +736,16 @@ export default function Onboarding() {
               type="email"
               placeholder="Enter invoice email address (optional)"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('invoiceEmail', {
+              {...register('invoice_email', {
                 pattern: {
                   value: /^\S+@\S+$/i,
                   message: 'Enter a valid email'
                 }
               })}
             />
-            {errors.invoiceEmail && (
+            {errors.invoice_email && (
               <div className="mt-0.5 text-xs text-red-600">
-                {errors.invoiceEmail.message}
+                {errors.invoice_email.message}
               </div>
             )}
           </div>
@@ -777,7 +777,7 @@ export default function Onboarding() {
               type="text"
               placeholder="Enter emergency contact name"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('emergencyName')}
+              {...register('emergency_contact_name')}
             />
           </div>
 
@@ -789,7 +789,7 @@ export default function Onboarding() {
               type="tel"
               placeholder="Enter emergency contact phone"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('emergencyPhone')}
+              {...register('emergency_phone')}
             />
           </div>
 
@@ -801,7 +801,7 @@ export default function Onboarding() {
               type="text"
               placeholder="Enter relationship"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('emergencyRelationship')}
+              {...register('emergency_relationship')}
             />
           </div>
 
@@ -824,13 +824,13 @@ export default function Onboarding() {
                   type="text"
                   placeholder="Type your full name as signature"
                   className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-                  {...register('digitalSignature', {
+                  {...register('digital_sign', {
                     required: 'Digital signature is required'
                   })}
                 />
-                {errors.digitalSignature && (
+                {errors.digital_sign && (
                   <div className="mt-0.5 text-xs text-red-600">
-                    {errors.digitalSignature.message}
+                    {errors.digital_sign.message}
                   </div>
                 )}
               </div>
@@ -858,7 +858,7 @@ export default function Onboarding() {
                   type="checkbox"
                   id="agreeTerms"
                   className="mt-1 rounded text-[#84b894] focus:ring-[#84b894]"
-                  {...register('agreeToTerms', {
+                  {...register('agree_to_terms', {
                     required: 'You must agree to the terms and conditions'
                   })}
                 />
@@ -866,9 +866,9 @@ export default function Onboarding() {
                   I agree to the terms and conditions*
                 </label>
               </div>
-              {errors.agreeToTerms && (
+              {errors.agree_to_terms && (
                 <div className="mt-0.5 text-xs text-red-600">
-                  {errors.agreeToTerms.message}
+                  {errors.agree_to_terms.message}
                 </div>
               )}
             </div>
