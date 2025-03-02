@@ -22,20 +22,21 @@ export default function Onboarding() {
     register,
     formState: { errors },
     handleSubmit,
+    getValues,
     watch
   } = useForm({
     defaultValues: {
       // Step 1: Client Information
-      fullName: '',
-      businessName: '',
-      personalAddress: '',
-      businessAddress: '',
-      positionTitle: '',
+      full_name: '',
+      business_name: '',
+      personal_address: '',
+      business_address: '',
+      position: '',
       email: '',
-      phoneNumber: '',
-      preferredContactMethod: '',
+      phone: '',
+      preferred_contact_method: '',
       timezone: '',
-      
+
       // Step 2: Services & Goals
       services: {
         personalVA: false,
@@ -48,61 +49,63 @@ export default function Onboarding() {
         website: false,
         eventPlanning: false
       },
-      otherServices: '',
+      other_services: '',
       deadlines: '',
-      hoursNeeded: '',
-      
+      hours_needed: '',
+
       // Step 3: Tools and Access
-      tools: '',
-      needAccess: 'no',
-      toolsToAccess: '',
-      fileSharingMethod: '',
-      
+      use_tools: '',
+      need_access: 'no',
+      tools_to_access: '',
+      file_share_method: '',
+
       // Step 4: Communication Preferences
-      updateFrequency: '',
-      updateMethod: '',
+      update_frequency: '',
+      update_method: '',
       stakeholders: '',
-      
+
       // Step 5: Priorities
-      priorityTasks: '',
-      startDate: '',
-      
+      priority_tasks: '',
+      start_date: '',
+
       // Step 6: Billing & Agreements
-      billingMethod: '',
-      billingCycle: '',
-      invoiceEmail: '',
-      
+      billing_method: '',
+      billing_cycle: '',
+      invoice_email: '',
+
       // Step 7: Emergency Contact & Agreement
-      emergencyName: '',
-      emergencyPhone: '',
-      emergencyRelationship: '',
-      digitalSignature: '',
+      emergency_contact_name: '',
+      emergency_phone: '',
+      emergency_relationship: '',
+      digital_sign: '',
       agreementDate: '',
-      agreeToTerms: false
+      agree_to_terms: false
     }
   });
 
-  const needAccessValue = watch('needAccess');
+  const need_accessValue = watch('need_access');
 
   const nextStep = () => {
-    setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+    setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
     window.scrollTo(0, 0);
   };
 
   const prevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
     window.scrollTo(0, 0);
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
+    const data = getValues();
+    console.log(data);
     if (currentStep < totalSteps) {
       nextStep();
       return;
     }
-    
+
     try {
       setLoading(true);
-      
+
       // Submit form data to backend
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/onboarding`,
@@ -110,7 +113,11 @@ export default function Onboarding() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+<<<<<<< HEAD
             'Authorization': `Bearer ${localStorage.getItem('refresh_token')}`
+=======
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+>>>>>>> register
           },
           body: JSON.stringify(data)
         }
@@ -123,7 +130,9 @@ export default function Onboarding() {
         router.push(`/${role}/dashboard`);
       } else {
         const errorData = await response.json();
-        toast.error(errorData.message || 'Failed to submit onboarding information');
+        toast.error(
+          errorData.message || 'Failed to submit onboarding information'
+        );
       }
     } catch (error) {
       console.error(error);
@@ -150,74 +159,96 @@ export default function Onboarding() {
             Please provide your basic contact information.
           </p>
         </div>
-            
+
         <div className="space-y-4">
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Full Name*</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Full Name*
+            </div>
             <input
               type="text"
               placeholder="Enter your full name"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('fullName', { required: 'Full name is required' })}
+              {...register('full_name', { required: 'Full name is required' })}
             />
-            {errors.fullName && (
-              <div className="mt-0.5 text-xs text-red-600">{errors.fullName.message}</div>
+            {errors.full_name && (
+              <div className="mt-0.5 text-xs text-red-600">
+                {errors.full_name.message}
+              </div>
             )}
           </div>
-          
+
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Business Name</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Business Name
+            </div>
             <input
               type="text"
               placeholder="Enter your business name"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('businessName')}
+              {...register('business_name')}
             />
           </div>
-          
+
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Personal Address*</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Personal Address*
+            </div>
             <textarea
               placeholder="Enter your address"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
               rows={2}
-              {...register('personalAddress', { required: 'Personal address is required' })}
+              {...register('personal_address', {
+                required: 'Personal address is required'
+              })}
             ></textarea>
-            {errors.personalAddress && (
-              <div className="mt-0.5 text-xs text-red-600">{errors.personalAddress.message}</div>
+            {errors.personal_address && (
+              <div className="mt-0.5 text-xs text-red-600">
+                {errors.personal_address.message}
+              </div>
             )}
           </div>
-          
+
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Business Address</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Business Address
+            </div>
             <textarea
               placeholder="Enter your business address"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
               rows={2}
-              {...register('businessAddress')}
+              {...register('business_address')}
             ></textarea>
           </div>
-          
+
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Position/Title*</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Position/Title*
+            </div>
             <input
               type="text"
               placeholder="Enter your position or title"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('positionTitle', { required: 'Position/Title is required' })}
+              {...register('position', {
+                required: 'Position/Title is required'
+              })}
             />
-            {errors.positionTitle && (
-              <div className="mt-0.5 text-xs text-red-600">{errors.positionTitle.message}</div>
+            {errors.position && (
+              <div className="mt-0.5 text-xs text-red-600">
+                {errors.position.message}
+              </div>
             )}
           </div>
-          
+
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Email Address*</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Email Address*
+            </div>
             <input
               type="email"
               placeholder="Enter your email address"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('email', { 
+              {...register('email', {
                 required: 'Email is required',
                 pattern: {
                   value: /^\S+@\S+$/i,
@@ -226,28 +257,38 @@ export default function Onboarding() {
               })}
             />
             {errors.email && (
-              <div className="mt-0.5 text-xs text-red-600">{errors.email.message}</div>
+              <div className="mt-0.5 text-xs text-red-600">
+                {errors.email.message}
+              </div>
             )}
           </div>
-          
+
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Phone Number*</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Phone Number*
+            </div>
             <input
               type="tel"
               placeholder="Enter your phone number"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('phoneNumber', { required: 'Phone number is required' })}
+              {...register('phone', {
+                required: 'Phone number is required'
+              })}
             />
-            {errors.phoneNumber && (
-              <div className="mt-0.5 text-xs text-red-600">{errors.phoneNumber.message}</div>
+            {errors.phone && (
+              <div className="mt-0.5 text-xs text-red-600">
+                {errors.phone.message}
+              </div>
             )}
           </div>
-          
+
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Preferred Contact Method</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Preferred Contact Method
+            </div>
             <select
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('preferredContactMethod')}
+              {...register('preferred_contact_method')}
             >
               <option value="">Select method</option>
               <option value="email">Email</option>
@@ -255,9 +296,11 @@ export default function Onboarding() {
               <option value="messaging">Messaging App</option>
             </select>
           </div>
-          
+
           <div>
-            <div className="block text-gray-700 mb-2 font-medium">Timezone*</div>
+            <div className="block text-gray-700 mb-2 font-medium">
+              Timezone*
+            </div>
             <select
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
               {...register('timezone', { required: 'Timezone is required' })}
@@ -271,7 +314,9 @@ export default function Onboarding() {
               <option value="GMT">Greenwich Mean Time (GMT)</option>
             </select>
             {errors.timezone && (
-              <div className="mt-0.5 text-xs text-red-600">{errors.timezone.message}</div>
+              <div className="mt-0.5 text-xs text-red-600">
+                {errors.timezone.message}
+              </div>
             )}
           </div>
         </div>
@@ -291,7 +336,7 @@ export default function Onboarding() {
             Select the services you need and tell us about your requirements.
           </p>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
@@ -305,9 +350,11 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.personalVA')}
                 />
-                <label htmlFor="personalVA" className="text-gray-700">Virtual Assistant (Personal / Lifestyle)</label>
+                <label htmlFor="personalVA" className="text-gray-700">
+                  Virtual Assistant (Personal / Lifestyle)
+                </label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -315,9 +362,11 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.businessVA')}
                 />
-                <label htmlFor="businessVA" className="text-gray-700">Virtual Assistant (Business Admin)</label>
+                <label htmlFor="businessVA" className="text-gray-700">
+                  Virtual Assistant (Business Admin)
+                </label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -325,9 +374,11 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.socialMedia')}
                 />
-                <label htmlFor="socialMedia" className="text-gray-700">Social Media Management</label>
+                <label htmlFor="socialMedia" className="text-gray-700">
+                  Social Media Management
+                </label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -335,9 +386,11 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.businessManagement')}
                 />
-                <label htmlFor="businessManagement" className="text-gray-700">Online Business Management</label>
+                <label htmlFor="businessManagement" className="text-gray-700">
+                  Online Business Management
+                </label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -345,9 +398,11 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.contentCreation')}
                 />
-                <label htmlFor="contentCreation" className="text-gray-700">Content Creation (Videography / Photography)</label>
+                <label htmlFor="contentCreation" className="text-gray-700">
+                  Content Creation (Videography / Photography)
+                </label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -355,9 +410,11 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.brandKit')}
                 />
-                <label htmlFor="brandKit" className="text-gray-700">Brand Kit (Logo etc)</label>
+                <label htmlFor="brandKit" className="text-gray-700">
+                  Brand Kit (Logo etc)
+                </label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -365,9 +422,11 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.legalVA')}
                 />
-                <label htmlFor="legalVA" className="text-gray-700">Legal VA</label>
+                <label htmlFor="legalVA" className="text-gray-700">
+                  Legal VA
+                </label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -375,9 +434,11 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.website')}
                 />
-                <label htmlFor="website" className="text-gray-700">Website Creation / Management</label>
+                <label htmlFor="website" className="text-gray-700">
+                  Website Creation / Management
+                </label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -385,11 +446,13 @@ export default function Onboarding() {
                   className="rounded text-[#84b894] focus:ring-[#84b894]"
                   {...register('services.eventPlanning')}
                 />
-                <label htmlFor="eventPlanning" className="text-gray-700">Event Planning / Coordination</label>
+                <label htmlFor="eventPlanning" className="text-gray-700">
+                  Event Planning / Coordination
+                </label>
               </div>
             </div>
           </div>
-          
+
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
               Other (please specify)
@@ -398,13 +461,14 @@ export default function Onboarding() {
               type="text"
               placeholder="Specify other services needed"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('otherServices')}
+              {...register('other_services')}
             />
           </div>
-          
+
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
-              Do you have any upcoming deadlines or priorities we should be aware of?
+              Do you have any upcoming deadlines or priorities we should be
+              aware of?
             </div>
             <textarea
               placeholder="Enter any upcoming deadlines or priorities"
@@ -413,14 +477,15 @@ export default function Onboarding() {
               {...register('deadlines')}
             ></textarea>
           </div>
-          
+
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
-              How many hours per week or month do you anticipate needing support?
+              How many hours per week or month do you anticipate needing
+              support?
             </div>
             <select
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('hoursNeeded')}
+              {...register('hours_needed')}
             >
               <option value="">Select hours</option>
               <option value="1-5 hours per week">1-5 hours per week</option>
@@ -440,20 +505,26 @@ export default function Onboarding() {
     return (
       <div className="space-y-4">
         <h2 className="text-xl font-semibold mb-2">Tools and Access</h2>
-        <p className="text-gray-600 mb-4">Tell us about the tools and platforms you use.</p>
-        
+        <p className="text-gray-600 mb-4">
+          Tell us about the tools and platforms you use.
+        </p>
+
         <div>
-          <label className="block text-gray-700 mb-2 font-medium">What tools/software/platforms do you currently use?</label>
+          <label className="block text-gray-700 mb-2 font-medium">
+            What tools/software/platforms do you currently use?
+          </label>
           <textarea
             placeholder="E.g., Google Workspace, Slack, Asana, Canva, etc."
             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
             rows={3}
-            {...register('tools')}
+            {...register('use_tools')}
           ></textarea>
         </div>
-        
+
         <div>
-          <label className="block text-gray-700 mb-2 font-medium">Do we need access to any specific tools or accounts?</label>
+          <label className="block text-gray-700 mb-2 font-medium">
+            Do we need access to any specific tools or accounts?
+          </label>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <input
@@ -461,9 +532,11 @@ export default function Onboarding() {
                 id="accessNo"
                 value="no"
                 className="form-radio text-primary"
-                {...register('needAccess')}
+                {...register('need_access')}
               />
-              <label htmlFor="accessNo" className="text-gray-700">No</label>
+              <label htmlFor="accessNo" className="text-gray-700">
+                No
+              </label>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -471,30 +544,36 @@ export default function Onboarding() {
                 id="accessYes"
                 value="yes"
                 className="form-radio text-primary"
-                {...register('needAccess')}
+                {...register('need_access')}
               />
-              <label htmlFor="accessYes" className="text-gray-700">Yes</label>
+              <label htmlFor="accessYes" className="text-gray-700">
+                Yes
+              </label>
             </div>
           </div>
         </div>
-        
-        {needAccessValue === 'yes' && (
+
+        {need_accessValue === 'yes' && (
           <div>
-            <label className="block text-gray-700 mb-2 font-medium">Please specify which tools:</label>
+            <label className="block text-gray-700 mb-2 font-medium">
+              Please specify which tools:
+            </label>
             <textarea
               placeholder="List the tools we'll need access to"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
               rows={2}
-              {...register('toolsToAccess')}
+              {...register('tools_to_access')}
             ></textarea>
           </div>
         )}
-        
+
         <div>
-          <label className="block text-gray-700 mb-2 font-medium">What is your preferred file-sharing method?</label>
+          <label className="block text-gray-700 mb-2 font-medium">
+            What is your preferred file-sharing method?
+          </label>
           <select
             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
-            {...register('fileSharingMethod')}
+            {...register('file_share_method')}
           >
             <option value="">Select method</option>
             <option value="Google Drive">Google Drive</option>
@@ -514,14 +593,20 @@ export default function Onboarding() {
   const renderStep4 = () => {
     return (
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold mb-2">Communication Preferences</h2>
-        <p className="text-gray-600 mb-4">Let us know how you prefer to communicate.</p>
-        
+        <h2 className="text-xl font-semibold mb-2">
+          Communication Preferences
+        </h2>
+        <p className="text-gray-600 mb-4">
+          Let us know how you prefer to communicate.
+        </p>
+
         <div>
-          <label className="block text-gray-700 mb-2 font-medium">How often would you like updates or check-ins?</label>
+          <label className="block text-gray-700 mb-2 font-medium">
+            How often would you like updates or check-ins?
+          </label>
           <select
             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
-            {...register('updateFrequency')}
+            {...register('update_frequency')}
           >
             <option value="">Select update frequency</option>
             <option value="Daily">Daily</option>
@@ -531,23 +616,30 @@ export default function Onboarding() {
             <option value="Other">Other</option>
           </select>
         </div>
-        
+
         <div>
-          <label className="block text-gray-700 mb-2 font-medium">What is your preferred method for receiving updates?</label>
+          <label className="block text-gray-700 mb-2 font-medium">
+            What is your preferred method for receiving updates?
+          </label>
           <select
             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
-            {...register('updateMethod')}
+            {...register('update_method')}
           >
             <option value="">Select method</option>
             <option value="Email">Email</option>
             <option value="Video Call">Video Call</option>
             <option value="Messaging App">Messaging App</option>
-            <option value="Project Management Tool">Project Management Tool</option>
+            <option value="Project Management Tool">
+              Project Management Tool
+            </option>
           </select>
         </div>
-        
+
         <div>
-          <label className="block text-gray-700 mb-2 font-medium">Who are the key stakeholders / team members we should keep in the loop?</label>
+          <label className="block text-gray-700 mb-2 font-medium">
+            Who are the key stakeholders / team members we should keep in the
+            loop?
+          </label>
           <textarea
             placeholder="List names, roles, and contact information"
             className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-200"
@@ -571,7 +663,7 @@ export default function Onboarding() {
             Help us understand your immediate needs.
           </p>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
@@ -581,10 +673,10 @@ export default function Onboarding() {
               placeholder="Describe your priority tasks"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
               rows={4}
-              {...register('priorityTasks')}
+              {...register('priority_tasks')}
             ></textarea>
           </div>
-          
+
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
               What is your onboarding timeline or ideal start date?
@@ -592,7 +684,7 @@ export default function Onboarding() {
             <input
               type="date"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('startDate')}
+              {...register('start_date')}
             />
           </div>
         </div>
@@ -608,11 +700,9 @@ export default function Onboarding() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">
             Billing & Agreements
           </h2>
-          <p className="text-gray-600 mb-8">
-            Set up your billing preferences.
-          </p>
+          <p className="text-gray-600 mb-8">Set up your billing preferences.</p>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
@@ -620,28 +710,28 @@ export default function Onboarding() {
             </div>
             <select
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('billingMethod')}
+              {...register('billing_method')}
             >
               <option value="">Select method</option>
               <option value="Credit/Debit Card">Credit/Debit Card</option>
               <option value="Bank Transfer">Bank Transfer</option>
             </select>
           </div>
-          
+
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
               Billing Cycle Preference
             </div>
             <select
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('billingCycle')}
+              {...register('billing_cycle')}
             >
               <option value="">Select cycle</option>
               <option value="Weekly">Weekly</option>
               <option value="Monthly">Monthly</option>
             </select>
           </div>
-          
+
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
               Invoice Email Address (if different from above)
@@ -650,15 +740,17 @@ export default function Onboarding() {
               type="email"
               placeholder="Enter invoice email address (optional)"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('invoiceEmail', {
+              {...register('invoice_email', {
                 pattern: {
                   value: /^\S+@\S+$/i,
                   message: 'Enter a valid email'
                 }
               })}
             />
-            {errors.invoiceEmail && (
-              <div className="mt-0.5 text-xs text-red-600">{errors.invoiceEmail.message}</div>
+            {errors.invoice_email && (
+              <div className="mt-0.5 text-xs text-red-600">
+                {errors.invoice_email.message}
+              </div>
             )}
           </div>
         </div>
@@ -675,10 +767,11 @@ export default function Onboarding() {
             Emergency Contact (Optional)
           </h2>
           <p className="text-gray-600 mb-8">
-            Please provide emergency contact information and review the agreement.
+            Please provide emergency contact information and review the
+            agreement.
           </p>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
@@ -688,10 +781,10 @@ export default function Onboarding() {
               type="text"
               placeholder="Enter emergency contact name"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('emergencyName')}
+              {...register('emergency_contact_name')}
             />
           </div>
-          
+
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
               Emergency Contact Phone
@@ -700,10 +793,10 @@ export default function Onboarding() {
               type="tel"
               placeholder="Enter emergency contact phone"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('emergencyPhone')}
+              {...register('emergency_phone')}
             />
           </div>
-          
+
           <div>
             <div className="block text-gray-700 mb-2 font-semibold">
               Relationship to You/Your Business
@@ -712,18 +805,20 @@ export default function Onboarding() {
               type="text"
               placeholder="Enter relationship"
               className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-              {...register('emergencyRelationship')}
+              {...register('emergency_relationship')}
             />
           </div>
-          
+
           <div className="pt-6 border-t border-gray-200">
             <h3 className="font-medium text-gray-900 mb-4">Agreement</h3>
             <div className="bg-gray-50 p-4 rounded-lg mb-4">
               <p className="text-sm text-gray-600">
-                By submitting this form, you agree to the terms and conditions of working with QPA Virtual Assistants and confirm that all provided information is accurate to the best of your knowledge.
+                By submitting this form, you agree to the terms and conditions
+                of working with QPA Virtual Assistants and confirm that all
+                provided information is accurate to the best of your knowledge.
               </p>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <div className="block text-gray-700 mb-2 font-semibold">
@@ -733,13 +828,17 @@ export default function Onboarding() {
                   type="text"
                   placeholder="Type your full name as signature"
                   className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-                  {...register('digitalSignature', { required: 'Digital signature is required' })}
+                  {...register('digital_sign', {
+                    required: 'Digital signature is required'
+                  })}
                 />
-                {errors.digitalSignature && (
-                  <div className="mt-0.5 text-xs text-red-600">{errors.digitalSignature.message}</div>
+                {errors.digital_sign && (
+                  <div className="mt-0.5 text-xs text-red-600">
+                    {errors.digital_sign.message}
+                  </div>
                 )}
               </div>
-              
+
               <div>
                 <div className="block text-gray-700 mb-2 font-semibold">
                   Date*
@@ -747,24 +846,34 @@ export default function Onboarding() {
                 <input
                   type="date"
                   className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-                  {...register('agreementDate', { required: 'Date is required' })}
+                  {...register('agreementDate', {
+                    required: 'Date is required'
+                  })}
                 />
                 {errors.agreementDate && (
-                  <div className="mt-0.5 text-xs text-red-600">{errors.agreementDate.message}</div>
+                  <div className="mt-0.5 text-xs text-red-600">
+                    {errors.agreementDate.message}
+                  </div>
                 )}
               </div>
-              
+
               <div className="flex items-start gap-2">
                 <input
                   type="checkbox"
                   id="agreeTerms"
                   className="mt-1 rounded text-[#84b894] focus:ring-[#84b894]"
-                  {...register('agreeToTerms', { required: 'You must agree to the terms and conditions' })}
+                  {...register('agree_to_terms', {
+                    required: 'You must agree to the terms and conditions'
+                  })}
                 />
-                <label htmlFor="agreeTerms" className="text-gray-700">I agree to the terms and conditions*</label>
+                <label htmlFor="agreeTerms" className="text-gray-700">
+                  I agree to the terms and conditions*
+                </label>
               </div>
-              {errors.agreeToTerms && (
-                <div className="mt-0.5 text-xs text-red-600">{errors.agreeToTerms.message}</div>
+              {errors.agree_to_terms && (
+                <div className="mt-0.5 text-xs text-red-600">
+                  {errors.agree_to_terms.message}
+                </div>
               )}
             </div>
           </div>
@@ -776,14 +885,22 @@ export default function Onboarding() {
   // Render current step
   const renderCurrentStep = () => {
     switch (currentStep) {
-      case 1: return renderStep1();
-      case 2: return renderStep2();
-      case 3: return renderStep3();
-      case 4: return renderStep4();
-      case 5: return renderStep5();
-      case 6: return renderStep6();
-      case 7: return renderStep7();
-      default: return renderStep1();
+      case 1:
+        return renderStep1();
+      case 2:
+        return renderStep2();
+      case 3:
+        return renderStep3();
+      case 4:
+        return renderStep4();
+      case 5:
+        return renderStep5();
+      case 6:
+        return renderStep6();
+      case 7:
+        return renderStep7();
+      default:
+        return renderStep1();
     }
   };
 
@@ -822,7 +939,8 @@ export default function Onboarding() {
                   Getting Started
                 </h2>
                 <p className="text-white/90 mb-8 text-lg">
-                  Tell us about yourself and your needs so we can provide the best possible service.
+                  Tell us about yourself and your needs so we can provide the
+                  best possible service.
                 </p>
 
                 <div className="w-full bg-white/20 backdrop-blur-sm rounded-full p-4">
@@ -843,7 +961,7 @@ export default function Onboarding() {
           </div>
         </div>
       </div>
-      
+
       {/* Right: Form Side */}
       <div className="w-full md:w-1/2 min-h-screen bg-white">
         <div className="px-8">
@@ -859,10 +977,10 @@ export default function Onboarding() {
             </div>
 
             <ToastContainer />
-            
+
             <form onSubmit={handleSubmit(onSubmit)}>
               {renderCurrentStep()}
-            
+
               <div className="flex justify-between mt-8 mb-8">
                 {currentStep > 1 && (
                   <button
@@ -873,28 +991,44 @@ export default function Onboarding() {
                     Previous
                   </button>
                 )}
-                
+
                 <button
                   type="submit"
                   className="px-6 py-3 bg-[#84b894] text-white rounded-lg hover:bg-[#6a9377] transition-colors flex items-center gap-2 ml-auto"
                   disabled={loading}
                 >
-                  {loading ? 'Processing...' : currentStep === totalSteps ? 'Submit' : 'Next'}
+                  {loading
+                    ? 'Processing...'
+                    : currentStep === totalSteps
+                    ? 'Submit'
+                    : 'Next'}
                   {!loading && (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   )}
                 </button>
               </div>
             </form>
-            
+
             <p className="text-center text-sm text-gray-500 mt-6">
-              Need help? <Link href="/contact" className="text-[#84b894] hover:underline">Contact Support</Link>
+              Need help?{' '}
+              <Link href="/contact" className="text-[#84b894] hover:underline">
+                Contact Support
+              </Link>
             </p>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
