@@ -113,11 +113,7 @@ export default function Onboarding() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-<<<<<<< HEAD
             'Authorization': `Bearer ${localStorage.getItem('refresh_token')}`
-=======
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`
->>>>>>> register
           },
           body: JSON.stringify(data)
         }
