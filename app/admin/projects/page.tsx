@@ -46,7 +46,7 @@ const itemVariants = {
 
 export default function Projects() {
   const [index, setIndex] = useState(0);
-  const [detailData, setDetailData] = useState<ProjectData | null>(null);
+  const [detailData, setDetailData] = useState<TypeProject | null>(null);
   const [createModal, setCreateModal] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
   const [clients, setClients] = useState<ClientProps[]>([]);
@@ -109,8 +109,12 @@ export default function Projects() {
     fetchClients();
     fetchUsers();
 
+
+  }, [dispatch, index, createModal, detailModal]);
+
+  useEffect(() => {
     dispatch(getAllProjects());
-  }, [dispatch, index, createModal]);
+  }, [detailModal]);
 
   const openNewProjectModal = () => {
     setCreateModal(true);
@@ -140,8 +144,8 @@ export default function Projects() {
     setCreateModal(false);
   };
 
-  const openProjectDetails = (i: number, d: ProjectData) => {
-    setDetailData(d);
+  const openProjectDetails = (i: number, d?: TypeProject) => {
+    setDetailData(d || null);
     setDetailModal(true);
   };
 
@@ -241,13 +245,13 @@ export default function Projects() {
                 <VACard onClick={openProjectDetails} project={project} />
               )}
               {project.package_type === 'obm' && (
-                <OBMCard onClick={openProjectDetails} />
+                <OBMCard onClick={openProjectDetails} project={project} />
               )}
               {project.package_type === 'smm' && (
-                <SMMCard onClick={openProjectDetails} />
+                <SMMCard onClick={openProjectDetails} project={project} />
               )}
               {project.package_type === 'wds' && (
-                <WDSCard onClick={openProjectDetails} />
+                <WDSCard onClick={openProjectDetails} project={project} />
               )}
             </motion.div>
           ))}

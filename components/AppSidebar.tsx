@@ -40,10 +40,10 @@ export default function AppSidebar() {
     { url: `/${role}/finance/reporting`, title: 'Financial Reports' }
   ];
 
-  const timerMenuItems = [
-    { url: `/${role}/timer`, title: 'Start Timer' },
-    { url: `/${role}/timer/report`, title: 'Report' }
-  ];
+  // const timerMenuItems = [
+  //   { url: `/${role}/timer`, title: 'Start Timer' },
+  //   { url: `/${role}/timer/report`, title: 'Report' }
+  // ];
 
   const isFinanceActive = currentPath.startsWith(`/${role}/finance`);
   const isTimerActive = currentPath.startsWith(`/${role}/timer`);
@@ -139,7 +139,7 @@ export default function AppSidebar() {
                 </div>
               )}
             </div>
-            <div className="relative">
+            {/* <div className="relative">
               <SidebarItem
                 url={`/${role}/timer`}
                 title="Timer"
@@ -148,7 +148,7 @@ export default function AppSidebar() {
                 onClick={() => setIsTimerOpen(!isTimerOpen)}
               />
 
-              {/* Finance Submenu */}
+             
               {isTimerOpen && role !== 'admin' && (
                 <div className="ml-7 mt-1 border-l border-gray-100/80 pl-3 max-h-[200px] overflow-y-auto custom-scrollbar">
                   <div className="space-y-1">
@@ -166,7 +166,7 @@ export default function AppSidebar() {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Other Menu Items */}
             <SidebarItem

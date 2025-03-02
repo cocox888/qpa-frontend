@@ -59,6 +59,21 @@ export interface TypeClient {
   clientTask?: TypeTask[];
   clientTimeTrack?: TypeTimeTrack[];
 }
+export interface Logs{
+  action_type?:string,
+  activity_description?:string,
+  id:number,
+  project_id?:number,
+  project_name?:string,
+  project_type?:string,
+  task_name?:string,
+  user_name?:string,
+  createdAt?:string,
+  log_hour?:number,
+  log_phase?:string,
+  
+}
+
 
 export interface TypeProject {
   id?: number;
@@ -80,10 +95,13 @@ export interface TypeProject {
   portal_access?: string;
   totalTimeForDay?: number;
   totalTimeForWeek?: number;
+  totalTimeForMonth?:number;
+  project_phase?:string;
   assignedProjectUser?: TypeUser[];
   requestedProjectClient?: TypeClient[];
   projectTask?: TypeTask[];
   projectTimeTrack: TypeTimeTrack[];
+  projectHasLogs:Logs[],
 }
 
 export interface TypeTask {

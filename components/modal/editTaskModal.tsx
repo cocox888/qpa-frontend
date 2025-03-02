@@ -92,7 +92,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('refresh_token');
     const fetchProjects = async () => {
       const response = await fetch(
         'http://localhost:5173/admin/getAllProjects',
@@ -143,6 +143,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
     if (members.length !== 0 && (estimateMinute !== 0 || estimateHour !== 0)) {
       try {
+        const user_name = localStorage.getItem("username");
         const payload = {
           data: {
             title: taskName,
@@ -151,7 +152,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             priority: priority,
             description: description,
             estimated_time: estimateHour * 60 + estimateMinute,
-            state: 'completed'
+            state: 'completed',
+            user_name: user_name
           },
           members
         };
@@ -164,7 +166,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
           console.log(totalTime);
           setTotalTime(Number(totalTime));
         })
-        
+
         Toast('success', 'Task Created Successfully');
         closeModal();
         setProjectID(0);
@@ -212,6 +214,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
   const updateTask = async () => {
     try {
+      const user_name = localStorage.getItem("username");
       const payload = {
         data: {
           id: data.task_id,
@@ -221,7 +224,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
           priority: priority,
           description: description,
           estimated_time: estimateHour * 60 + estimateMinute,
-          state: 'completed'
+          state: 'completed',
+          user_name: user_name
         },
         members
       };

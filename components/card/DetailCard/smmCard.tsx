@@ -1,61 +1,63 @@
 'use client';
 import type { ProjectData } from '@/components/modal/projectDetailsModal';
+import { TypeProject } from '@/lib/types';
 
 interface SMMCardProps {
-  onClick: (param1: number, param2: ProjectData) => void;
+  onClick: (param1: number, param2?: TypeProject) => void;
+  project?: TypeProject;
 }
 
-const SMMCard: React.FC<SMMCardProps> = ({ onClick }) => {
-  const data: ProjectData = {
-    projectTitle: 'Email Management',
-    clientName: 'DigitalCorp Ltd',
-    status: 'In Progress',
-    dates: { due: '', renewal: '', start: '12/27/2024' },
-    type: 'smm',
-    progress: { used: 12, total: 20, percent: Math.floor((12 / 20) * 100) },
-    teamMembers: [
-      {
-        image: '/images/person1.jpg',
-        role: 'Business Manager',
-        full_name: 'Sarah',
-        status: 'Active'
-      },
-      {
-        image: '/images/person1.jpg',
-        role: 'Business Manager',
-        full_name: 'Sarah',
-        status: 'Active'
-      },
-      {
-        image: '/images/person1.jpg',
-        role: 'Business Manager',
-        full_name: 'Sarah',
-        status: 'Active'
-      }
-    ],
-    details: {
-      servicesProvided: [
-        'Project Management',
-        'Team Coordination',
-        'Process Optimization'
-      ],
-      hourlyRate: '$50/hr',
-      monthlyHours: '40 hours',
+const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
+  // const data: ProjectData = {
+  //   projectTitle: 'Email Management',
+  //   clientName: 'DigitalCorp Ltd',
+  //   status: 'In Progress',
+  //   dates: { due: '', renewal: '', start: '12/27/2024' },
+  //   type: 'smm',
+  //   progress: { used: 12, total: 20, percent: Math.floor((12 / 20) * 100) },
+  //   teamMembers: [
+  //     {
+  //       image: '/images/person1.jpg',
+  //       role: 'Business Manager',
+  //       full_name: 'Sarah',
+  //       status: 'Active'
+  //     },
+  //     {
+  //       image: '/images/person1.jpg',
+  //       role: 'Business Manager',
+  //       full_name: 'Sarah',
+  //       status: 'Active'
+  //     },
+  //     {
+  //       image: '/images/person1.jpg',
+  //       role: 'Business Manager',
+  //       full_name: 'Sarah',
+  //       status: 'Active'
+  //     }
+  //   ],
+  //   details: {
+  //     servicesProvided: [
+  //       'Project Management',
+  //       'Team Coordination',
+  //       'Process Optimization'
+  //     ],
+  //     hourlyRate: '$50/hr',
+  //     monthlyHours: '40 hours',
 
-      packageLevel: 'Premium',
-      postsPerWeek: '7 posts',
-      platforms: ['Instagram, Facebook, Twitter'],
+  //     packageLevel: 'Premium',
+  //     postsPerWeek: '7 posts',
+  //     platforms: ['Instagram, Facebook, Twitter'],
 
-      projectType: 'Project Type',
-      currentPhase: 'Current Phase',
-      technologies: ['React', 'Next.js'],
-      managementAreas: [
-        'Project Management',
-        'Team Coordination',
-        'Process Optimization'
-      ]
-    }
-  };
+  //     projectType: 'Project Type',
+  //     currentPhase: 'Current Phase',
+  //     technologies: ['React', 'Next.js'],
+  //     managementAreas: [
+  //       'Project Management',
+  //       'Team Coordination',
+  //       'Process Optimization'
+  //     ]
+  //   }
+  // };
   return (
     <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
       <div className="p-6">
@@ -171,7 +173,7 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick }) => {
           {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
           <button
             className="text-sm text-brand-500 hover:text-brand-600 font-medium"
-            onClick={() => onClick(2, data)}
+            onClick={() => onClick(2, project)}
           >
             View Details
           </button>

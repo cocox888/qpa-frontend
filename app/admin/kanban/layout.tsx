@@ -1,5 +1,5 @@
 export default function KanbanLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
-  return <>{children}</>;
+  return <div className="w-screen">{children}</div>;
 }

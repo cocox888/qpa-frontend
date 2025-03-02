@@ -1,12 +1,14 @@
 'use client';
 
 import type { ProjectData } from '@/components/modal/projectDetailsModal';
+import { TypeProject } from '@/lib/types';
 
 interface WDSCardProps {
-  onClick: (param1: number, param2: ProjectData) => void;
+  onClick: (param1: number, param2?: TypeProject) => void;
+  project?: TypeProject;
 }
 
-const WDSCard: React.FC<WDSCardProps> = ({ onClick }) => {
+const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
   const data: ProjectData = {
     projectTitle: 'Email Management',
     clientName: 'DigitalCorp Ltd',
@@ -209,7 +211,7 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick }) => {
           </div>
           {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
           <button
-            onClick={() => onClick(3, data)}
+            onClick={() => onClick(3, project)}
             className="text-sm text-brand-500 hover:text-brand-600 font-medium"
           >
             View Details

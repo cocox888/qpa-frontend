@@ -44,7 +44,7 @@ export default function Team() {
     let activeCount = 0;
     let managerCount = 0;
     let adminCount = 0;
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('refresh_token');
     const fetchUsers = async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/team`,

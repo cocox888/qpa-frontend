@@ -6,11 +6,12 @@ import api from '@/app/api/customApi';
 import type { ProjectData } from '@/components/modal/projectDetailsModal';
 import type { TypeProject } from '@/lib/types';
 import { isNonEmptyArray } from '@/lib/utils/functions';
+import { convertMin2HourFixed, convertMin2HourMin } from '@/lib/utils/time';
 import { time } from 'console';
 import { useEffect, useState } from 'react';
 
 interface VACardProps {
-  onClick: (param1: number, param2: ProjectData) => void;
+  onClick: (param1: number, param2?: TypeProject) => void;
   project?: TypeProject;
 }
 
@@ -21,62 +22,62 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
   const [timeSpentWeek, setTimeSpentWeek] = useState(0);
 
 
-  const data: ProjectData = {
-    projectTitle: project?.title || '',
-    clientName:
-      (isNonEmptyArray(project?.requestedProjectClient) &&
-        project?.requestedProjectClient[0].full_name) ||
-      '',
-    status: project?.state || '',
-    dates: { due: '', renewal: '', start: project?.start_date || '' },
-    type: project?.package_type || '',
-    progress: { used: 12, total: 20, percent: Math.floor((12 / 20) * 100) },
-    teamMembers: project?.assignedProjectUser,
-    details: {
-      servicesProvided: project?.services?.split(','),
-      hourlyRate: `${project?.rate}/hr`,
-      monthlyHours: `${project?.monthly_hours} hours`,
+  // const data: ProjectData = {
+  //   projectTitle: project?.title || '',
+  //   clientName:
+  //     (isNonEmptyArray(project?.requestedProjectClient) &&
+  //       project?.requestedProjectClient[0].full_name) ||
+  //     '',
+  //   status: project?.state || '',
+  //   dates: { due: '', renewal: '', start: project?.start_date || '' },
+  //   type: project?.package_type || '',
+  //   progress: { used: 12, total: 20, percent: Math.floor((12 / 20) * 100) },
+  //   teamMembers: project?.assignedProjectUser,
+  //   details: {
+  //     servicesProvided: project?.services?.split(','),
+  //     hourlyRate: `${project?.rate}/hr`,
+  //     monthlyHours: `${project?.monthly_hours} hours`,
 
-      packageLevel: project?.package_level,
-      postsPerWeek: '7 posts',
-      platforms: project?.platforms?.split(','),
-      projectType: project?.package_type,
-      currentPhase: 'Current Phase',
-      technologies: project?.technology?.split(','),
-      managementAreas: [
-        'Project Management',
-        'Team Coordination',
-        'Process Optimization'
-      ],
+  //     packageLevel: project?.package_level,
+  //     postsPerWeek: '7 posts',
+  //     platforms: project?.platforms?.split(','),
+  //     projectType: project?.package_type,
+  //     currentPhase: 'Current Phase',
+  //     technologies: project?.technology?.split(','),
+  //     managementAreas: [
+  //       'Project Management',
+  //       'Team Coordination',
+  //       'Process Optimization'
+  //     ],
 
-    },
-    timeSpentData: {
-      timeSpentToday: timeSpentToday,
-      timeSpentWeek: timeSpentWeek
-    },
-    totalTime: project?.monthly_hours
-  };
+  //   },
+  //   timeSpentData: {
+  //     timeSpentToday: timeSpentToday,
+  //     timeSpentWeek: timeSpentWeek
+  //   },
+  //   totalTime: project?.monthly_hours
+  // };
 
-  useEffect(() => {
-    try {
-      const res = api.post('/admin/getTimeDataForProject', JSON.stringify({ project_id: project?.id }))
-        .then((response) => {
-          // Handle successful response here
-          console.log('Data received:', response.data);
-          setTimeSpentToday(response.data.response.data.totalTimeForDay);
-          setTimeSpentWeek(response.data.response.data.totalTimeForWeek);
-          // You can also use the data to update state or perform other actions
-        })
-        .catch((error) => {
-          // Handle error here
-          console.error('Error fetching time data for project:', error);
-        });
+  // useEffect(() => {
+  //   try {
+  //     const res = api.post('/admin/getTimeDataForProject', JSON.stringify({ project_id: project?.id }))
+  //       .then((response) => {
+  //         // Handle successful response here
+  //         console.log('Data received:', response.data);
+  //         setTimeSpentToday(response.data.response.data.totalTimeForDay);
+  //         setTimeSpentWeek(response.data.response.data.totalTimeForWeek);
+  //         // You can also use the data to update state or perform other actions
+  //       })
+  //       .catch((error) => {
+  //         // Handle error here
+  //         console.error('Error fetching time data for project:', error);
+  //       });
 
-    } catch (e) {
+  //   } catch (e) {
 
-    }
+  //   }
 
-  }, []);
+  // }, []);
 
   return (
     <>
@@ -127,14 +128,14 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
               <div className="flex items-center justify-between text-sm mb-1">
                 <span className="text-gray-500">Monthly Hours</span>
                 <span className="text-gray-900 font-medium">
-                  {project?.monthly_hours}/{timeSpentToProject} hrs
+                  {convertMin2HourFixed(Number(project?.totalTimeForMonth))}/{project?.monthly_hours} hrs
                 </span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-1.5">
                 <div
                   className="bg-blue-500 h-1.5 rounded-full"
                   style={{
-                    width: `${((timeSpentToProject || 0) /
+                    width: `${((Number(project?.totalTimeForMonth) / 60 || 0) /
                       (project?.monthly_hours || 1)) *
                       100
                       }%`
@@ -146,7 +147,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
             <div className="bg-gray-50 rounded-lg p-3">
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-gray-600">Current Week</span>
-                <span className="text-gray-900 font-medium">4.5 hrs used</span>
+                <span className="text-gray-900 font-medium">{convertMin2HourMin(Number(project?.totalTimeForWeek))} Used</span>
               </div>
               {/* <div className="flex items-center gap-2">
                 <button className="px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600">
@@ -187,7 +188,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
             {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
             <button
               className="text-sm text-brand-500 hover:text-brand-600 font-medium"
-              onClick={() => onClick(0, data)}
+              onClick={() => onClick(0, project)}
             >
               View Details
             </button>

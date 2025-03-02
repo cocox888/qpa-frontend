@@ -1,11 +1,13 @@
 'use client';
 import type { ProjectData } from '@/components/modal/projectDetailsModal';
+import { TypeProject } from '@/lib/types';
 
 interface OBMCardProps {
-  onClick: (param1: number, param2: ProjectData) => void;
+  onClick: (param1: number, param2?: TypeProject) => void;
+  project?:TypeProject;
 }
 
-const OBMCard: React.FC<OBMCardProps> = ({ onClick }) => {
+const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
   const data: ProjectData = {
     projectTitle: 'Email Management',
     clientName: 'DigitalCorp Ltd',
@@ -156,7 +158,7 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick }) => {
           {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
           <button
             className="text-sm text-brand-500 hover:text-brand-600 font-medium"
-            onClick={() => onClick(1, data)}
+            onClick={() => onClick(1, project)}
           >
             View Details
           </button>

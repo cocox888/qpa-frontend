@@ -38,6 +38,7 @@ export default function Projects() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     dispatch(getAllProjects());
+    dispatch(getAllTasks());
     setCount(false);
   }, [dispatch, count, editModal]);
 
@@ -53,7 +54,7 @@ export default function Projects() {
   };
 
   const handleDelete = async (id: number) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('');
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/deleteTask?taskId=${id}`,
       {
@@ -70,7 +71,7 @@ export default function Projects() {
   };
 
   return (
-    <div className="pt-20 pl-64 pr-6 min-h-screen w-screen overflow-x-hidden">
+    <div className="pt-20 pl-64 pr-6 pb-20 h-screen w-screen overflow-x-hidden">
       <ToastContainer />
       <div className=" mx-auto space-y-6">
         {/* <!-- Header Section --> */}
