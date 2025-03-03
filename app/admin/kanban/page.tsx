@@ -1,8 +1,14 @@
 'use client';
 import type React from 'react';
-import { useState, type DragEvent, useRef } from 'react';
+import { useState, type DragEvent, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import StatsGrid from '@/components/StatsGrid';
+import KanbanTaskCreateModal from '@/components/modal/kanbanTaskCreateModal';
+import { ToastContainer } from 'react-toastify';
+import api from '@/app/api/customApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../reducers/store';
+import { fetchKanbanTasks } from '../reducers/kanbanTasks';
 
 interface SubTask {
   id: string;
@@ -67,6 +73,9 @@ interface Column {
 }
 
 const KanbanBoard: React.FC = () => {
+
+  const kanbanTasks = useSelector((state: RootState) => state.kanbanTasks.tasks);
+  const dispatch: AppDispatch = useDispatch();
   const [columns, setColumns] = useState<Column[]>([
     {
       id: 'todo',
@@ -143,7 +152,7 @@ const KanbanBoard: React.FC = () => {
       order: 3
     }
   ]);
-
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -157,6 +166,10 @@ const KanbanBoard: React.FC = () => {
   });
   const [isColumnSettingsOpen, setIsColumnSettingsOpen] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<Column | null>(null);
+
+  useEffect(() => {
+    dispatch(fetchKanbanTasks());
+  }, [dispatch]);
 
   const dragItem = useRef<{ taskId: string; sourceColumnId: string } | null>(
     null
@@ -353,11 +366,11 @@ const KanbanBoard: React.FC = () => {
         tasks: col.tasks.map((task) =>
           task.id === taskId
             ? {
-                ...task,
-                subtasks: task.subtasks?.map((st) =>
-                  st.id === subtaskId ? { ...st, completed: !st.completed } : st
-                )
-              }
+              ...task,
+              subtasks: task.subtasks?.map((st) =>
+                st.id === subtaskId ? { ...st, completed: !st.completed } : st
+              )
+            }
             : task
         )
       }))
@@ -443,78 +456,164 @@ const KanbanBoard: React.FC = () => {
   }
 
   return (
-    <div className="pt-20 pl-64 pr-6 min-h-screen bg-gray-50">
-      <div className="max-w-[1400px] mx-auto space-y-6">
-        {/* Header Section */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Kanban Board</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Manage your tasks with ease
-              </p>
+    <>
+      <ToastContainer />
+      <div className="pt-20 pl-64 pr-6 min-h-screen bg-gray-50">
+        <div className="max-w-[1400px] mx-auto space-y-6">
+          {/* Header Section */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Kanban Board</h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  Manage your tasks with ease
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {/* Team Members */}
+                <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl">
+                  <div className="flex -space-x-3">
+                    {[1, 2, 3].map((_, index) => (
+                      <Image
+                        key={index}
+                        width={32}
+                        height={32}
+                        src="/images/person1.jpg"
+                        alt="Team member"
+                        className="w-8 h-8 rounded-lg ring-2 ring-white"
+                      />
+                    ))}
+                    <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-xs text-white font-medium ring-2 ring-white">
+                      +5
+                    </div>
+                  </div>
+                  <div className="h-6 w-px bg-gray-200" />
+                  <button className="text-sm text-brand-500 font-medium hover:text-brand-600">
+                    Manage Team
+                  </button>
+                </div>
+
+                {/* Action Buttons */}
+                <button className="p-2 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-lg">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </button>
+
+                <button className="p-2 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-lg">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                    />
+                  </svg>
+                </button>
+
+                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-500 rounded-xl hover:bg-brand-600 transition-colors"
+                  onClick={() => setIsCreateModalOpen(true)}>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  New Task
+                </button>
+              </div>
+            </div>
+
+            {/* Sprint Progress */}
+            <div className="space-y-8">
+              <StatsGrid />
+            </div>
+          </div>
+
+          {/* Filters and Views */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <select className="pl-3 pr-10 py-2 text-sm bg-white border border-gray-100 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+                  <option>All Tasks</option>
+                  <option>My Tasks</option>
+                  <option>Assigned to Me</option>
+                </select>
+                <svg
+                  className="w-4 h-4 absolute right-3 top-3 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+
+              <div className="flex gap-2">
+                <div className="px-3 py-2 text-sm bg-white border border-gray-100 rounded-xl hover:bg-gray-50">
+                  <span className="w-2 h-2 inline-block rounded-full bg-red-500 mr-2"></span>
+                  High Priority
+                </div>
+                <div className="px-3 py-2 text-sm bg-white border border-gray-100 rounded-xl hover:bg-gray-50">
+                  <span className="w-2 h-2 inline-block rounded-full bg-yellow-500 mr-2"></span>
+                  Blocked
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Team Members */}
-              <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3].map((_, index) => (
-                    <Image
-                      key={index}
-                      width={32}
-                      height={32}
-                      src="/images/person1.jpg"
-                      alt="Team member"
-                      className="w-8 h-8 rounded-lg ring-2 ring-white"
-                    />
-                  ))}
-                  <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-xs text-white font-medium ring-2 ring-white">
-                    +5
-                  </div>
-                </div>
-                <div className="h-6 w-px bg-gray-200" />
-                <button className="text-sm text-brand-500 font-medium hover:text-brand-600">
-                  Manage Team
-                </button>
+              <div className="px-3 py-2 text-sm bg-white border border-gray-100 rounded-xl hover:bg-gray-50">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                  />
+                </svg>
               </div>
 
-              {/* Action Buttons */}
-              <button className="p-2 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-lg">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search tasks..."
+                  className="pl-10 pr-4 py-2 w-64 text-sm bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
                 <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                    d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-                  />
-                </svg>
-              </button>
-
-              <button className="p-2 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-lg">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                  />
-                </svg>
-              </button>
-
-              <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-500 rounded-xl hover:bg-brand-600 transition-colors">
-                <svg
-                  className="w-4 h-4"
+                  className="w-4 h-4 absolute left-3 top-2.5 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -523,609 +622,532 @@ const KanbanBoard: React.FC = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M12 4v16m8-8H4"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-                New Task
-              </button>
-            </div>
-          </div>
-
-          {/* Sprint Progress */}
-          <div className="space-y-8">
-            <StatsGrid />
-          </div>
-        </div>
-
-        {/* Filters and Views */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <select className="pl-3 pr-10 py-2 text-sm bg-white border border-gray-100 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20">
-                <option>All Tasks</option>
-                <option>My Tasks</option>
-                <option>Assigned to Me</option>
-              </select>
-              <svg
-                className="w-4 h-4 absolute right-3 top-3 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-
-            <div className="flex gap-2">
-              <div className="px-3 py-2 text-sm bg-white border border-gray-100 rounded-xl hover:bg-gray-50">
-                <span className="w-2 h-2 inline-block rounded-full bg-red-500 mr-2"></span>
-                High Priority
-              </div>
-              <div className="px-3 py-2 text-sm bg-white border border-gray-100 rounded-xl hover:bg-gray-50">
-                <span className="w-2 h-2 inline-block rounded-full bg-yellow-500 mr-2"></span>
-                Blocked
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="px-3 py-2 text-sm bg-white border border-gray-100 rounded-xl hover:bg-gray-50">
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {/* Kanban Board Container */}
+          <div className="grid grid-cols-4 gap-6 pb-6">
+            {columns.map((column) => (
+              <div
+                key={column.id}
+                id={`column-${column.id}`}
+                className={`flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 ${column.isCollapsed ? 'w-20' : ''
+                  }`}
+                onDragOver={(e) => handleDragOver(e)}
+                onDrop={(e) => handleDrop(e, column.id)}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                />
-              </svg>
-            </div>
-
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search tasks..."
-                className="pl-10 pr-4 py-2 w-64 text-sm bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
-              />
-              <svg
-                className="w-4 h-4 absolute left-3 top-2.5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* Kanban Board Container */}
-        <div className="grid grid-cols-4 gap-6 pb-6">
-          {columns.map((column) => (
-            <div
-              key={column.id}
-              id={`column-${column.id}`}
-              className={`flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 ${
-                column.isCollapsed ? 'w-20' : ''
-              }`}
-              onDragOver={(e) => handleDragOver(e)}
-              onDrop={(e) => handleDrop(e, column.id)}
-            >
-              <div className="p-4 border-b border-gray-100">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => toggleColumnCollapse(column.id)}>
-                      {column.isCollapsed ? collapseIcon : expandIcon}
+                <div className="p-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => toggleColumnCollapse(column.id)}>
+                        {column.isCollapsed ? collapseIcon : expandIcon}
+                      </button>
+                      {!column.isCollapsed && (
+                        <>
+                          <h3 className="text-sm font-semibold text-gray-900">
+                            {column.title}
+                          </h3>
+                          <span className="px-2.5 py-0.5 text-xs font-medium bg-gray-100 rounded-full">
+                            {column.tasks.length}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setSelectedColumn(column);
+                        setIsColumnSettingsOpen(true);
+                      }}
+                      className="p-1 text-gray-400 hover:text-gray-600"
+                    >
+                      <svg className="w-5 h-5" />
                     </button>
-                    {!column.isCollapsed && (
-                      <>
-                        <h3 className="text-sm font-semibold text-gray-900">
-                          {column.title}
-                        </h3>
-                        <span className="px-2.5 py-0.5 text-xs font-medium bg-gray-100 rounded-full">
-                          {column.tasks.length}
-                        </span>
-                      </>
-                    )}
                   </div>
-                  <button
-                    onClick={() => {
-                      setSelectedColumn(column);
-                      setIsColumnSettingsOpen(true);
-                    }}
-                    className="p-1 text-gray-400 hover:text-gray-600"
-                  >
-                    <svg className="w-5 h-5" />
-                  </button>
-                </div>
 
-                {/* Add column capacity progress bar */}
-                <div className="w-full bg-gray-100 rounded-full h-1.5">
-                  <div
-                    className={`h-1.5 rounded-full ${
-                      getColumnProgress(column.id, column.tasks.length) > 80
+                  {/* Add column capacity progress bar */}
+                  <div className="w-full bg-gray-100 rounded-full h-1.5">
+                    <div
+                      className={`h-1.5 rounded-full ${getColumnProgress(column.id, column.tasks.length) > 80
                         ? 'bg-red-500'
                         : 'bg-brand-500'
-                    }`}
-                    style={{
-                      width: `${Math.min(
-                        getColumnProgress(column.id, column.tasks.length),
-                        100
-                      )}%`
-                    }}
-                  />
+                        }`}
+                      style={{
+                        width: `${Math.min(
+                          getColumnProgress(column.id, column.tasks.length),
+                          100
+                        )}%`
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between mt-1">
+                    <span className="text-xs text-gray-500">
+                      {column.tasks.length} tasks
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {columnCapacity[column.id as keyof typeof columnCapacity]}{' '}
+                      max
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between mt-1">
-                  <span className="text-xs text-gray-500">
-                    {column.tasks.length} tasks
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {columnCapacity[column.id as keyof typeof columnCapacity]}{' '}
-                    max
-                  </span>
-                </div>
-              </div>
 
-              {!column.isCollapsed && (
-                <div
-                  className="flex-1 p-4 space-y-4 overflow-y-auto scroll-smooth"
-                  style={{
-                    backgroundImage: `
+                {!column.isCollapsed && (
+                  <div
+                    className="flex-1 p-4 space-y-4 overflow-y-auto scroll-smooth"
+                    style={{
+                      backgroundImage: `
                       linear-gradient(to top, white 0%, transparent 5%),
                       linear-gradient(to bottom, white 0%, transparent 5%)
                     `,
-                    backgroundPosition: 'top, bottom',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: '100% 20px'
-                  }}
-                >
-                  {column.tasks.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-40 text-gray-400">
-                      <svg
-                        className="w-12 h-12 mb-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                        />
-                      </svg>
-                      <p className="text-sm">No tasks yet</p>
-                      <button className="mt-2 text-xs text-brand-500 hover:text-brand-600">
-                        Add a task
-                      </button>
-                    </div>
-                  ) : (
-                    column.tasks.map((task) => (
-                      <div
-                        key={task.id}
-                        draggable
-                        onDragStart={(e) =>
-                          handleDragStart(e, task.id, column.id)
-                        }
-                        onDragEnd={handleDragEnd}
-                        className="group relative bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 cursor-move"
-                        onClick={() => {
-                          setSelectedTask(task);
-                          setIsDetailModalOpen(true);
-                        }}
-                      >
-                        {/* Quick Actions Menu */}
-                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <div className="relative">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleQuickAction('menu', task);
-                              }}
-                              className="p-1 hover:bg-gray-100 rounded-lg"
-                            >
-                              <svg
-                                className="w-4 h-4 text-gray-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                      backgroundPosition: 'top, bottom',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '100% 20px'
+                    }}
+                  >
+                    {column.tasks.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-40 text-gray-400">
+                        <svg
+                          className="w-12 h-12 mb-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1.5"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          />
+                        </svg>
+                        <p className="text-sm">No tasks yet</p>
+                        <button className="mt-2 text-xs text-brand-500 hover:text-brand-600">
+                          Add a task
+                        </button>
+                      </div>
+                    ) : (
+                      column.tasks.map((task) => (
+                        <div
+                          key={task.id}
+                          draggable
+                          onDragStart={(e) =>
+                            handleDragStart(e, task.id, column.id)
+                          }
+                          onDragEnd={handleDragEnd}
+                          className="group relative bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 cursor-move"
+                          onClick={() => {
+                            setSelectedTask(task);
+                            setIsDetailModalOpen(true);
+                          }}
+                        >
+                          {/* Quick Actions Menu */}
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="relative">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleQuickAction('menu', task);
+                                }}
+                                className="p-1 hover:bg-gray-100 rounded-lg"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="p-4">
-                          {/* Show priority badges */}
-                          {task.priority && (
-                            <>
-                              {task.priority === 'high' && (
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-lg">
-                                    <span className="w-1 h-1 rounded-full bg-red-600" />
-                                    High Priority
-                                  </span>
-                                </div>
-                              )}
-                              {task.priority === 'normal' && (
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-50 text-gray-600 rounded-lg">
-                                    Normal Priority
-                                  </span>
-                                </div>
-                              )}
-                              {task.priority === 'low' && (
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-green-50 text-green-600 rounded-lg">
-                                    Low Priority
-                                  </span>
-                                </div>
-                              )}
-                            </>
-                          )}
-
-                          <h4 className="text-sm font-medium text-gray-900 mb-2">
-                            {task.title}
-                          </h4>
-                          <p className="text-xs text-gray-500 mb-4">
-                            {task.description}
-                          </p>
-
-                          {/* Show labels if present */}
-                          {task.labels?.length ? (
-                            <div className="flex flex-wrap gap-2 mb-3">
-                              {task.labels.map((label, i) => (
-                                <span
-                                  key={i}
-                                  className="px-2 py-1 text-xs bg-gray-100 rounded-lg text-gray-600"
+                                <svg
+                                  className="w-4 h-4 text-gray-500"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
                                 >
-                                  {label}
-                                </span>
-                              ))}
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                                  />
+                                </svg>
+                              </button>
                             </div>
-                          ) : null}
+                          </div>
 
-                          {/* Show progress bar if progress exists */}
-                          {typeof task.progress === 'number' && (
-                            <div className="mb-3">
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="bg-blue-500 h-2 rounded-full"
-                                  style={{ width: `${task.progress}%` }}
-                                />
-                              </div>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {task.progress}% done
-                              </p>
-                            </div>
-                          )}
+                          <div className="p-4">
+                            {/* Show priority badges */}
+                            {task.priority && (
+                              <>
+                                {task.priority === 'high' && (
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-lg">
+                                      <span className="w-1 h-1 rounded-full bg-red-600" />
+                                      High Priority
+                                    </span>
+                                  </div>
+                                )}
+                                {task.priority === 'normal' && (
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-50 text-gray-600 rounded-lg">
+                                      Normal Priority
+                                    </span>
+                                  </div>
+                                )}
+                                {task.priority === 'low' && (
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-green-50 text-green-600 rounded-lg">
+                                      Low Priority
+                                    </span>
+                                  </div>
+                                )}
+                              </>
+                            )}
 
-                          {/* Show reviewer/timeInReview if present */}
-                          {task.reviewer && (
-                            <p className="text-xs text-gray-500 mb-1">
-                              Reviewer: {task.reviewer}
-                            </p>
-                          )}
-                          {task.timeInReview && (
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">
+                              {task.title}
+                            </h4>
                             <p className="text-xs text-gray-500 mb-4">
-                              Time in review: {task.timeInReview}
+                              {task.description}
                             </p>
-                          )}
 
-                          <div className="flex items-center justify-between">
-                            <div className="flex -space-x-2">
-                              {task.assignees?.map((assignee, index) => (
-                                <Image
-                                  key={index}
-                                  width={32}
-                                  height={32}
-                                  src="/images/person1.jpg"
-                                  alt="Avatar"
-                                  className="w-6 h-6 rounded-lg ring-2 ring-white"
-                                />
-                              ))}
-                            </div>
+                            {/* Show labels if present */}
+                            {task.labels?.length ? (
+                              <div className="flex flex-wrap gap-2 mb-3">
+                                {task.labels.map((label, i) => (
+                                  <span
+                                    key={i}
+                                    className="px-2 py-1 text-xs bg-gray-100 rounded-lg text-gray-600"
+                                  >
+                                    {label}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : null}
 
-                            <div className="flex items-center gap-2 text-xs text-gray-400">
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="1.5"
-                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                              </svg>
-                              <span>{task.dueDate}</span>
-                            </div>
-                            {task.completedDate && (
+                            {/* Show progress bar if progress exists */}
+                            {typeof task.progress === 'number' && (
+                              <div className="mb-3">
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className="bg-blue-500 h-2 rounded-full"
+                                    style={{ width: `${task.progress}%` }}
+                                  />
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {task.progress}% done
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Show reviewer/timeInReview if present */}
+                            {task.reviewer && (
                               <p className="text-xs text-gray-500 mb-1">
-                                Completed on {task.completedDate}
+                                Reviewer: {task.reviewer}
                               </p>
                             )}
+                            {task.timeInReview && (
+                              <p className="text-xs text-gray-500 mb-4">
+                                Time in review: {task.timeInReview}
+                              </p>
+                            )}
+
+                            <div className="flex items-center justify-between">
+                              <div className="flex -space-x-2">
+                                {task.assignees?.map((assignee, index) => (
+                                  <Image
+                                    key={index}
+                                    width={32}
+                                    height={32}
+                                    src="/images/person1.jpg"
+                                    alt="Avatar"
+                                    className="w-6 h-6 rounded-lg ring-2 ring-white"
+                                  />
+                                ))}
+                              </div>
+
+                              <div className="flex items-center gap-2 text-xs text-gray-400">
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="1.5"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                  />
+                                </svg>
+                                <span>{task.dueDate}</span>
+                              </div>
+                              {task.completedDate && (
+                                <p className="text-xs text-gray-500 mb-1">
+                                  Completed on {task.completedDate}
+                                </p>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Column Settings Modal */}
-      {isColumnSettingsOpen && selectedColumn && renderColumnSettingsModal()}
+        {/* Column Settings Modal */}
+        {isColumnSettingsOpen && selectedColumn && renderColumnSettingsModal()}
 
-      {/* Task Detail Modal */}
-      {isDetailModalOpen && selectedTask && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-2xl">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Task Details</h2>
-              <button
-                onClick={() => setIsDetailModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+        {/* Task Detail Modal */}
+        {isDetailModalOpen && selectedTask && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-2xl">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Task Details</h2>
+                <button
+                  onClick={() => setIsDetailModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.currentTarget);
-                const updatedTask = {
-                  ...selectedTask,
-                  title: formData.get('title') as string,
-                  description: formData.get('description') as string,
-                  priority: formData.get('priority') as
-                    | 'high'
-                    | 'normal'
-                    | 'low',
-                  dueDate: formData.get('dueDate') as string,
-                  labels:
-                    formData
-                      .get('labels')
-                      ?.toString()
-                      .split(',')
-                      .map((label) => label.trim()) || []
-                };
-                handleTaskUpdate(updatedTask);
-              }}
-            >
-              <div className="space-y-4">
-                <div>
-                  <div className="block text-sm font-medium text-gray-700 mb-1">
-                    Title
-                  </div>
-                  <input
-                    type="text"
-                    name="title"
-                    defaultValue={selectedTask.title}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
-                  />
-                </div>
-
-                <div>
-                  <div className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </div>
-                  <textarea
-                    name="description"
-                    defaultValue={selectedTask.description}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  const updatedTask = {
+                    ...selectedTask,
+                    title: formData.get('title') as string,
+                    description: formData.get('description') as string,
+                    priority: formData.get('priority') as
+                      | 'high'
+                      | 'normal'
+                      | 'low',
+                    dueDate: formData.get('dueDate') as string,
+                    labels:
+                      formData
+                        .get('labels')
+                        ?.toString()
+                        .split(',')
+                        .map((label) => label.trim()) || []
+                  };
+                  handleTaskUpdate(updatedTask);
+                }}
+              >
+                <div className="space-y-4">
                   <div>
                     <div className="block text-sm font-medium text-gray-700 mb-1">
-                      Priority
-                    </div>
-                    <select
-                      name="priority"
-                      defaultValue={selectedTask.priority}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
-                    >
-                      <option value="high">High</option>
-                      <option value="normal">Normal</option>
-                      <option value="low">Low</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <div className="block text-sm font-medium text-gray-700 mb-1">
-                      Due Date
+                      Title
                     </div>
                     <input
                       type="text"
-                      name="dueDate"
-                      defaultValue={selectedTask.dueDate}
+                      name="title"
+                      defaultValue={selectedTask.title}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
-                </div>
 
-                <div>
-                  <div className="block text-sm font-medium text-gray-700 mb-1">
-                    Labels (comma-separated)
+                  <div>
+                    <div className="block text-sm font-medium text-gray-700 mb-1">
+                      Description
+                    </div>
+                    <textarea
+                      name="description"
+                      defaultValue={selectedTask.description}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    name="labels"
-                    defaultValue={selectedTask.labels?.join(', ')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
-                  />
-                </div>
 
-                <div className="flex justify-end gap-3 pt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="block text-sm font-medium text-gray-700 mb-1">
+                        Priority
+                      </div>
+                      <select
+                        name="priority"
+                        defaultValue={selectedTask.priority}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      >
+                        <option value="high">High</option>
+                        <option value="normal">Normal</option>
+                        <option value="low">Low</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <div className="block text-sm font-medium text-gray-700 mb-1">
+                        Due Date
+                      </div>
+                      <input
+                        type="text"
+                        name="dueDate"
+                        defaultValue={selectedTask.dueDate}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="block text-sm font-medium text-gray-700 mb-1">
+                      Labels (comma-separated)
+                    </div>
+                    <input
+                      type="text"
+                      name="labels"
+                      defaultValue={selectedTask.labels?.join(', ')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setIsDetailModalOpen(false)}
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              {/* Subtasks Section */}
+              <div className="mt-4">
+                <h3 className="text-sm font-medium mb-2">Subtasks</h3>
+                <div className="space-y-2">
+                  {selectedTask.subtasks?.map((subtask) => (
+                    <div key={subtask.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={subtask.completed}
+                        onChange={() =>
+                          handleSubtaskToggle(selectedTask.id, subtask.id)
+                        }
+                      />
+                      <span>{subtask.title}</span>
+                    </div>
+                  ))}
                   <button
-                    type="button"
-                    onClick={() => setIsDetailModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                    className="text-sm text-brand-500"
+                    onClick={() => {
+                      const newSubtask: SubTask = {
+                        id: 'sub-' + Date.now(),
+                        title: 'New Subtask',
+                        completed: false
+                      };
+                      addSubtask(selectedTask.id, newSubtask);
+                    }}
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600"
-                  >
-                    Save Changes
+                    + Add Subtask
                   </button>
                 </div>
               </div>
-            </form>
 
-            {/* Subtasks Section */}
-            <div className="mt-4">
-              <h3 className="text-sm font-medium mb-2">Subtasks</h3>
-              <div className="space-y-2">
-                {selectedTask.subtasks?.map((subtask) => (
-                  <div key={subtask.id} className="flex items-center gap-2">
+              {/* Comments Section */}
+              <div className="mt-4">
+                <h3 className="text-sm font-medium mb-2">Comments</h3>
+                <div className="space-y-4">
+                  {selectedTask.comments?.map((comment) => (
+                    <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium">{comment.author}</span>
+                        <span className="text-xs text-gray-500">
+                          {comment.timestamp}
+                        </span>
+                      </div>
+                      <p className="text-sm">{comment.content}</p>
+                    </div>
+                  ))}
+                  <div className="flex gap-2">
                     <input
-                      type="checkbox"
-                      checked={subtask.completed}
-                      onChange={() =>
-                        handleSubtaskToggle(selectedTask.id, subtask.id)
-                      }
+                      type="text"
+                      placeholder="Add a comment..."
+                      className="flex-1 px-3 py-2 border rounded-lg"
                     />
-                    <span>{subtask.title}</span>
+                    <div className="px-4 py-2 bg-brand-500 text-white rounded-lg">
+                      Post
+                    </div>
                   </div>
-                ))}
+                </div>
+              </div>
+
+              {/* Attachments Section */}
+              <div className="mt-4">
+                <h3 className="text-sm font-medium mb-2">Attachments</h3>
+                {/* Attachment list and upload button */}
+              </div>
+
+              {/* Activity History */}
+              <div className="mt-4">
+                <h3 className="text-sm font-medium mb-2">Activity History</h3>
+                <div className="space-y-2">
+                  {selectedTask.activityHistory?.map((activity) => (
+                    <div key={activity.id} className="text-sm text-gray-600">
+                      <span className="font-medium">{activity.user}</span>{' '}
+                      {activity.description}
+                      <span className="text-xs text-gray-500 ml-2">
+                        {activity.timestamp}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {isDeleteModalOpen && taskToDelete && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+              <h2 className="text-xl font-bold mb-4">Delete Task</h2>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete &quot;{taskToDelete.title}&quot;?
+              </p>
+              <div className="flex justify-end gap-4">
                 <button
-                  className="text-sm text-brand-500"
-                  onClick={() => {
-                    const newSubtask: SubTask = {
-                      id: 'sub-' + Date.now(),
-                      title: 'New Subtask',
-                      completed: false
-                    };
-                    addSubtask(selectedTask.id, newSubtask);
-                  }}
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                 >
-                  + Add Subtask
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleTaskDelete(taskToDelete.id)}
+                  className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded-lg"
+                >
+                  Delete
                 </button>
               </div>
             </div>
-
-            {/* Comments Section */}
-            <div className="mt-4">
-              <h3 className="text-sm font-medium mb-2">Comments</h3>
-              <div className="space-y-4">
-                {selectedTask.comments?.map((comment) => (
-                  <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium">{comment.author}</span>
-                      <span className="text-xs text-gray-500">
-                        {comment.timestamp}
-                      </span>
-                    </div>
-                    <p className="text-sm">{comment.content}</p>
-                  </div>
-                ))}
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Add a comment..."
-                    className="flex-1 px-3 py-2 border rounded-lg"
-                  />
-                  <div className="px-4 py-2 bg-brand-500 text-white rounded-lg">
-                    Post
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Attachments Section */}
-            <div className="mt-4">
-              <h3 className="text-sm font-medium mb-2">Attachments</h3>
-              {/* Attachment list and upload button */}
-            </div>
-
-            {/* Activity History */}
-            <div className="mt-4">
-              <h3 className="text-sm font-medium mb-2">Activity History</h3>
-              <div className="space-y-2">
-                {selectedTask.activityHistory?.map((activity) => (
-                  <div key={activity.id} className="text-sm text-gray-600">
-                    <span className="font-medium">{activity.user}</span>{' '}
-                    {activity.description}
-                    <span className="text-xs text-gray-500 ml-2">
-                      {activity.timestamp}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Delete Confirmation Modal */}
-      {isDeleteModalOpen && taskToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Delete Task</h2>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete &quot;{taskToDelete.title}&quot;?
-            </p>
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() => setIsDeleteModalOpen(false)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleTaskDelete(taskToDelete.id)}
-                className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded-lg"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+        {
+          isCreateModalOpen && (
+            <KanbanTaskCreateModal closeHandle={setIsCreateModalOpen} />
+          )
+        }
+      </div>
+    </>
+
   );
 };
 

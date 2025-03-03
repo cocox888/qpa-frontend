@@ -74,6 +74,17 @@ export interface Logs{
   
 }
 
+export interface KanbanTask{
+  id?:number,
+  title?:string,
+  description?:string,
+  priority?:string,
+  due_date?:string,
+  label?:string,
+  status?:string,
+  user_id?:number
+}
+
 
 export interface TypeProject {
   id?: number;
@@ -101,7 +112,7 @@ export interface TypeProject {
   requestedProjectClient?: TypeClient[];
   projectTask?: TypeTask[];
   projectTimeTrack: TypeTimeTrack[];
-  projectHasLogs:Logs[],
+  projectHasLogs?:Logs[],
 }
 
 export interface TypeTask {

@@ -108,7 +108,7 @@ export default function Onboarding() {
 
       // Submit form data to backend
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/onboarding`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/createClient`,
         {
           method: 'POST',
           headers: {
