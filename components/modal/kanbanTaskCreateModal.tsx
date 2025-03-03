@@ -18,7 +18,7 @@ const KanbanTaskCreateModal: React.FC<KanbanTaskCreateModalProps> = ({ closeHand
     const dispatch: AppDispatch = useDispatch();
     const kanbanTasks = useSelector((state: RootState) => state.kanbanTasks.tasks);
 
- 
+
     const {
         register,
         formState: { errors },
@@ -101,13 +101,13 @@ const KanbanTaskCreateModal: React.FC<KanbanTaskCreateModalProps> = ({ closeHand
 
                         <div>
                             <div className="block text-sm font-medium text-gray-700 mb-1">
-                                Description
+                                Description<span className="text-red-600"> * </span>
                             </div>
                             <textarea
                                 // defaultValue={selectedTask.description}
                                 rows={3}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
-                                {...register('description')}
+                                {...register('description', { required: "Description is required" })}
                             />
                         </div>
 
@@ -149,20 +149,20 @@ const KanbanTaskCreateModal: React.FC<KanbanTaskCreateModalProps> = ({ closeHand
 
                         <div>
                             <div className="block text-sm font-medium text-gray-700 mb-1">
-                                Labels (comma-separated)
+                                Labels (comma-separated) <span className="text-red-600">*</span>
                             </div>
                             <input
                                 type="text"
                                 // defaultValue={selectedTask.labels?.join(', ')}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
-                                {...register('label')}
+                                {...register('label', { required: "Label is required" })}
                             />
                         </div>
 
                         <div className="flex justify-end gap-3 pt-4">
                             <button
                                 type="button"
-                                // onClick={() => setIsDetailModalOpen(false)}
+                                onClick={() => closeHandle(false)}
                                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                             >
                                 Cancel

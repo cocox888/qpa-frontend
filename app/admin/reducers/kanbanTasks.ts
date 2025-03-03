@@ -1,5 +1,6 @@
 import { KanbanTask } from "@/lib/types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getUniqPayload } from "recharts/types/util/payload/getUniqPayload";
 
 interface TaskState {
   tasks: KanbanTask[];
@@ -50,6 +51,15 @@ const taskSlice = createSlice({
     deleteKanbanTask: (state, action: PayloadAction<number>) => {
       state.tasks = state.tasks.filter((task) => task.id !== action.payload);
     },
+    updateKanbanTaskStatusById: (
+      state,
+      action: PayloadAction<number, string>
+    ) => {
+      const index = state.tasks.findIndex(
+        (task) => task.id === action.payload.id
+      );
+
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -59,7 +69,7 @@ const taskSlice = createSlice({
       .addCase(fetchKanbanTasks.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.tasks = action.payload;
-        console.log(action.payload);
+        // console.log(action.payload);
       })
       .addCase(fetchKanbanTasks.rejected, (state, action) => {
         state.status = "failed";

@@ -1,12 +1,29 @@
+import { RootState } from '@/app/admin/reducers/store';
 import { Card } from '@/components/card/kanbanCard';
-import { ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUp, ArrowDown, SwatchBook } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+interface StatsType {
+  id?: number;
+  title: string;
+  count: number;
+  change: number;
+  isIncrease: boolean;
+  bgColor: string;
+  textColor: string;
+  accentColor: string;
+  borderColor: string;
+  changeColor: string;
+}
 
 const StatsGrid = () => {
-  const stats = [
+  const kanbanTasks = useSelector((state: RootState) => state.kanbanTasks.tasks);
+  const [stats, setStats] = useState<StatsType[]>([
     {
+      id: 0,
       title: 'Total Tasks',
-      count: '28',
-      change: '+14%',
+      count: 0,
+      change: 0,
       isIncrease: true,
       bgColor: 'bg-purple-200',
       textColor: 'text-purple-600',
@@ -15,9 +32,10 @@ const StatsGrid = () => {
       changeColor: 'text-purple-600 bg-purple-100/50'
     },
     {
+      id: 1,
       title: 'In Progress',
-      count: '12',
-      change: '+7%',
+      count: 0,
+      change: 0,
       isIncrease: true,
       bgColor: 'bg-blue-200',
       textColor: 'text-blue-600',
@@ -26,9 +44,10 @@ const StatsGrid = () => {
       changeColor: 'text-blue-600 bg-blue-100/50'
     },
     {
-      title: 'Blocked',
-      count: '3',
-      change: '-2%',
+      id: 2,
+      title: 'In Review',
+      count: 0,
+      change: 0,
       isIncrease: false,
       bgColor: 'bg-red-200',
       textColor: 'text-red-600',
@@ -37,9 +56,10 @@ const StatsGrid = () => {
       changeColor: 'text-red-600 bg-red-100/50'
     },
     {
+      id: 3,
       title: 'Completed',
-      count: '8',
-      change: '+12%',
+      count: 0,
+      change: 0,
       isIncrease: true,
       bgColor: 'bg-green-200',
       textColor: 'text-green-600',
@@ -47,7 +67,41 @@ const StatsGrid = () => {
       borderColor: 'border-green-100',
       changeColor: 'text-green-600 bg-green-100/50'
     }
-  ];
+  ]);
+
+  const updateState = () => {
+    setStats((prev) =>
+      prev.map((item, index) => {
+        let count = 0;
+        const id = item.id;
+        switch (id) {
+          case 0:
+            count = kanbanTasks.length;
+            break;
+          case 1:
+            count = kanbanTasks.filter((item) => item.status == 'in-progress').length;
+            break;
+          case 2:
+            count = kanbanTasks.filter((item) => item.status == 'review').length;
+            break;
+          case 3:
+            count = kanbanTasks.filter((item) => item.status == 'done').length;
+            break;
+          default:
+            count = kanbanTasks.length;
+        }
+        return { ...item, count: count }
+      })
+    );
+  }
+  useEffect(() => {
+    updateState()
+
+  }, []);
+
+  useEffect(() => {
+    updateState()
+  }, [kanbanTasks]);
 
   return (
     <div className="grid grid-cols-4 gap-4">

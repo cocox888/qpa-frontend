@@ -9,6 +9,8 @@ import api from '@/app/api/customApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../reducers/store';
 import { fetchKanbanTasks } from '../reducers/kanbanTasks';
+import { KanbanTask } from '@/lib/types';
+import Toast from '@/components/toast';
 
 interface SubTask {
   id: string;
@@ -62,7 +64,7 @@ interface Column {
   id: string;
   title: string;
   color: string;
-  tasks: Task[];
+  tasks: KanbanTask[];
   isCollapsed?: boolean;
   order: number;
   settings?: {
@@ -82,24 +84,7 @@ const KanbanBoard: React.FC = () => {
       title: 'To Do',
       color: 'gray',
       tasks: [
-        {
-          id: 't1',
-          title: 'API Authentication Bug',
-          description: 'Fix user session timeout issues in production',
-          priority: 'high',
-          dueDate: 'Due Today',
-          assignees: ['user1', 'user2'],
-          labels: ['High Priority']
-        },
-        {
-          id: 't2',
-          title: 'Dashboard Redesign',
-          description: 'Update analytics dashboard with new metrics',
-          priority: 'normal',
-          dueDate: 'Dec 28',
-          assignees: ['user1'],
-          labels: ['Design', 'Frontend']
-        }
+
       ],
       order: 0
     },
@@ -108,15 +93,7 @@ const KanbanBoard: React.FC = () => {
       title: 'In Progress',
       color: 'blue',
       tasks: [
-        {
-          id: 't3',
-          title: 'Payment Integration',
-          description: 'Implement Stripe payment gateway',
-          progress: 65,
-          dueDate: 'Dec 25',
-          assignees: ['user1', 'user2'],
-          labels: ['Backend']
-        }
+
       ],
       order: 1
     },
@@ -125,14 +102,7 @@ const KanbanBoard: React.FC = () => {
       title: 'In Review',
       color: 'yellow',
       tasks: [
-        {
-          id: 't4',
-          title: 'Homepage Redesign',
-          description: 'Review new homepage layout and components',
-          reviewer: 'John Doe',
-          timeInReview: '2 days',
-          labels: ['UI/UX']
-        }
+
       ],
       order: 2
     },
@@ -141,22 +111,16 @@ const KanbanBoard: React.FC = () => {
       title: 'Done',
       color: 'green',
       tasks: [
-        {
-          id: 't5',
-          title: 'User Authentication',
-          description: 'Implemented secure login system',
-          completedDate: 'Dec 15',
-          assignees: ['user1']
-        }
+
       ],
       order: 3
     }
   ]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = useState<KanbanTask | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState<KanbanTask | null>(null);
   const [loading] = useState(false);
   const [columnCapacity] = useState({
     todo: 10,
@@ -167,18 +131,40 @@ const KanbanBoard: React.FC = () => {
   const [isColumnSettingsOpen, setIsColumnSettingsOpen] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<Column | null>(null);
 
+  /**
+   * update kanbanTask state
+   */
   useEffect(() => {
-    dispatch(fetchKanbanTasks());
+    const updateColumnState = async () => {
+      await dispatch(fetchKanbanTasks()); // Guaranteed to run after tasks are fetched
+    };
+    updateColumnState();
   }, [dispatch]);
 
-  const dragItem = useRef<{ taskId: string; sourceColumnId: string } | null>(
+  useEffect(() => {
+    console.log(kanbanTasks)
+    if (kanbanTasks.length > 0) {
+      setColumns((prevColumns) =>
+        prevColumns.map((column) => ({
+          ...column,
+          tasks: kanbanTasks.filter((item, index) => {
+            return item.status == column.id;
+          })
+        }))
+      );
+    }
+  }, [kanbanTasks]);
+
+
+
+  const dragItem = useRef<{ taskId: number; sourceColumnId: string } | null>(
     null
   );
 
   // Handle drag start
   const handleDragStart = (
     e: DragEvent<HTMLDivElement>,
-    taskId: string,
+    taskId: number,
     sourceColumnId: string
   ) => {
     dragItem.current = { taskId, sourceColumnId };
@@ -206,17 +192,27 @@ const KanbanBoard: React.FC = () => {
       return;
     }
 
+    const role = localStorage.getItem("role");
+    api.post(`${role}/updateKanbanTaskById`, { task_id: taskId, updated_status: targetColumnId }).then(() => {
+      Toast('success', 'Task updated successfully');
+      dispatch(updateKanbanTaskStatusById());
+
+    }).catch((e) => {
+      console.log(e);
+    })
+
     setColumns((prevColumns) => {
       const taskToMove = prevColumns
         .find((col) => col.id === sourceColumnId)
-        ?.tasks.find((t) => t.id === taskId);
+        ?.tasks.find((t) => t.id === Number(taskId));
       if (!taskToMove) return prevColumns;
+
 
       return prevColumns.map((col) => {
         if (col.id === sourceColumnId) {
           return {
             ...col,
-            tasks: col.tasks.filter((t) => t.id !== taskId)
+            tasks: col.tasks.filter((t) => t.id !== Number(taskId))
           };
         }
         if (col.id === targetColumnId) {
@@ -233,20 +229,20 @@ const KanbanBoard: React.FC = () => {
   };
 
   // Handle task update
-  const handleTaskUpdate = (updatedTask: Task) => {
-    setColumns((prevColumns) =>
-      prevColumns.map((column) => ({
-        ...column,
-        tasks: column.tasks.map((task) =>
-          task.id === updatedTask.id ? updatedTask : task
-        )
-      }))
-    );
-    setIsDetailModalOpen(false);
-  };
+  // const handleTaskUpdate = (updatedTask: Task) => {
+  //   setColumns((prevColumns) =>
+  //     prevColumns.map((column) => ({
+  //       ...column,
+  //       tasks: column.tasks.map((task) =>
+  //         task.id === updatedTask.id ? updatedTask : task
+  //       )
+  //     }))
+  //   );
+  //   setIsDetailModalOpen(false);
+  // };
 
   // Handle task delete
-  const handleTaskDelete = (taskId: string) => {
+  const handleTaskDelete = (taskId: number) => {
     setColumns((prevColumns) =>
       prevColumns.map((column) => ({
         ...column,
@@ -258,7 +254,7 @@ const KanbanBoard: React.FC = () => {
   };
 
   // Quick actions menu handler
-  const handleQuickAction = (action: string, task: Task) => {
+  const handleQuickAction = (action: string, task: KanbanTask) => {
     switch (action) {
       case 'edit':
         setSelectedTask(task);
@@ -302,18 +298,18 @@ const KanbanBoard: React.FC = () => {
   };
 
   // Task management functions
-  const addSubtask = (taskId: string, subtask: SubTask) => {
-    setColumns((prev) =>
-      prev.map((col) => ({
-        ...col,
-        tasks: col.tasks.map((task) =>
-          task.id === taskId
-            ? { ...task, subtasks: [...(task.subtasks || []), subtask] }
-            : task
-        )
-      }))
-    );
-  };
+  // const addSubtask = (taskId: string, subtask: SubTask) => {
+  //   setColumns((prev) =>
+  //     prev.map((col) => ({
+  //       ...col,
+  //       tasks: col.tasks.map((task) =>
+  //         task.id === taskId
+  //           ? { ...task, subtasks: [...(task.subtasks || []), subtask] }
+  //           : task
+  //       )
+  //     }))
+  //   );
+  // };
 
   // Add missing collapse/expand icon JSX
   const collapseIcon = (
@@ -359,23 +355,23 @@ const KanbanBoard: React.FC = () => {
   };
 
   // Add missing subtask toggle handler
-  const handleSubtaskToggle = (taskId: string, subtaskId: string) => {
-    setColumns((prev) =>
-      prev.map((col) => ({
-        ...col,
-        tasks: col.tasks.map((task) =>
-          task.id === taskId
-            ? {
-              ...task,
-              subtasks: task.subtasks?.map((st) =>
-                st.id === subtaskId ? { ...st, completed: !st.completed } : st
-              )
-            }
-            : task
-        )
-      }))
-    );
-  };
+  // const handleSubtaskToggle = (taskId: number, subtaskId: string) => {
+  //   setColumns((prev) =>
+  //     prev.map((col) => ({
+  //       ...col,
+  //       tasks: col.tasks.map((task) =>
+  //         task.id === taskId
+  //           ? {
+  //             ...task,
+  //             subtasks: task.subtasks?.map((st) =>
+  //               st.id === subtaskId ? { ...st, completed: !st.completed } : st
+  //             )
+  //           }
+  //           : task
+  //       )
+  //     }))
+  //   );
+  // };
 
   // Fix column settings modal content
   const renderColumnSettingsModal = () => (
@@ -733,7 +729,7 @@ const KanbanBoard: React.FC = () => {
                           key={task.id}
                           draggable
                           onDragStart={(e) =>
-                            handleDragStart(e, task.id, column.id)
+                            handleDragStart(e, task.id || 0, column.id)
                           }
                           onDragEnd={handleDragEnd}
                           className="group relative bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 cursor-move"
@@ -806,9 +802,9 @@ const KanbanBoard: React.FC = () => {
                             </p>
 
                             {/* Show labels if present */}
-                            {task.labels?.length ? (
+                            {task.label?.length ? (
                               <div className="flex flex-wrap gap-2 mb-3">
-                                {task.labels.map((label, i) => (
+                                {task.label.split(",").map((label, i) => (
                                   <span
                                     key={i}
                                     className="px-2 py-1 text-xs bg-gray-100 rounded-lg text-gray-600"
@@ -820,7 +816,7 @@ const KanbanBoard: React.FC = () => {
                             ) : null}
 
                             {/* Show progress bar if progress exists */}
-                            {typeof task.progress === 'number' && (
+                            {/* {typeof task.progress === 'number' && (
                               <div className="mb-3">
                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                   <div
@@ -832,10 +828,10 @@ const KanbanBoard: React.FC = () => {
                                   {task.progress}% done
                                 </p>
                               </div>
-                            )}
+                            )} */}
 
                             {/* Show reviewer/timeInReview if present */}
-                            {task.reviewer && (
+                            {/* {task.reviewer && (
                               <p className="text-xs text-gray-500 mb-1">
                                 Reviewer: {task.reviewer}
                               </p>
@@ -844,10 +840,10 @@ const KanbanBoard: React.FC = () => {
                               <p className="text-xs text-gray-500 mb-4">
                                 Time in review: {task.timeInReview}
                               </p>
-                            )}
+                            )} */}
 
                             <div className="flex items-center justify-between">
-                              <div className="flex -space-x-2">
+                              {/* <div className="flex -space-x-2">
                                 {task.assignees?.map((assignee, index) => (
                                   <Image
                                     key={index}
@@ -858,7 +854,7 @@ const KanbanBoard: React.FC = () => {
                                     className="w-6 h-6 rounded-lg ring-2 ring-white"
                                   />
                                 ))}
-                              </div>
+                              </div> */}
 
                               <div className="flex items-center gap-2 text-xs text-gray-400">
                                 <svg
@@ -874,13 +870,13 @@ const KanbanBoard: React.FC = () => {
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                   />
                                 </svg>
-                                <span>{task.dueDate}</span>
+                                <span>{task.due_date}</span>
                               </div>
-                              {task.completedDate && (
+                              {/* {task.completedDate && (
                                 <p className="text-xs text-gray-500 mb-1">
                                   Completed on {task.completedDate}
                                 </p>
-                              )}
+                              )} */}
                             </div>
                           </div>
                         </div>
@@ -942,7 +938,7 @@ const KanbanBoard: React.FC = () => {
                         .split(',')
                         .map((label) => label.trim()) || []
                   };
-                  handleTaskUpdate(updatedTask);
+                  // handleTaskUpdate(updatedTask);
                 }}
               >
                 <div className="space-y-4">
@@ -993,7 +989,7 @@ const KanbanBoard: React.FC = () => {
                       <input
                         type="text"
                         name="dueDate"
-                        defaultValue={selectedTask.dueDate}
+                        defaultValue={selectedTask.due_date}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
                       />
                     </div>
@@ -1006,7 +1002,7 @@ const KanbanBoard: React.FC = () => {
                     <input
                       type="text"
                       name="labels"
-                      defaultValue={selectedTask.labels?.join(', ')}
+                      // defaultValue={selectedTask.label?.join(', ')}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
@@ -1033,7 +1029,7 @@ const KanbanBoard: React.FC = () => {
               <div className="mt-4">
                 <h3 className="text-sm font-medium mb-2">Subtasks</h3>
                 <div className="space-y-2">
-                  {selectedTask.subtasks?.map((subtask) => (
+                  {/* {selectedTask.subtasks?.map((subtask) => (
                     <div key={subtask.id} className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -1044,7 +1040,7 @@ const KanbanBoard: React.FC = () => {
                       />
                       <span>{subtask.title}</span>
                     </div>
-                  ))}
+                  ))} */}
                   <button
                     className="text-sm text-brand-500"
                     onClick={() => {
@@ -1053,7 +1049,7 @@ const KanbanBoard: React.FC = () => {
                         title: 'New Subtask',
                         completed: false
                       };
-                      addSubtask(selectedTask.id, newSubtask);
+                      // addSubtask(selectedTask.id, newSubtask);
                     }}
                   >
                     + Add Subtask
@@ -1065,7 +1061,7 @@ const KanbanBoard: React.FC = () => {
               <div className="mt-4">
                 <h3 className="text-sm font-medium mb-2">Comments</h3>
                 <div className="space-y-4">
-                  {selectedTask.comments?.map((comment) => (
+                  {/* {selectedTask.comments?.map((comment) => (
                     <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium">{comment.author}</span>
@@ -1075,7 +1071,7 @@ const KanbanBoard: React.FC = () => {
                       </div>
                       <p className="text-sm">{comment.content}</p>
                     </div>
-                  ))}
+                  ))} */}
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -1096,7 +1092,7 @@ const KanbanBoard: React.FC = () => {
               </div>
 
               {/* Activity History */}
-              <div className="mt-4">
+              {/* <div className="mt-4">
                 <h3 className="text-sm font-medium mb-2">Activity History</h3>
                 <div className="space-y-2">
                   {selectedTask.activityHistory?.map((activity) => (
@@ -1109,7 +1105,7 @@ const KanbanBoard: React.FC = () => {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         )}
@@ -1130,7 +1126,7 @@ const KanbanBoard: React.FC = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => handleTaskDelete(taskToDelete.id)}
+                  // onClick={() => handleTaskDelete(taskToDelete.id)}
                   className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded-lg"
                 >
                   Delete
