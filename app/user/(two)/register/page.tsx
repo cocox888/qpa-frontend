@@ -79,7 +79,9 @@ export default function Onboarding() {
       emergency_relationship: '',
       digital_sign: '',
       agreementDate: '',
-      agree_to_terms: false
+      agree_to_terms: false,
+      password: '',
+      confpassword: ''
     }
   });
 
@@ -103,6 +105,11 @@ export default function Onboarding() {
       return;
     }
 
+    if (data.password !== data.confpassword) {
+      toast.error('Password Does not Match!');
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -113,7 +120,7 @@ export default function Onboarding() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('refresh_token')}`
+            Authorization: `Bearer ${localStorage.getItem('refresh_token')}`
           },
           body: JSON.stringify(data)
         }
@@ -123,7 +130,7 @@ export default function Onboarding() {
         toast.success('Onboarding completed successfully!');
         // Redirect to appropriate dashboard based on role
         const role = localStorage.getItem('role');
-        router.push(`/${role}/dashboard`);
+        router.push('/user/login');
       } else {
         const errorData = await response.json();
         toast.error(
@@ -866,6 +873,18 @@ export default function Onboarding() {
                   I agree to the terms and conditions*
                 </label>
               </div>
+              <input
+                type="text"
+                placeholder="Set your Password"
+                className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
+                {...register('password')}
+              />
+              <input
+                type="text"
+                placeholder="Confirm Password"
+                className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
+                {...register('confpassword')}
+              />
               {errors.agree_to_terms && (
                 <div className="mt-0.5 text-xs text-red-600">
                   {errors.agree_to_terms.message}

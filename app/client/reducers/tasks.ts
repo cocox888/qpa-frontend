@@ -7,11 +7,9 @@ import {
 import type { TypeTask } from '@/lib/types';
 
 export const getAllTasks = createAsyncThunk('tasks/getAllTasks', async () => {
-  const role = localStorage.getItem('role');
   const data = await client(
-    `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/${role}/allTasks`
+    `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/client/allTasks`
   );
-  console.log(data);
   return data;
 });
 
@@ -25,7 +23,6 @@ interface TaskState {
     completed: number;
     dueToday: number;
     allTasksNum: number;
-    myTaskNum: number; // Add this if necessary
   };
 }
 
@@ -38,8 +35,7 @@ const initialState: TaskState = {
     inProgress: 0,
     completed: 0,
     dueToday: 0,
-    allTasksNum: 0,
-    myTaskNum: 0
+    allTasksNum: 0
   }
 };
 
@@ -73,8 +69,6 @@ const taskSlice = createSlice({
               }, 0) || 0 >= 1
             );
           });
-          state.myTasks = myTasks;
-          console.log(myTasks);
           state.tasks = action.payload;
           const today = new Date().toISOString().split('T')[0];
           let pending = 0;
@@ -93,8 +87,7 @@ const taskSlice = createSlice({
             inProgress,
             completed,
             dueToday,
-            allTasksNum: action.payload.length,
-            myTaskNum: myTasks.length
+            allTasksNum: action.payload.length
           };
         }
       )
