@@ -171,7 +171,7 @@ const KanbanTaskCreateModal: React.FC<KanbanTaskCreateModalProps> = ({ closeHand
                                 type="submit"
                                 className="px-4 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600"
                             >
-                                Save Changes
+                                Create KanbanTask
                             </button>
                         </div>
                     </div>

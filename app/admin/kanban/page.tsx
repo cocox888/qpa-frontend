@@ -8,7 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import api from '@/app/api/customApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../reducers/store';
-import { fetchKanbanTasks } from '../reducers/kanbanTasks';
+import { fetchKanbanTasks, updateKanbanTaskById, updateKanbanTaskStatusById } from '../reducers/kanbanTasks';
 import { KanbanTask } from '@/lib/types';
 import Toast from '@/components/toast';
 
@@ -160,6 +160,30 @@ const KanbanBoard: React.FC = () => {
   const dragItem = useRef<{ taskId: number; sourceColumnId: string } | null>(
     null
   );
+  //Handle Search
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value !== "") {
+      console.log(e.target.value)
+      setColumns((prevColumns) =>
+        prevColumns.map((column) => ({
+          ...column,
+          tasks: kanbanTasks.filter((item, index) => {
+            return item.status == column.id && item.title?.includes(e.target.value);
+          })
+        }))
+      );
+    } else {
+      console.log("asdf");
+      setColumns((prevColumns) =>
+        prevColumns.map((column) => ({
+          ...column,
+          tasks: kanbanTasks.filter((item, index) => {
+            return item.status == column.id;
+          })
+        }))
+      );
+    }
+  };
 
   // Handle drag start
   const handleDragStart = (
@@ -193,9 +217,9 @@ const KanbanBoard: React.FC = () => {
     }
 
     const role = localStorage.getItem("role");
-    api.post(`${role}/updateKanbanTaskById`, { task_id: taskId, updated_status: targetColumnId }).then(() => {
-      Toast('success', 'Task updated successfully');
-      dispatch(updateKanbanTaskStatusById());
+    api.post(`${role}/updateKanbanTaskStatusById`, { task_id: taskId, updated_status: targetColumnId }).then(() => {
+      Toast('success', 'Task status updated successfully');
+      dispatch(updateKanbanTaskStatusById({ id: taskId, status: targetColumnId }));
 
     }).catch((e) => {
       console.log(e);
@@ -229,17 +253,20 @@ const KanbanBoard: React.FC = () => {
   };
 
   // Handle task update
-  // const handleTaskUpdate = (updatedTask: Task) => {
-  //   setColumns((prevColumns) =>
-  //     prevColumns.map((column) => ({
-  //       ...column,
-  //       tasks: column.tasks.map((task) =>
-  //         task.id === updatedTask.id ? updatedTask : task
-  //       )
-  //     }))
-  //   );
-  //   setIsDetailModalOpen(false);
-  // };
+  const handleTaskUpdate = (updatedTask: KanbanTask) => {
+    console.log(updatedTask)
+    const role = localStorage.getItem("role");
+    api.post(`${role}/updateKanbanTaskById`, updatedTask).then(() => {
+      Toast('success', 'Task updated successfully');
+      dispatch(updateKanbanTaskById(updatedTask));
+
+    }).catch((e) => {
+      Toast('error', 'Task updated failed');
+    })
+
+    setIsDetailModalOpen(false);
+
+  };
 
   // Handle task delete
   const handleTaskDelete = (taskId: number) => {
@@ -552,7 +579,7 @@ const KanbanBoard: React.FC = () => {
           {/* Filters and Views */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="relative">
+              {/* <div className="relative">
                 <select className="pl-3 pr-10 py-2 text-sm bg-white border border-gray-100 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-brand-500/20">
                   <option>All Tasks</option>
                   <option>My Tasks</option>
@@ -571,9 +598,9 @@ const KanbanBoard: React.FC = () => {
                     d="M19 9l-7 7-7-7"
                   />
                 </svg>
-              </div>
+              </div> */}
 
-              <div className="flex gap-2">
+              {/* <div className="flex gap-2">
                 <div className="px-3 py-2 text-sm bg-white border border-gray-100 rounded-xl hover:bg-gray-50">
                   <span className="w-2 h-2 inline-block rounded-full bg-red-500 mr-2"></span>
                   High Priority
@@ -582,7 +609,7 @@ const KanbanBoard: React.FC = () => {
                   <span className="w-2 h-2 inline-block rounded-full bg-yellow-500 mr-2"></span>
                   Blocked
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex items-center gap-3">
@@ -607,6 +634,7 @@ const KanbanBoard: React.FC = () => {
                   type="text"
                   placeholder="Search tasks..."
                   className="pl-10 pr-4 py-2 w-64 text-sm bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                  onChange={handleSearch}
                 />
                 <svg
                   className="w-4 h-4 absolute left-3 top-2.5 text-gray-400"
@@ -931,32 +959,33 @@ const KanbanBoard: React.FC = () => {
                       | 'normal'
                       | 'low',
                     dueDate: formData.get('dueDate') as string,
-                    labels:
+                    label:
                       formData
                         .get('labels')
                         ?.toString()
-                        .split(',')
-                        .map((label) => label.trim()) || []
+                    // .split(',')
+                    // .map((label) => label.trim()) || []
                   };
-                  // handleTaskUpdate(updatedTask);
+                  handleTaskUpdate(updatedTask);
                 }}
               >
                 <div className="space-y-4">
                   <div>
                     <div className="block text-sm font-medium text-gray-700 mb-1">
-                      Title
+                      Title <span className='text-red-600'>*</span>
                     </div>
                     <input
                       type="text"
                       name="title"
                       defaultValue={selectedTask.title}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
+                      required
                     />
                   </div>
 
                   <div>
                     <div className="block text-sm font-medium text-gray-700 mb-1">
-                      Description
+                      Description <span className='text-red-600'>*</span>
                     </div>
                     <textarea
                       name="description"
@@ -969,7 +998,7 @@ const KanbanBoard: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <div className="block text-sm font-medium text-gray-700 mb-1">
-                        Priority
+                        Priority <span className='text-red-600'>*</span>
                       </div>
                       <select
                         name="priority"
@@ -984,10 +1013,10 @@ const KanbanBoard: React.FC = () => {
 
                     <div>
                       <div className="block text-sm font-medium text-gray-700 mb-1">
-                        Due Date
+                        Due Date <span className='text-red-600'>*</span>
                       </div>
                       <input
-                        type="text"
+                        type="date"
                         name="dueDate"
                         defaultValue={selectedTask.due_date}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
@@ -997,12 +1026,12 @@ const KanbanBoard: React.FC = () => {
 
                   <div>
                     <div className="block text-sm font-medium text-gray-700 mb-1">
-                      Labels (comma-separated)
+                      Labels (comma-separated) <span className='text-red-600'>*</span>
                     </div>
                     <input
                       type="text"
                       name="labels"
-                      // defaultValue={selectedTask.label?.join(', ')}
+                      defaultValue={selectedTask.label}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500"
                     />
                   </div>
@@ -1026,10 +1055,10 @@ const KanbanBoard: React.FC = () => {
               </form>
 
               {/* Subtasks Section */}
-              <div className="mt-4">
+              {/* <div className="mt-4">
                 <h3 className="text-sm font-medium mb-2">Subtasks</h3>
                 <div className="space-y-2">
-                  {/* {selectedTask.subtasks?.map((subtask) => (
+                  {selectedTask.subtasks?.map((subtask) => (
                     <div key={subtask.id} className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -1040,7 +1069,7 @@ const KanbanBoard: React.FC = () => {
                       />
                       <span>{subtask.title}</span>
                     </div>
-                  ))} */}
+                  ))}
                   <button
                     className="text-sm text-brand-500"
                     onClick={() => {
@@ -1049,19 +1078,19 @@ const KanbanBoard: React.FC = () => {
                         title: 'New Subtask',
                         completed: false
                       };
-                      // addSubtask(selectedTask.id, newSubtask);
+                      addSubtask(selectedTask.id, newSubtask);
                     }}
                   >
                     + Add Subtask
                   </button>
                 </div>
-              </div>
+              </div> */}
 
               {/* Comments Section */}
-              <div className="mt-4">
+              {/* <div className="mt-4">
                 <h3 className="text-sm font-medium mb-2">Comments</h3>
                 <div className="space-y-4">
-                  {/* {selectedTask.comments?.map((comment) => (
+                  {selectedTask.comments?.map((comment) => (
                     <div key={comment.id} className="bg-gray-50 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium">{comment.author}</span>
@@ -1071,7 +1100,7 @@ const KanbanBoard: React.FC = () => {
                       </div>
                       <p className="text-sm">{comment.content}</p>
                     </div>
-                  ))} */}
+                  ))}
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -1083,13 +1112,13 @@ const KanbanBoard: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Attachments Section */}
-              <div className="mt-4">
+              {/* <div className="mt-4">
                 <h3 className="text-sm font-medium mb-2">Attachments</h3>
-                {/* Attachment list and upload button */}
-              </div>
+                Attachment list and upload button
+              </div> */}
 
               {/* Activity History */}
               {/* <div className="mt-4">

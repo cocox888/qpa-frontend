@@ -40,7 +40,7 @@ const taskSlice = createSlice({
     addKanbanTask: (state, action: PayloadAction<KanbanTask>) => {
       state.tasks.push(action.payload);
     },
-    updateKanbanTask: (state, action: PayloadAction<KanbanTask>) => {
+    updateKanbanTaskById: (state, action: PayloadAction<KanbanTask>) => {
       const index = state.tasks.findIndex(
         (task) => task.id === action.payload.id
       );
@@ -53,13 +53,17 @@ const taskSlice = createSlice({
     },
     updateKanbanTaskStatusById: (
       state,
-      action: PayloadAction<number, string>
+      action: PayloadAction<{ id: number; status: string }>
     ) => {
       const index = state.tasks.findIndex(
         (task) => task.id === action.payload.id
       );
-
+      state.tasks[index].status = action.payload.status;
     },
+    getAllKanbanTasks: (state, action: PayloadAction<KanbanTask>) => {
+        state.tasks.push(action.payload);
+      },
+   
   },
   extraReducers: (builder) => {
     builder
@@ -78,6 +82,10 @@ const taskSlice = createSlice({
   },
 });
 
-export const { addKanbanTask, updateKanbanTask, deleteKanbanTask } =
-  taskSlice.actions;
+export const {
+  addKanbanTask,
+  deleteKanbanTask,
+  updateKanbanTaskStatusById,
+  updateKanbanTaskById,
+} = taskSlice.actions;
 export default taskSlice.reducer;
