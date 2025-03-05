@@ -10,15 +10,30 @@ import EmployeeTable from '@/components/table/employeeTable';
 import ProjectTable from '@/components/table/projectTable';
 import TaskTable from '@/components/table/taskTable';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../reducers/store';
+import { getAllProjects } from '../reducers/projects';
+import { getAllTasks } from '../reducers/tasks';
 
 export default function Dashboard() {
   const [index, setIndex] = useState(0);
+  const dispatch = useDispatch();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    dispatch(getAllProjects());
+    dispatch(getAllTasks());
+  }, []);
 
   const handleIndex = (index: number) => {
     setIndex(index);
   };
+
+  const projects = useSelector((state: RootState) => state.projects.projects);
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const projectCounts = useSelector(
+    (state: RootState) => state.projects.projectCounts
+  );
+  const taskCounts = useSelector((state: RootState) => state.tasks.taskCounts);
 
   return (
     <>
@@ -26,8 +41,8 @@ export default function Dashboard() {
         <div className="space-y-8">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
             <RevenueCard />
-            <ProjectCard />
-            <TaskCard />
+            <ProjectCard {...projectCounts} />
+            <TaskCard {...taskCounts} />
             <MemberCard />
           </div>
 

@@ -99,9 +99,9 @@ const projectSlice = createSlice({
 
           for (const project of action.payload) {
             if (project.project_phase !== 'Completed') actProjects += 1;
-            if (project.project_phase === 'inProgress') inProgress += 1;
-            if (project.project_phase === 'inReview') inReview += 1;
-            if (project.project_phase === 'onHold') onHold += 1;
+            if (project.project_phase === 'In Progress') inProgress += 1;
+            if (project.project_phase === 'Review') inReview += 1;
+            if (project.project_phase === 'Pending') onHold += 1;
             if (project.package_type === 'va') {
               vaPackageNum += 1;
               vaPackageHour += project.monthly_hours || 0;
