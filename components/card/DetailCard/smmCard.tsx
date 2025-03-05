@@ -53,7 +53,21 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
             </div>
           </div>
           <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
-            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                project?.project_phase === 'In Progress'
+                  ? 'bg-blue-500'
+                  : project?.project_phase === 'Pending'
+                  ? 'bg-yellow-500'
+                  : project?.project_phase === 'On Schedule'
+                  ? 'bg-green-500'
+                  : project?.project_phase === 'Publishing'
+                  ? 'bg-purple-500'
+                  : project?.project_phase === 'Completed'
+                  ? 'bg-emerald-500'
+                  : 'bg-gray-300' // Default color if project_phase is undefined
+              }`}
+            />
             {project?.project_phase}
           </span>
         </div>
