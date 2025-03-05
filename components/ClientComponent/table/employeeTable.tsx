@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function ProjectTable() {
+export default function EmployeeTable() {
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -26,7 +26,7 @@ export default function ProjectTable() {
 
     const updatedCheckedItems = Object.keys(checkedItems).reduce(
       (acc, curr) => {
-        acc[Number.parseInt(curr)] = isChecked;
+        acc[parseInt(curr)] = isChecked;
         return acc;
       },
       {} as { [key: number]: boolean }
@@ -45,8 +45,9 @@ export default function ProjectTable() {
       setIsSelectAllChecked(false);
     }
   }, [checkedItems]);
+
   return (
-    <div id="projects-panel" role="tabpanel">
+    <div id="employees-panel" role="tabpanel">
       <table className="w-full border-spacing-0">
         <thead>
           <tr>
@@ -60,7 +61,7 @@ export default function ProjectTable() {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Project Name
+                Name
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
@@ -79,7 +80,7 @@ export default function ProjectTable() {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Client
+                Job Title
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
@@ -98,7 +99,7 @@ export default function ProjectTable() {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Team
+                Department
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
@@ -117,7 +118,7 @@ export default function ProjectTable() {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Deadline
+                Site
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
@@ -136,7 +137,26 @@ export default function ProjectTable() {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Progress
+                Salary
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden={true}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </th>
+            <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
+                Start Date
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
@@ -186,72 +206,89 @@ export default function ProjectTable() {
             </td>
             <td className="px-4 py-3 whitespace-nowrap">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                  <svg
-                    className="w-4 h-4 text-purple-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden={true}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-                    />
-                  </svg>
+                <div className="flex-shrink-0">
+                  <Image
+                    src="/images/person1.jpg"
+                    alt="user"
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 rounded-xl object-cover ring-2 ring-gray-100"
+                  />
                 </div>
-                <span className="font-medium text-gray-900">
-                  Website Redesign
-                </span>
-              </div>
-            </td>
-            <td className="px-4 py-3 text-gray-600">TechCorp</td>
-            <td className="px-4 py-3">
-              <div className="flex -space-x-2">
-                <Image
-                  src="/images/person1.jpg"
-                  alt="user"
-                  width={32}
-                  height={32}
-                  className="w-6 h-6 rounded-full border-2 border-white"
-                />
-                <Image
-                  src="/images/person1.jpg"
-                  alt="user"
-                  width={32}
-                  height={32}
-                  className="w-6 h-6 rounded-full border-2 border-white"
-                />
-                <div className="w-6 h-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-xs text-gray-500">
-                  +3
+                <div>
+                  <div className="font-medium text-gray-900">Anatoly Belik</div>
+                  <div className="text-xs text-gray-500">
+                    anatoly@example.com
+                  </div>
                 </div>
               </div>
             </td>
-            <td className="px-4 py-3 text-gray-600">Dec 24, 2024</td>
-            <td className="px-4 py-3">
-              <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                <div
-                  className="bg-brand-500 h-1.5 rounded-full transition-all duration-500"
-                  style={{
-                    width: '75%',
-                    background:
-                      'linear-gradient(90deg, rgba(132, 184, 148, 0.8), rgba(132, 184, 148, 1))'
-                  }}
-                />
-              </div>
-              <div className="text-xs text-gray-500 mt-1">75% Complete</div>
+            <td className="px-4 py-3 whitespace-nowrap">
+              <div className="text-sm text-gray-900">Head of Design</div>
+              <div className="text-xs text-gray-500">Product Design</div>
             </td>
+            <td className="px-4 py-3 text-gray-600">Product</td>
+            <td className="px-4 py-3 text-gray-600">🇸🇪 Stockholm</td>
+            <td className="px-4 py-3 text-gray-900 font-medium">$1,350</td>
+            <td className="px-4 py-3 text-gray-600">Mar 13, 2023</td>
             <td className="px-4 py-3">
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
-                  In Progress
+                  Invited
                 </span>
               </div>
             </td>
           </tr>
+
+          {/* <!-- More rows following the same pattern --> */}
+          <tr className="table-row-hover bg-yellow-50/50">
+            <td className="p-4 whitespace-nowrap">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                checked={checkedItems[2] || false}
+                onChange={(e) => handleCheckboxChange(e, 2)}
+              />
+            </td>
+            <td className="px-4 py-3 whitespace-nowrap">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0">
+                  <Image
+                    src="/images/person1.jpg"
+                    alt="user"
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 rounded-xl object-cover ring-2 ring-gray-100"
+                  />
+                </div>
+                <div>
+                  <div className="font-medium text-gray-900">Ksenia Bator</div>
+                  <div className="text-xs text-gray-500">
+                    ksenia@example.com
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td className="px-4 py-3 whitespace-nowrap">
+              <div className="text-sm text-gray-900">Fullstack Engineer</div>
+              <div className="text-xs text-gray-500">Engineering</div>
+            </td>
+            <td className="px-4 py-3 text-gray-600">Engineering</td>
+            <td className="px-4 py-3 text-gray-600">🇺🇸 Miami</td>
+            <td className="px-4 py-3 text-gray-900 font-medium">$1,500</td>
+            <td className="px-4 py-3 text-gray-600">Oct 13, 2023</td>
+            <td className="px-4 py-3">
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-gray-500" />
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                  Absent
+                </span>
+              </div>
+            </td>
+          </tr>
+
+          {/* <!-- More employee rows here --> */}
         </tbody>
       </table>
     </div>
