@@ -115,7 +115,21 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
               </div>
             </div>
             <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
-              <span className="w-1.5 h-1.5 bg-primary rounded-full" />
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  project?.project_phase === 'In Progress'
+                    ? 'bg-blue-500'
+                    : project?.project_phase === 'Pending'
+                    ? 'bg-yellow-500'
+                    : project?.project_phase === 'On Schedule'
+                    ? 'bg-green-500'
+                    : project?.project_phase === 'Publishing'
+                    ? 'bg-purple-500'
+                    : project?.project_phase === 'Completed'
+                    ? 'bg-emerald-500'
+                    : 'bg-gray-300' // Default color if project_phase is undefined
+                }`}
+              />
               {project?.project_phase}
             </span>
           </div>
@@ -126,7 +140,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
               <div className="flex items-center justify-between text-sm mb-1">
                 <span className="text-gray-500">Monthly Hours</span>
                 <span className="text-gray-900 font-medium">
-                  {convertMin2HourFixed(Number(project?.totalTimeForMonth))}/
+                  {(project?.totalTimeForMonth || 0) / 60} /
                   {project?.monthly_hours} hrs
                 </span>
               </div>

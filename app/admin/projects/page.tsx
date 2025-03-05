@@ -84,7 +84,7 @@ export default function Projects() {
 
     const fetchUsers = async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/team`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllMembers`,
         {
           method: 'GET',
           headers: {

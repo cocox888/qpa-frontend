@@ -60,30 +60,29 @@ export interface TypeClient {
   clientTimeTrack?: TypeTimeTrack[];
 }
 
-export interface Logs{
-  action_type?:string,
-  activity_description?:string,
-  id:number,
-  project_id?:number,
-  project_name?:string,
-  project_type?:string,
-  task_name?:string,
-  user_name?:string,
-  createdAt?:string,
-  log_hour?:number,
-  log_phase?:string,
-  
+export interface Logs {
+  action_type?: string;
+  activity_description?: string;
+  id: number;
+  project_id?: number;
+  project_name?: string;
+  project_type?: string;
+  task_name?: string;
+  user_name?: string;
+  createdAt?: string;
+  log_hour?: number;
+  log_phase?: string;
 }
 
-export interface KanbanTask{
-  id?:number,
-  title?:string,
-  description?:string,
-  priority?:string,
-  due_date?:string,
-  label?:string,
-  status?:string,
-  user_id?:number
+export interface KanbanTask {
+  id?: number;
+  title?: string;
+  description?: string;
+  priority?: string;
+  due_date?: string;
+  label?: string;
+  status?: string;
+  user_id?: number;
 }
 
 export interface TypeProject {
@@ -106,13 +105,13 @@ export interface TypeProject {
   portal_access?: string;
   totalTimeForDay?: number;
   totalTimeForWeek?: number;
-  totalTimeForMonth?:number;
-  project_phase?:string;
+  totalTimeForMonth?: number;
+  project_phase?: string;
   assignedProjectUser?: TypeUser[];
-  requestedProjectClient?: TypeClient[];
+  projectClient?: TypeClient;
   projectTask?: TypeTask[];
   projectTimeTrack: TypeTimeTrack[];
-  projectHasLogs?:Logs[],
+  projectHasLogs?: Logs[];
 }
 
 export interface TypeTask {
@@ -146,13 +145,13 @@ export interface TypeTimeTrack {
   timeTrackTask?: TypeTask;
 }
 
-export interface TypeDocument{
-  id?:number,
-  user_id?:number,
-  title?:string,
-  upload_time?:string,
-  badge?:string,
-  file_format?:string,
-  file_size?:number,
-  file_path:string,
+export interface TypeDocument {
+  id?: number;
+  user_id?: number;
+  title?: string;
+  upload_time?: string;
+  badge?: string;
+  file_format?: string;
+  file_size?: number;
+  file_path: string;
 }
