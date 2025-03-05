@@ -47,7 +47,7 @@ export default function Team() {
     const token = localStorage.getItem('refresh_token');
     const fetchUsers = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/team`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllMembers`,
         {
           method: 'GET',
           headers: {
@@ -57,6 +57,7 @@ export default function Team() {
         }
       );
       const data = await response.json();
+      console.log(data);
       const userArray = data.map((user: TypeUser) => {
         let completedTask = 0;
         user.assignedUserTask?.map((task: TypeTask) => {
@@ -167,11 +168,11 @@ export default function Team() {
 
         {/* <!-- Stats Cards --> */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* <!-- Total Members --> */}
+         
           <div className="stats-card gradient-border card-shine p-4 rounded-xl">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+              
                 <svg
                   className="w-5 h-5 text-blue-500"
                   fill="none"
@@ -197,11 +198,11 @@ export default function Team() {
             </div>
           </div>
 
-          {/* <!-- Active Now --> */}
-          <div className="stats-card gradient-border card-shine p-4 rounded-xl">
+        
+          {/* <div className="stats-card gradient-border card-shine p-4 rounded-xl">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+              
                 <svg
                   className="w-5 h-5 text-green-500"
                   fill="none"
@@ -225,11 +226,11 @@ export default function Team() {
             </div>
           </div>
 
-          {/* <!-- Projects Assigned --> */}
+        
           <div className="stats-card gradient-border card-shine p-4 rounded-xl">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+            
                 <svg
                   className="w-5 h-5 text-purple-500"
                   fill="none"
@@ -255,11 +256,10 @@ export default function Team() {
             </div>
           </div>
 
-          {/* <!-- Tasks in Progress --> */}
           <div className="stats-card gradient-border card-shine p-4 rounded-xl">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center">
-                {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+              
                 <svg
                   className="w-5 h-5 text-yellow-500"
                   fill="none"
@@ -283,7 +283,7 @@ export default function Team() {
                 </h3>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* <!-- Main Content --> */}

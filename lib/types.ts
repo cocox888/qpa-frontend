@@ -59,6 +59,7 @@ export interface TypeClient {
   clientTask?: TypeTask[];
   clientTimeTrack?: TypeTimeTrack[];
 }
+
 export interface Logs{
   action_type?:string,
   activity_description?:string,
@@ -84,7 +85,6 @@ export interface KanbanTask{
   status?:string,
   user_id?:number
 }
-
 
 export interface TypeProject {
   id?: number;
@@ -144,4 +144,14 @@ export interface TypeTimeTrack {
   timeTrackClient?: TypeClient;
   timeTrackUser?: TypeUser;
   timeTrackTask?: TypeTask;
+}
+
+export interface TypeDocument{
+  id?:number,
+  user_id?:number,
+  title?:string,
+  upload_time?:string,
+  badge?:string,
+  file_format?:string,
+  file_size?:string,
 }

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '../public/css/custom.css';
 import { AuthorizationProvider } from '@/providers/AuthorizationProvider';
-import { TotalTimeProvider } from '@/providers/TotalTimeProvider';
+
 
 export const metadata: Metadata = {
   title: 'QPA',
