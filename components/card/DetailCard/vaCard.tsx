@@ -109,8 +109,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
                   </span>
                 </div>
                 <p className="text-sm text-gray-500">
-                  {isNonEmptyArray(project?.requestedProjectClient) &&
-                    project?.requestedProjectClient[0].full_name}
+                  {project?.projectClient?.full_name || ""}
                 </p>
               </div>
             </div>
@@ -134,11 +133,10 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
                 <div
                   className="bg-blue-500 h-1.5 rounded-full"
                   style={{
-                    width: `${
-                      ((Number(project?.totalTimeForMonth) / 60 || 0) /
-                        (project?.monthly_hours || 1)) *
+                    width: `${((Number(project?.totalTimeForMonth) / 60 || 0) /
+                      (project?.monthly_hours || 1)) *
                       100
-                    }%`
+                      }%`
                   }}
                 />
               </div>
@@ -162,6 +160,8 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
             </div>
 
             <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-500">Assigned Team Members</span>
+
               <div className="flex -space-x-2">
                 {project?.assignedProjectUser?.map((item, index) => {
                   return (
@@ -178,7 +178,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
                   +2
                 </div> */}
               </div>
-              <span className="text-xs text-gray-500">Renews in 12 days</span>
+              {/* <span className="text-xs text-gray-500">Renews in 12 days</span> */}
             </div>
           </div>
         </div>

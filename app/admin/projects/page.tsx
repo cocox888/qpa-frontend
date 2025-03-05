@@ -15,6 +15,7 @@ import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { getAllProjects } from '@/app/admin/reducers/projects';
+import store from '@/app/admin/reducers/store';
 
 export interface ClientProps {
   id?: number;
@@ -54,7 +55,8 @@ export default function Projects() {
   const projectCounts = useSelector(
     (state: RootState) => state.projects.projectCounts
   );
-  const projects = useSelector((state: RootState) => state.projects.projects);
+  const initial_projects = useSelector((state: RootState) => state.projects.projects)
+  const [projects, setProjects] = useState<TypeProject[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem('refresh_token');
@@ -70,7 +72,7 @@ export default function Projects() {
         }
       );
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       const clientsArray = data.map((user: TypeUser) => {
         const temp = {
           full_name: user.full_name,
@@ -107,15 +109,20 @@ export default function Projects() {
     };
     fetchClients();
     fetchUsers();
-  }, [dispatch, index, createModal, detailModal]);
+  }, []);
 
   useEffect(() => {
     dispatch(getAllProjects());
-  }, [detailModal]);
+  }, []);
+
+  useEffect(() => {
+    setProjects(initial_projects);
+  }, [initial_projects])
 
   const openNewProjectModal = () => {
     setCreateModal(true);
   };
+
 
   const filterData = () => {
     let result = [];
@@ -275,10 +282,10 @@ export default function Projects() {
           <button
             id="projectDetailsOverlay"
             className="active modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-            onClick={() => setDetailModal(false)}
+            onClick={() => { setDetailModal(false); window.location.reload(); }}
           />
           <ProjectDetailModal
-            onClose={() => setDetailModal(false)}
+            onClose={() => { setDetailModal(false); window.location.reload(); }}
             data={detailData}
           />
         </>

@@ -1,8 +1,11 @@
+import { getAllProjects } from '@/app/admin/reducers/projects';
+import { AppDispatch } from '@/app/admin/reducers/store';
 import api from '@/app/api/customApi';
 import type { Logs, TypeProject, TypeUser } from '@/lib/types';
 import { isNonEmptyArray } from '@/lib/utils/functions';
 import { convertMin2HourMin } from '@/lib/utils/time';
 import React from 'react';
+import { useDispatch } from 'react-redux';
 
 type DateType = {
   due: string;
@@ -54,7 +57,7 @@ export default function ProjectDetailModal({
   phaseMap.set('Testing', 3);
   phaseMap.set('Launch', 4);
   const [phase, setPhase] = React.useState(phaseMap.get(data?.project_phase || 'Strategy') || 0);
-
+  const dispatch: AppDispatch = useDispatch();
   if (!data) {
     return null;
   }
@@ -137,6 +140,8 @@ export default function ProjectDetailModal({
         }).catch((err) => {
           console.log(err);
         });
+      // dispatch(getAllProjects());
+
 
     }
 
@@ -337,7 +342,7 @@ export default function ProjectDetailModal({
     return (
       <>
         {
-          data.projectHasLogs?.map((log:Logs, index) => {
+          data.projectHasLogs?.map((log: Logs, index) => {
             return (
               <div>
                 <div className="relative pl-10 pb-6  border-gray-300/50 border-l-2">
@@ -423,7 +428,7 @@ export default function ProjectDetailModal({
                   {data.title}
                 </h2>
                 <p id="clientName" className="text-sm text-gray-500">
-                  {data.requestedProjectClient ? data.requestedProjectClient[0].full_name : ''}
+                  {data.projectClient?.full_name || ""}
                 </p>
               </div>
             </div>
@@ -505,7 +510,7 @@ export default function ProjectDetailModal({
                         className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
                       >
                         <img
-                          src={member.avatar}
+                          src="/images/person1.png"
                           alt={member.full_name}
                           className="w-8 h-8 rounded-lg object-cover"
                         />

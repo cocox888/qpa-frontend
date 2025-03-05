@@ -1,6 +1,6 @@
 'use client';
 import type { ProjectData } from '@/components/modal/projectDetailsModal';
-import { PhaseSVG } from '@/components/phase/PhaseSVG';
+import { PhaseSVGForSMM } from '@/components/phase/PhaseSVGForSMM';
 import { TypeProject } from '@/lib/types';
 import React from 'react';
 
@@ -21,6 +21,8 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
   phaseMap.set('Testing', 3);
   phaseMap.set('Launch', 4);
   const [phase, setPhase] = React.useState(phaseMap.get(project?.project_phase || 'Strategy') || 0);
+ 
+ 
   return (
     <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
       <div className="p-6">
@@ -44,12 +46,12 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-medium text-gray-900">Social Campaign</h3>
+                <h3 className="font-medium text-gray-900">{project?.title}</h3>
                 <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-600">
                   SMM
                 </span>
               </div>
-              <p className="text-sm text-gray-500">FashionBrand Co</p>
+              <p className="text-sm text-gray-500">{project?.projectClient?.full_name}</p>
             </div>
           </div>
           <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
@@ -71,21 +73,24 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                  {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                  {PhaseSVG('completed')}
-                </div>
-                <span className="text-sm text-gray-600">Strategy</span>
+                {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+                {phase == 1 ? PhaseSVGForSMM('progress') : PhaseSVGForSMM('completed')}
+
+                <span className="text-sm ">Strategy</span>
               </div>
               <div className="flex items-center gap-2">
-                {PhaseSVG('progress')}
-                <span className="text-sm text-gray-900 font-medium">
+                {phase < 2 ? PhaseSVGForSMM('upcoming') : phase == 2 ? PhaseSVGForSMM('progress') : PhaseSVGForSMM('completed')}
+                <span className="text-sm">
                   Content
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                {PhaseSVG('upcoming')}
-                <span className="text-sm text-gray-400">Publishing</span>
+                {phase < 3 ? PhaseSVGForSMM('upcoming') : phase == 3 ? PhaseSVGForSMM('progress') : PhaseSVGForSMM('completed')}
+                <span className="text-sm ">Publishing</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {phase < 4 ? PhaseSVGForSMM('upcoming') : phase == 4 ? PhaseSVGForSMM('progress') : PhaseSVGForSMM('completed')}
+                <span className="text-sm ">Review</span>
               </div>
             </div>
           </div>
@@ -104,19 +109,19 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
               })}
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-xs text-gray-500">Due: Sep 15</span>
-              <span className="px-2 py-0.5 rounded-lg text-xs font-medium bg-green-50 text-green-600">
+              <span className="text-xs text-gray-500">Start Date: {project?.start_date?.toString().split('T')[0].replace(/^(\d{4}-\d{2}-)(\d{1,2})$/, '$1$2')}</span>
+              {/* <span className="px-2 py-0.5 rounded-lg text-xs font-medium bg-green-50 text-green-600">
                 On Track
-              </span>
+              </span> */}
             </div>
           </div>
         </div>
       </div>
-      <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
+      <div className="border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
         <div className="flex items-center justify-center">
           {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
           <button
-            className="text-sm text-brand-500 hover:text-brand-600 font-medium"
+            className="py-2 text-sm text-brand-500 hover:text-brand-600 font-medium"
             onClick={() => onClick(2, project)}
           >
             View Details

@@ -81,17 +81,17 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-medium text-gray-900">Business Strategy</h3>
+                <h3 className="font-medium text-gray-900">{project?.title}</h3>
                 <span className="px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-600">
                   OBM
                 </span>
               </div>
-              <p className="text-sm text-gray-500">GrowthCo Inc</p>
+              <p className="text-sm text-gray-500">{project?.projectClient?.full_name}</p>
             </div>
           </div>
           <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
-            <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full" />
-            Pending Review
+            <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+            In Progress
           </span>
         </div>
 

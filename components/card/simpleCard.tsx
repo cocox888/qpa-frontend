@@ -35,7 +35,7 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
           {type == 0 ? 'Hourly' : 'Fixed Price'}
         </span>
       </div>
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <div className="flex justify-between text-sm mb-1">
           <span className="text-gray-500">
             {type == 0 ? 'Hours Used' : 'Completion'}
@@ -55,7 +55,7 @@ const SimpleCard: React.FC<SimpleCardProps> = ({
             }}
           ></div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
