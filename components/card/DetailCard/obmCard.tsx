@@ -4,7 +4,7 @@ import { TypeProject } from '@/lib/types';
 
 interface OBMCardProps {
   onClick: (param1: number, param2?: TypeProject) => void;
-  project?:TypeProject;
+  project?: TypeProject;
 }
 
 const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
@@ -104,7 +104,7 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
             <div className="w-full bg-gray-100 rounded-full h-1.5">
               <div
                 className="bg-indigo-500 h-1.5 rounded-full"
-                style={{ width: '70%' }}
+                style={{ width: `${Math.floor(Number(project?.totalTimeForMonth) / Number(project?.monthly_hours))}` }}
               />
             </div>
           </div>
@@ -112,41 +112,38 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="grid grid-cols-3 gap-2">
               <div className="text-center p-2 bg-white rounded-lg">
-                <div className="text-xs text-gray-500">Strategy</div>
-                <div className="text-sm font-medium text-gray-900">12h</div>
+                <div className="text-xs text-gray-500">Today</div>
+                <div className="text-sm font-medium text-gray-900">{project?.totalTimeForDay}</div>
               </div>
               <div className="text-center p-2 bg-white rounded-lg">
-                <div className="text-xs text-gray-500">Planning</div>
-                <div className="text-sm font-medium text-gray-900">8h</div>
+                <div className="text-xs text-gray-500">This Week</div>
+                <div className="text-sm font-medium text-gray-900">{project?.totalTimeForWeek}</div>
               </div>
               <div className="text-center p-2 bg-white rounded-lg">
-                <div className="text-xs text-gray-500">Review</div>
-                <div className="text-sm font-medium text-gray-900">8h</div>
+                <div className="text-xs text-gray-500">This Month</div>
+                <div className="text-sm font-medium text-gray-900">{project?.totalTimeForMonth}</div>
               </div>
             </div>
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex -space-x-2">
-              <img
-                src="/images/person1.jpg"
-                alt=""
-                className="w-8 h-8 rounded-lg ring-2 ring-white object-cover"
-              />
-              <img
-                src="/images/person1.jpg"
-                alt=""
-                className="w-8 h-8 rounded-lg ring-2 ring-white object-cover"
-              />
-              <img
-                src="/images/person1.jpg"
-                alt=""
-                className="w-8 h-8 rounded-lg ring-2 ring-white object-cover"
-              />
-            </div>
             <span className="text-xs text-gray-500">
-              Monthly Review: Aug 30
+              Assigned Team Members
             </span>
+            <div className="flex -space-x-2">
+              {
+                project?.assignedProjectUser?.map((item) => {
+                  return (
+                    <img
+                      src="/images/person1.jpg"
+                      alt=""
+                      className="w-8 h-8 rounded-lg ring-2 ring-white object-cover transfrom hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
+                    />
+                  )
+                })
+              }
+            </div>
+
           </div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 'use client';
 import type { ProjectData } from '@/components/modal/projectDetailsModal';
+import { PhaseSVG } from '@/components/phase/PhaseSVG';
 import { TypeProject } from '@/lib/types';
+import React from 'react';
 
 interface SMMCardProps {
   onClick: (param1: number, param2?: TypeProject) => void;
@@ -8,56 +10,17 @@ interface SMMCardProps {
 }
 
 const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
-  // const data: ProjectData = {
-  //   projectTitle: 'Email Management',
-  //   clientName: 'DigitalCorp Ltd',
-  //   status: 'In Progress',
-  //   dates: { due: '', renewal: '', start: '12/27/2024' },
-  //   type: 'smm',
-  //   progress: { used: 12, total: 20, percent: Math.floor((12 / 20) * 100) },
-  //   teamMembers: [
-  //     {
-  //       image: '/images/person1.jpg',
-  //       role: 'Business Manager',
-  //       full_name: 'Sarah',
-  //       status: 'Active'
-  //     },
-  //     {
-  //       image: '/images/person1.jpg',
-  //       role: 'Business Manager',
-  //       full_name: 'Sarah',
-  //       status: 'Active'
-  //     },
-  //     {
-  //       image: '/images/person1.jpg',
-  //       role: 'Business Manager',
-  //       full_name: 'Sarah',
-  //       status: 'Active'
-  //     }
-  //   ],
-  //   details: {
-  //     servicesProvided: [
-  //       'Project Management',
-  //       'Team Coordination',
-  //       'Process Optimization'
-  //     ],
-  //     hourlyRate: '$50/hr',
-  //     monthlyHours: '40 hours',
+  const phaseMap = new Map<string, number>();
+  phaseMap.set('Strategy', 1);
+  phaseMap.set('Content', 2);
+  phaseMap.set('Publishing', 3);
+  phaseMap.set('Review', 4);
 
-  //     packageLevel: 'Premium',
-  //     postsPerWeek: '7 posts',
-  //     platforms: ['Instagram, Facebook, Twitter'],
-
-  //     projectType: 'Project Type',
-  //     currentPhase: 'Current Phase',
-  //     technologies: ['React', 'Next.js'],
-  //     managementAreas: [
-  //       'Project Management',
-  //       'Team Coordination',
-  //       'Process Optimization'
-  //     ]
-  //   }
-  // };
+  phaseMap.set('Design', 1);
+  phaseMap.set('Development', 2);
+  phaseMap.set('Testing', 3);
+  phaseMap.set('Launch', 4);
+  const [phase, setPhase] = React.useState(phaseMap.get(project?.project_phase || 'Strategy') || 0);
   return (
     <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
       <div className="p-6">
@@ -103,41 +66,25 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
                 Current Phase
               </span>
               <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-600">
-                2 of 4
+                {phase} of 4
               </span>
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
                   {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                  <svg
-                    className="w-4 h-4 text-green-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                  {PhaseSVG('completed')}
                 </div>
-                <span className="text-sm text-gray-600">Content Strategy</span>
+                <span className="text-sm text-gray-600">Strategy</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                </div>
+                {PhaseSVG('progress')}
                 <span className="text-sm text-gray-900 font-medium">
-                  Content Creation
+                  Content
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full" />
-                </div>
+                {PhaseSVG('upcoming')}
                 <span className="text-sm text-gray-400">Publishing</span>
               </div>
             </div>

@@ -5,6 +5,6 @@ export const convertMin2HourMin = (min: number) => {
 };
 
 export const convertMin2HourFixed = (min: number) => {
-  const hour = (min / 60).toFixed(2);
+  const hour = (min / 60).toFixed(1);
   return `${hour} hrs`;
 };
