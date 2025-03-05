@@ -16,11 +16,9 @@ interface VACardProps {
 }
 
 const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
-
   const [timeSpentToProject, setTimeSpentToProject] = useState(0);
   const [timeSpentToday, setTimeSpentToday] = useState(0);
   const [timeSpentWeek, setTimeSpentWeek] = useState(0);
-
 
   // const data: ProjectData = {
   //   projectTitle: project?.title || '',
@@ -118,7 +116,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
             </div>
             <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
               <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-              {project?.state}
+              {project?.project_phase}
             </span>
           </div>
 
@@ -128,17 +126,19 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
               <div className="flex items-center justify-between text-sm mb-1">
                 <span className="text-gray-500">Monthly Hours</span>
                 <span className="text-gray-900 font-medium">
-                  {convertMin2HourFixed(Number(project?.totalTimeForMonth))}/{project?.monthly_hours} hrs
+                  {convertMin2HourFixed(Number(project?.totalTimeForMonth))}/
+                  {project?.monthly_hours} hrs
                 </span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-1.5">
                 <div
                   className="bg-blue-500 h-1.5 rounded-full"
                   style={{
-                    width: `${((Number(project?.totalTimeForMonth) / 60 || 0) /
-                      (project?.monthly_hours || 1)) *
+                    width: `${
+                      ((Number(project?.totalTimeForMonth) / 60 || 0) /
+                        (project?.monthly_hours || 1)) *
                       100
-                      }%`
+                    }%`
                   }}
                 />
               </div>
@@ -147,7 +147,9 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
             <div className="bg-gray-50 rounded-lg p-3">
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="text-gray-600">Current Week</span>
-                <span className="text-gray-900 font-medium">{convertMin2HourMin(Number(project?.totalTimeForWeek))} Used</span>
+                <span className="text-gray-900 font-medium">
+                  {convertMin2HourMin(Number(project?.totalTimeForWeek))} Used
+                </span>
               </div>
               {/* <div className="flex items-center gap-2">
                 <button className="px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600">
@@ -181,14 +183,10 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
           </div>
         </div>
         <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
-          <div className="flex items-center justify-between">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-50 text-blue-700">
-              {project?.state}
-            </span>
-            {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+          <div className="flex items-center justify-center">
             <button
               className="text-sm text-brand-500 hover:text-brand-600 font-medium"
-              onClick={() => onClick(0, project)}
+              onClick={() => onClick(2, project)}
             >
               View Details
             </button>

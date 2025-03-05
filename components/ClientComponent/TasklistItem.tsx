@@ -3,31 +3,24 @@
 import { PauseIcon, PlayIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useTimerContext } from '@/hooks/use-store-hooks';
-import StopWatch from './timer/StopWatch';
+import StopWatch from '../timer/StopWatch';
 import { useDispatch, useSelector } from 'react-redux';
-import { addRecord } from '@/reducer/timerReducer';
-import { useEffect } from 'react';
-import { RootState } from '@/reducer';
-import customFetch from '@/lib/api/customFetch';
+import { TypeUser } from '@/lib/types';
 
 interface TasklistItemProps {
   id: number;
   title: string;
   project: string;
   hours: number;
-  members: number;
+  members: TypeUser[];
   state: string;
   time: string;
   company: string;
   startTime: string;
   isMyTask?: boolean;
-  onDetail: (param1: number, param2: object) => void;
-  onDelete: (id: number) => void;
 }
 
 const TasklistItem: React.FC<TasklistItemProps> = ({
-  onDetail,
-  onDelete,
   id,
   title,
   project,
@@ -102,20 +95,21 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
                 </span>
               </div>
               <div className="flex -space-x-2">
-                {Array.from({ length: members }, (_, index) => index + 1).map(
-                  (item, index) => {
-                    return (
-                      <Image
-                        key={index}
-                        src="/images/person1.jpg"
-                        alt="user"
-                        width={100}
-                        height={100}
-                        className="w-8 h-8 rounded-lg ring-2 ring-white object-cover"
-                      />
-                    );
-                  }
-                )}
+                {Array.from(
+                  { length: members?.length },
+                  (_, index) => index + 1
+                ).map((item, index) => {
+                  return (
+                    <Image
+                      key={index}
+                      src="/images/person1.jpg"
+                      alt="user"
+                      width={100}
+                      height={100}
+                      className="w-8 h-8 rounded-lg ring-2 ring-white object-cover"
+                    />
+                  );
+                })}
               </div>
               <span
                 className={`px-2.5 py-1 text-xs font-medium ${
@@ -135,13 +129,16 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
             <div className="flex items-center gap-6 text-gray-500">
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2">
-                  <Image
-                    src="/images/person1.jpg"
-                    alt="TechCorp Inc"
-                    width={100}
-                    height={100}
-                    className="w-6 h-6 rounded-lg ring-1 ring-gray-100 object-cover"
-                  />
+                  {members?.map((item, index) => {
+                    return (
+                      <img
+                        key={item.id}
+                        src="/images/person1.png"
+                        alt=""
+                        className="w-8 h-8 rounded-lg ring-2 ring-white object-cover transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
+                      />
+                    );
+                  })}
                   <span>{company}</span>
                 </div>
               </div>
@@ -210,45 +207,6 @@ const TasklistItem: React.FC<TasklistItemProps> = ({
                   </div>
                 </div>
               )} */}
-
-              <button
-                className="task-edit-btn p-1.5 text-gray-400 hover:text-gray-500 rounded-lg hover:bg-gray-50"
-                onClick={() => onDetail(1, data)}
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden={true}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={() => onDelete(id)}
-                className="task-delete-btn p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-gray-50"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden={true}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
         </div>

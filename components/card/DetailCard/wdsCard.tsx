@@ -12,7 +12,7 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
   const data: ProjectData = {
     projectTitle: 'Email Management',
     clientName: 'DigitalCorp Ltd',
-    status: 'In Progress',
+    status: project?.project_phase,
     dates: { due: '', renewal: '', start: '12/27/2024' },
     type: 'wds',
     progress: { used: 12, total: 20, percent: Math.floor((12 / 20) * 100) },

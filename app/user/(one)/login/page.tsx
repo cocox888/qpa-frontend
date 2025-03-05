@@ -7,8 +7,8 @@ import { useForm } from 'react-hook-form';
 import { useState, useEffect, useContext } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { Spinner, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { AuthenticationContext } from '@/providers/AuthenticationProvider';
 import { useAuthentication } from '@/hooks/useAthentication';
 type dataType = { email: string; password: string };
@@ -54,7 +54,7 @@ export default function Login() {
         const responseData = await status.json();
         const { access_token, refresh_token, role, userId, username } =
           responseData;
-        console.log(responseData)
+        console.log(responseData);
         // Only access localStorage on the client side
         if (isClient) {
           localStorage.setItem('access_token', access_token);
@@ -72,10 +72,7 @@ export default function Login() {
           } else if (role === 'member') {
             router.push('/member/dashboard');
           }
-
-
         }
-
       } else {
         toast.error('Invalid credentials');
       }
@@ -171,10 +168,13 @@ export default function Login() {
             Reset it
           </Link>
         </p>
-        <Link href="/user/register"
-          className="py-3 flex items-center text-sm text-black uppercase before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-neutral-500 dark:before:border-neutral-600 dark:after:border-neutral-600">Register</Link>
-
-      </form >
+        <Link
+          href="/user/register"
+          className="py-3 flex items-center text-sm text-black uppercase before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-neutral-500 dark:before:border-neutral-600 dark:after:border-neutral-600"
+        >
+          Register
+        </Link>
+      </form>
     </>
   );
 }
