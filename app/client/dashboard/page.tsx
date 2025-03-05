@@ -1,20 +1,30 @@
 'use client';
+import { getAllProjects } from '@/app/client/reducers/projects';
 import ButtonSecondary from '@/components/button/buttonSecondary';
-import MemberCard from '@/components/card/memberCard';
-import ProjectCard from '@/components/card/projectCard';
-import RevenueCard from '@/components/card/revenueCard';
-import TaskCard from '@/components/card/taskCard';
-import ActivityChart from '@/components/charts/LineChart';
-import ClientTable from '@/components/table/clientTable';
-import EmployeeTable from '@/components/table/employeeTable';
-import ProjectTable from '@/components/table/projectTable';
-import TaskTable from '@/components/table/taskTable';
+import { ProjectTable } from '@/components/table/projectTable';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import type { RootState } from '../reducers/store';
+import { ProjectCard } from '@/components/card/projectCard';
+import { getAllTasks } from '../reducers/tasks';
+import { TaskCard } from '@/components/card/taskCard';
+import { TaskTable } from '@/components/table/taskTable';
 
 export default function Dashboard() {
   const [index, setIndex] = useState(0);
+  const dispatch = useDispatch();
 
-  useEffect(() => {}, []);
+  const projects = useSelector((state: RootState) => state.projects.projects);
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const projectCounts = useSelector(
+    (state: RootState) => state.projects.projectCounts
+  );
+  const taskCounts = useSelector((state: RootState) => state.tasks.taskCounts);
+
+  useEffect(() => {
+    dispatch(getAllProjects());
+    dispatch(getAllTasks());
+  }, []);
 
   const handleIndex = (index: number) => {
     setIndex(index);
@@ -25,13 +35,11 @@ export default function Dashboard() {
       <div className="py-20 pl-64 pr-6 w-screen min-h-screen overflow-x-hidden">
         <div className="space-y-8">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-            <RevenueCard />
-            <ProjectCard />
-            <TaskCard />
-            <MemberCard />
+            <ProjectCard {...projectCounts} />
+            <TaskCard {...taskCounts} />
           </div>
 
-          <div className="flex flex-col stats-card gradient-border card-shine p-6 rounded-2xl bg-white">
+          {/* <div className="flex flex-col stats-card gradient-border card-shine p-6 rounded-2xl bg-white">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -50,38 +58,24 @@ export default function Dashboard() {
             <div className="w-100 h-[300]" id="chart">
               <ActivityChart />
             </div>
-          </div>
+          </div> */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8 overflow-x-auto">
             <div className="border-b border-gray-100">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-4">
                   <ButtonSecondary
-                    title="Employees"
-                    count={8}
+                    title="Projects"
+                    count={projects.length}
                     onClick={handleIndex}
                     index={0}
                     isActive={index === 0}
                   />
                   <ButtonSecondary
-                    title="Projects"
-                    count={12}
+                    title="Tasks"
+                    count={tasks.length}
                     onClick={handleIndex}
                     index={1}
                     isActive={index === 1}
-                  />
-                  <ButtonSecondary
-                    title="Tasks"
-                    count={24}
-                    onClick={handleIndex}
-                    index={2}
-                    isActive={index === 2}
-                  />
-                  <ButtonSecondary
-                    title="Clients"
-                    count={6}
-                    onClick={handleIndex}
-                    index={3}
-                    isActive={index === 3}
                   />
                 </div>
 
@@ -107,22 +101,14 @@ export default function Dashboard() {
                       />
                     </svg>
                   </div>
-
-                  <button className="h-9 px-4 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-green-700 transition-colors">
-                    Add New
-                  </button>
                 </div>
               </div>
             </div>
 
             {index === 0 ? (
-              <EmployeeTable />
+              <ProjectTable projects={projects} />
             ) : index === 1 ? (
-              <ProjectTable />
-            ) : index === 2 ? (
-              <TaskTable />
-            ) : index === 3 ? (
-              <ClientTable />
+              <TaskTable tasks={tasks} />
             ) : (
               <div>&nbsp;</div>
             )}

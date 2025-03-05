@@ -23,6 +23,9 @@ interface TaskState {
     completed: number;
     dueToday: number;
     allTasksNum: number;
+    activeTasks: number;
+    onGoing: number;
+    overDue: number;
   };
 }
 
@@ -35,7 +38,10 @@ const initialState: TaskState = {
     inProgress: 0,
     completed: 0,
     dueToday: 0,
-    allTasksNum: 0
+    allTasksNum: 0,
+    activeTasks: 0,
+    onGoing: 0,
+    overDue: 0
   }
 };
 
@@ -64,7 +70,7 @@ const taskSlice = createSlice({
           const myTasks = action.payload?.filter((item) => {
             return (
               item?.assignedTaskUser?.reduce((acc, user) => {
-                const temp = String(user.id) == userID ? 1 : 0;
+                const temp = String(user.id) === userID ? 1 : 0;
                 return acc + temp;
               }, 0) || 0 >= 1
             );
@@ -75,10 +81,16 @@ const taskSlice = createSlice({
           let inProgress = 0;
           let completed = 0;
           let dueToday = 0;
+          let activeTasks = 0;
+          let onGoing = 0;
+          let overDue = 0;
           for (const task of action.payload) {
             if (task.state === 'todo') pending += 1;
             if (task.state === 'inprogress') inProgress += 1;
             if (task.state === 'completed') completed += 1;
+            if (task.state === 'ongoing') onGoing += 1;
+            if (task.state === 'overdue') overDue += 1;
+            if (task.state !== 'completed') activeTasks += 1;
             if (task.due_date === today) dueToday += 1;
           }
 
@@ -87,7 +99,8 @@ const taskSlice = createSlice({
             inProgress,
             completed,
             dueToday,
-            allTasksNum: action.payload.length
+            allTasksNum: action.payload.length,
+            activeTasks
           };
         }
       )

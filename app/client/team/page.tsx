@@ -5,7 +5,7 @@ import MemberCard2, {
 } from '@/components/ClientComponent/clientMemberCard';
 import { useEffect, useState } from 'react';
 // import teamMembers from '@/mockData/teamMembersData';
-import AddMemberModal from '@/components/modal/addMemberModal';
+import MemberModal from '@/components/ClientComponent/MemberModal';
 import type { TypeTask, TypeUser } from '@/lib/types';
 import { getAllProjects } from '../reducers/projects';
 import type { AppDispatch, RootState } from '../reducers/store';
@@ -21,6 +21,7 @@ export default function Team() {
   const [activeProjectsNumber, setActiveProjectsNumber] = useState(0);
   const [activeTasksNumber, setActiveTasksNumber] = useState(0);
   const [memberNumber, setMemberNumber] = useState(0);
+  const [selectedMember, setSelectedMember] = useState<TypeUser>();
   const dispatch: AppDispatch = useDispatch();
 
   const filterData = () => {
@@ -111,6 +112,14 @@ export default function Team() {
     setTeamMembers(userAssigned || []);
     setMemberNumber(totalMember - managerCount - adminCount);
   }, [projects]);
+
+  const handleClick = (id: number) => {
+    setMemberModal(true);
+    const member = projects
+      .flatMap((project) => project.assignedProjectUser)
+      .find((user) => user?.id === id);
+    setSelectedMember(member);
+  };
 
   return (
     <div className="pt-20 pl-64 pr-6 min-h-screen w-screen overflow-x-hidden">
@@ -381,14 +390,24 @@ export default function Team() {
               {/* <!-- Team members will be dynamically inserted here --> */}
               {filterData().map((item: Item, index: number) => {
                 // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                return <MemberCard2 key={index} member={item} />;
+                return (
+                  <MemberCard2
+                    key={index}
+                    member={item}
+                    handleClick={handleClick}
+                  />
+                );
               })}
             </div>
           </div>
         </div>
       </div>
 
-      {memberModal ? <AddMemberModal closeModal={setMemberModal} /> : <></>}
+      {memberModal ? (
+        <MemberModal closeModal={setMemberModal} memberData={selectedMember} />
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
