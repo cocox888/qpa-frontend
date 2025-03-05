@@ -1,14 +1,14 @@
 'use client';
 import { getAllProjects } from '@/app/client/reducers/projects';
 import ButtonSecondary from '@/components/button/buttonSecondary';
-import { ProjectTable } from '@/components/table/projectTable';
+import { ProjectTable } from '@/components/ClientComponent/table/projectTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import type { RootState } from '../reducers/store';
 import { ProjectCard } from '@/components/card/projectCard';
 import { getAllTasks } from '../reducers/tasks';
 import { TaskCard } from '@/components/card/taskCard';
-import { TaskTable } from '@/components/table/taskTable';
+import { TaskTable } from '@/components/ClientComponent/table/taskTable';
 
 export default function Dashboard() {
   const [index, setIndex] = useState(0);
