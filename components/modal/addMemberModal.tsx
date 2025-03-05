@@ -3,6 +3,7 @@ import { type ChangeEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ToastContainer } from 'react-toastify';
 import Toast from '../toast';
+import api from '@/app/api/customApi';
 
 interface AddMemberModalProps {
   closeModal: (params: boolean) => void;
@@ -10,86 +11,51 @@ interface AddMemberModalProps {
 
 const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
   const token = localStorage.getItem('access_token');
-  const { handleSubmit } = useForm({
+  const [passwordError, setPasswordError] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const { register, formState: { errors }, handleSubmit, getValues } = useForm({
     defaultValues: {
+      first_name: '',
+      last_name: '',
+      full_name: '',
+      sex: '',
       email: '',
-      password: ''
+      password: '',
+      phone: '',
+      position: '',
+      role: '',
+      avatar: '',
+      dob: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      zip_code: '',
+      status: '',
+      ref_token: ''
     }
   });
 
   const onSubmit = async () => {
-    if (formData.password !== confirmPassword) {
+    if (password !== confirmPassword) {
       setPasswordError(true);
     } else {
       setPasswordError(false);
-      formData.full_name = `${formData.first_name} ${formData.last_name}`;
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/register/user`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ ...formData })
-          }
-        );
-        console.log(res);
-
-        console.log(formData);
+      let data = getValues();
+      data.full_name = `${data.first_name} ${data.last_name}`;
+      data.password = password;
+      const role = localStorage.getItem('role')
+      api.post(`/${role}/createMembers`, data).then(() => {
         Toast('success', 'User Created Successfully.');
         closeModal(false);
-        setFormData({
-          first_name: '',
-          last_name: '',
-          full_name: '',
-          email: '',
-          password: '',
-          phone: '',
-          position: '',
-          role: '',
-          dob: '',
-          address: '',
-          city: '',
-          state: '',
-          country: '',
-          zip_code: ''
-        });
-      } catch (error) {
-        Toast('error', String(error));
-      }
+      }).catch((e) => {
+        Toast('error', String(e));
+      })
     }
   };
-  const [passwordError, setPasswordError] = useState(false);
 
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [formData, setFormData] = useState<TypeUser>({
-    first_name: '',
-    last_name: '',
-    full_name: '',
-    email: '',
-    password: '',
-    phone: '',
-    position: '',
-    role: '',
-    dob: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
-    zip_code: ''
-  });
-
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
 
   return (
     <div>
@@ -153,12 +119,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="text"
-                        name="first_name"
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        required
-                        value={String(formData.first_name)}
-                        onChange={handleInputChange}
+                        {...register('first_name', { required: "First Name is required" })}
                       />
+                      {
+                        errors.first_name && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.first_name.message}
+                          </div>
+                        )
+                      }
                     </div>
 
                     {/* <!-- Last Name --> */}
@@ -168,12 +138,17 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="text"
-                        name="last_name"
+
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        required
-                        value={String(formData.last_name)}
-                        onChange={handleInputChange}
+                        {...register('last_name', { required: 'Last Name is required' })}
                       />
+                      {
+                        errors.last_name && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.last_name.message}
+                          </div>
+                        )
+                      }
                     </div>
 
                     {/* <!-- Email --> */}
@@ -183,12 +158,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="email"
-                        name="email"
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        required
-                        value={String(formData.email)}
-                        onChange={handleInputChange}
+                        {...register('email', { required: 'Email is required' })}
                       />
+                      {
+                        errors.email && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.email.message}
+                          </div>
+                        )
+                      }
                     </div>
 
                     {/* <!-- Phone --> */}
@@ -198,12 +177,17 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="tel"
-                        name="phone"
+
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        required
-                        value={String(formData.phone)}
-                        onChange={handleInputChange}
+                        {...register('phone', { required: 'Phone is required' })}
                       />
+                      {
+                        errors.phone && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.phone.message}
+                          </div>
+                        )
+                      }
                     </div>
                   </div>
                 </div>
@@ -225,8 +209,8 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
                         required
                         minLength={8}
-                        value={String(formData.password)}
-                        onChange={handleInputChange}
+                        value={String(password)}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                       <p className="text-xs text-gray-500 mt-1">
                         Minimum 8 characters
@@ -261,13 +245,18 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="text"
-                        name="position"
+
                         placeholder="e.g. Product Manager, Frontend Developer"
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        required
-                        value={String(formData.position)}
-                        onChange={handleInputChange}
+                        {...register('position', { required: 'Position is required' })}
                       />
+                      {
+                        errors.position && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.position.message}
+                          </div>
+                        )
+                      }
                     </div>
 
                     {/* <!-- Role with enhanced select --> */}
@@ -277,18 +266,22 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <div className="relative">
                         <select
-                          name="role"
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow appearance-none bg-white"
-                          required
-                          value={String(formData.role)}
-                          onChange={handleInputChange}
+                          {...register('role', { required: 'Role is required' })}
                         >
-                          <option value="">Please select</option>
-                          <option value="admin">Admin</option>
+                          {/* <option value="">Select Role</option> */}
+                          {/* <option value="admin">Admin</option> */}
                           <option value="member">Member</option>
                           <option value="manager">Manager</option>
-                          <option value="client">Client</option>
+                          {/* <option value="client">Client</option> */}
                         </select>
+                        {
+                          errors.role && (
+                            <div className="mt-0.5 text-xs text-red-600">
+                              {errors.role.message}
+                            </div>
+                          )
+                        }
                         <svg
                           className="w-5 h-5 absolute right-3 top-3 text-gray-400 pointer-events-none"
                           fill="none"
@@ -312,12 +305,18 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="date"
-                        name="dob"
+
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        required
-                        value={String(formData.dob)}
-                        onChange={handleInputChange}
+                        {...register('dob', { required: 'Date of birth is required' })}
+
                       />
+                      {
+                        errors.dob && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.dob.message}
+                          </div>
+                        )
+                      }
                     </div>
                   </div>
                 </div>
@@ -333,13 +332,19 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         Address <span className="text-red-500">*</span>
                       </label>
                       <textarea
-                        name="address"
+
                         rows={2}
                         className="w-full px-3 py-2 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow resize-none"
-                        required
-                        value={String(formData.address)}
-                        onChange={handleInputChange}
+                        {...register('address', { required: 'Address is required' })}
+
                       />
+                      {
+                        errors.address && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.address.message}
+                          </div>
+                        )
+                      }
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -350,12 +355,18 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         </label>
                         <input
                           type="text"
-                          name="city"
+
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                          required
-                          value={String(formData.city)}
-                          onChange={handleInputChange}
+                          {...register('city', { required: 'City is required' })}
+
                         />
+                        {
+                          errors.city && (
+                            <div className="mt-0.5 text-xs text-red-600">
+                              {errors.city.message}
+                            </div>
+                          )
+                        }
                       </div>
 
                       {/* <!-- State --> */}
@@ -365,12 +376,18 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         </label>
                         <input
                           type="text"
-                          name="state"
+                          {...register('state', { required: 'State is required' })}
+
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                          required
-                          value={String(formData.state)}
-                          onChange={handleInputChange}
+
                         />
+                        {
+                          errors.state && (
+                            <div className="mt-0.5 text-xs text-red-600">
+                              {errors.state.message}
+                            </div>
+                          )
+                        }
                       </div>
 
                       {/* <!-- Country --> */}
@@ -380,12 +397,18 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         </label>
                         <input
                           type="text"
-                          name="country"
+                          {...register('country', { required: 'Country is required' })}
+
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                          required
-                          value={String(formData.country)}
-                          onChange={handleInputChange}
+
                         />
+                        {
+                          errors.country && (
+                            <div className="mt-0.5 text-xs text-red-600">
+                              {errors.country.message}
+                            </div>
+                          )
+                        }
                       </div>
 
                       {/* <!-- Zip Code --> */}
@@ -395,12 +418,18 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         </label>
                         <input
                           type="text"
-                          name="zip_code"
+
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                          required
-                          value={String(formData.zip_code)}
-                          onChange={handleInputChange}
+                          {...register('zip_code', { required: 'Zip Code is required' })}
+
                         />
+                        {
+                          errors.zip_code && (
+                            <div className="mt-0.5 text-xs text-red-600">
+                              {errors.zip_code.message}
+                            </div>
+                          )
+                        }
                       </div>
                     </div>
                   </div>

@@ -43,7 +43,8 @@ const KanbanTaskCreateModal: React.FC<KanbanTaskCreateModalProps> = ({ closeHand
         const role = localStorage.getItem('role');
 
         api.post(`/${role}/createKanbanBoardTask`, data).then(() => {
-            Toast('success', 'Kanban Created Successfully')
+            Toast('success', 'Kanban Created Successfully');
+            closeHandle(false);
         }).catch((e) => {
             console.log(e);
         });

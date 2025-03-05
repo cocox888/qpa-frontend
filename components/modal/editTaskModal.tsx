@@ -42,7 +42,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   data
 }) => {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
-  const projectsData = useSelector((state: RootState) => state.projects.projects);
+  // const projectsData = useSelector((state: RootState) => state.projects.projects);
   const { title } = data;
   const dispatch: AppDispatch = useDispatch();
   const [projectID, setProjectID] = useState(0);
@@ -144,6 +144,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
     if (members.length !== 0 && (estimateMinute !== 0 || estimateHour !== 0)) {
       try {
         const user_name = localStorage.getItem("username");
+        const user_id = localStorage.getItem('userId');
         const payload = {
           data: {
             title: taskName,
@@ -153,7 +154,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             description: description,
             estimated_time: estimateHour * 60 + estimateMinute,
             state: 'completed',
-            user_name: user_name
+            user_name: user_name,
           },
           members
         };
