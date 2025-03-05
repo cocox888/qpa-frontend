@@ -1,6 +1,6 @@
 const customFetch = async (uri: string,
     method: "POST" | "GET" | "DELETE" | "PUT") => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('refresh_token');
     const response = await fetch(
         `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}${uri}`,
         {

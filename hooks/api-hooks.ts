@@ -2,7 +2,7 @@ import type { TypeUser } from '@/lib/types';
 import { getTodayStartEndISO } from '@/lib/utils/date';
 
 export async function fetchTodayTimeTracks() {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('refresh_token');
 
   const { start_time, end_time } = getTodayStartEndISO();
   const res = await fetch(
@@ -22,7 +22,7 @@ export async function fetchTodayTimeTracks() {
 }
 
 export async function fetchTodayTimeTracksForAllUsers() {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('refresh_token');
 
   const { start_time, end_time } = getTodayStartEndISO();
   const res = await fetch(

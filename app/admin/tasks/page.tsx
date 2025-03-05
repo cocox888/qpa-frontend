@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import { getAllProjects } from '../reducers/projects';
+import Toast from '@/components/toast';
 
 export default function Projects() {
   const [editModal, setEditModal] = useState(false);
@@ -54,7 +55,7 @@ export default function Projects() {
   };
 
   const handleDelete = async (id: number) => {
-    const token = localStorage.getItem('');
+    const token = localStorage.getItem('refresh_token');
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/deleteTask?taskId=${id}`,
       {
@@ -66,7 +67,7 @@ export default function Projects() {
       }
     );
     const res = await response.json();
-    toast(res.message);
+    Toast('success', "Task deleted successfully");
     setCount(true);
   };
 

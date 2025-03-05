@@ -63,7 +63,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   const { totalTime, setTotalTime } = useTotalTime();
   const handleProjectSelect = async (projectId: number) => {
     setProjectID(projectId);
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('refresh_token');
     const response = await fetch('http://localhost:5173/admin/getprojectbyid', {
       method: 'POST',
       headers: {

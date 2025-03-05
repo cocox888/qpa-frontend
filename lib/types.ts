@@ -153,5 +153,6 @@ export interface TypeDocument{
   upload_time?:string,
   badge?:string,
   file_format?:string,
-  file_size?:string,
+  file_size?:number,
+  file_path:string,
 }

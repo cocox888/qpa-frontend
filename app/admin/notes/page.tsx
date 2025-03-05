@@ -8,15 +8,21 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer } from "react-toastify";
+import { fileSizeFormat } from "@/lib/utils/fileUtils";
 
 
 export default function Notes() {
 
-  const [totalDocuments, setTotalDocuments] = useState<TypeDocument>({});
+  const [totalDocuments, setTotalDocuments] = useState<TypeDocument[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-
+    api.get('/getAllUploads').then((res) => {
+      console.log(res.data);
+      setTotalDocuments(res.data)
+    }).catch((e) => {
+      Toast('error', e);
+    })
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,18 +34,21 @@ export default function Notes() {
       const userId = localStorage.getItem("userId");
 
       const payload = {
-        user_id: userId,
+        user_id: Number(userId),
         title: file.name,
-        upload_time: new Date(),
+        upload_time: (new Date()).toISOString().split('T')[0].replace(/^(\d{4}-\d{2}-)(\d{1,2})$/, '$1$2'),
         badge: 'important',
-        file_format: file.name.split('.')[1],
-        file_size: file.size / 1024
+        file_format: file.name.split('.')[1].toUpperCase(),
+        file_size: Math.floor((file.size / 1024)),
+        file_path: ""
       }
 
       formData.append('file', file);
-      formData.append('extraData',JSON.stringify(payload));
-      
+      formData.append('extraData', JSON.stringify(payload));
+
       apiForFile.post('/upload', formData).then((res) => {
+        console.log(res.data)
+        setTotalDocuments(res.data);
         Toast('success', 'File Upload Completed')
       }).catch((e) => {
         Toast('error', 'File Upload Failed')
@@ -51,6 +60,24 @@ export default function Notes() {
       console.error('No file selected');
     }
   }
+
+  const handleDownload = async (filename: string) => {
+    console.log(filename)
+    const role = localStorage.getItem("role");
+    api.get(`/${role}/download/${filename}`, { responseType: 'blob' }).then( (response) => {
+      console.log(response.data)
+      const blob:Blob = response.data
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click(); // Programmatically click the link to trigger the download
+      document.body.removeChild(link); // Clean up by removing the link element
+    }).catch(() => {
+
+    });
+
+  };
 
   return (
 
@@ -151,7 +178,7 @@ export default function Notes() {
                   <p className="text-sm font-medium text-gray-500">
                     Total Documents
                   </p>
-                  <h3 className="text-xl font-bold text-gray-900">124</h3>
+                  <h3 className="text-xl font-bold text-gray-900">{totalDocuments.length}</h3>
                 </div>
               </div>
             </div>
@@ -244,16 +271,16 @@ export default function Notes() {
                   <div className="px-4 py-2 text-sm font-medium rounded-lg text-brand-500 bg-brand-50">
                     All Files
                     <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
-                      236
+                      {totalDocuments.length}
                     </span>
                   </div>
                   <div className="px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50">
                     Documents
                     <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
-                      124
+                      {totalDocuments.length}
                     </span>
                   </div>
-                  <div className="px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50">
+                  {/* <div className="px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50">
                     Notes
                     <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
                       45
@@ -264,7 +291,7 @@ export default function Notes() {
                     <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
                       67
                     </span>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -311,7 +338,7 @@ export default function Notes() {
             {/* <!-- Documents Grid --> */}
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* <!-- Document Card --> */}
-              <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
+              {/* <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
                 <div className="flex gap-4">
                   <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                     <svg
@@ -357,10 +384,64 @@ export default function Notes() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* <!-- More Note Cards --> */}
-              <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
+              {
+                totalDocuments.length > 0 ? (
+                  totalDocuments.map((item, index) => (
+                    <div className="p-4 border cursor-pointer border-gray-100 rounded-xl hover:shadow-lg transition-all"
+                      onClick={() => handleDownload(item.file_path || "")}>
+                      <div className="flex gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                          <svg
+                            className="w-5 h-5 text-purple-500"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="flex-1 truncate">
+                          <div className="flex justify-between items-start ">
+                            <div className="w-3/4">
+                              <h3 className="font-medium text-gray-900 ">
+                                {item.title}
+                                <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-max px-2 py-1 text-xs text-white bg-gray-800 rounded">
+                                  Your tooltip text here
+                                </span>
+                              </h3>
+                              <p className="text-sm text-gray-500">{item.upload_time}</p>
+                            </div>
+                            {item.badge == "important" && (<span className="px-2 py-1 text-xs font-medium bg-yellow-50 text-yellow-600 rounded-lg">
+                              Important
+                            </span>)}
+                            {item.badge == 'confidential' && (<span className="px-2 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-lg">
+                              Confidential
+                            </span>)}
+                            {item.badge == "none" && (<></>)}
+
+                          </div>
+                          <div className="mt-3 flex items-center gap-4">
+                            <span className="text-xs text-gray-500">{fileSizeFormat(Number(item.file_size))}</span>
+                            <span className="text-xs text-gray-500">{item.file_format} Document</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+
+                ) : (
+                  <div className="flex col-span-3 justify-center items-center w-full py-10 text-gray-500">No Uploaded Files</div>
+                )
+              }
+              {/* <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
                 <div className="flex gap-4">
                   <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center flex-shrink-0">
                     <svg
@@ -416,48 +497,13 @@ export default function Notes() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* <!-- Document Card --> */}
-              <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                    <svg
-                      className="w-5 h-5 text-purple-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium text-gray-900">
-                          Q3 Performance Review.pdf
-                        </h3>
-                        <p className="text-sm text-gray-500">Added 1 week ago</p>
-                      </div>
-                      <span className="px-2 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-lg">
-                        Confidential
-                      </span>
-                    </div>
-                    <div className="mt-3 flex items-center gap-4">
-                      <span className="text-xs text-gray-500">4.2 MB</span>
-                      <span className="text-xs text-gray-500">PDF Document</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+
 
               {/* <!-- Shared Document Card --> */}
-              <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
+              {/* <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
                 <div className="flex gap-4">
                   <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                     <svg
@@ -485,8 +531,8 @@ export default function Notes() {
                         </p>
                       </div>
                       <div className="flex -space-x-2">
-                        {/* <img className="w-6 h-6 rounded-full border-2 border-white"
-                                                src="/api/placeholder/24/24" alt="User 1" /> */}
+                        <img className="w-6 h-6 rounded-full border-2 border-white"
+                                                src="/api/placeholder/24/24" alt="User 1" />
                         <img
                           className="w-6 h-6 rounded-full border-2 border-white"
                           src="/images/person1.jpg"
@@ -545,10 +591,10 @@ export default function Notes() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* <!-- Load More Button --> */}
-              <div className="col-span-full flex justify-center py-4">
+              {/* <div className="col-span-full flex justify-center py-4">
                 <div className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100">
                   <svg
                     className="w-5 h-5"
@@ -565,7 +611,7 @@ export default function Notes() {
                   </svg>
                   Load More
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

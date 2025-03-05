@@ -15,7 +15,7 @@ const AuthenticationProvider = ({ children }: Readonly<{ children: React.ReactNo
     const [token, setToken] = React.useState<string | null>(null);
 
     useEffect(() => {
-        const access_token =  localStorage.getItem('access_token');
+        const access_token =  localStorage.getItem('refresh_token');
         console.log("access_token: ", access_token);
         if (!access_token) {
             router.push('/login');

@@ -163,7 +163,7 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
           users: members
         };
 
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('refresh_token');
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/createProject`,
           {
