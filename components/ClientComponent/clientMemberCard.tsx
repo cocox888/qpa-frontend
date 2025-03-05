@@ -11,10 +11,11 @@ export interface Item {
 
 interface MemberCard2Props {
   member: Item;
+  handleClick: (id: number) => void;
 }
 
-const MemberCard2: React.FC<MemberCard2Props> = ({ member }) => {
-  const { name, role, status, totalAssignedTime } = member;
+const MemberCard2: React.FC<MemberCard2Props> = ({ member, handleClick }) => {
+  const { id, name, role, status, totalAssignedTime } = member;
   const status1 = status === '1' ? 'online' : status;
   return (
     <div className="animate-in p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all bg-white ">
@@ -54,7 +55,10 @@ const MemberCard2: React.FC<MemberCard2Props> = ({ member }) => {
             </div>
           </div>
           <div className="mt-4 flex items-center justify-between">
-            <button className="text-sm text-brand-500 hover:text-brand-600 font-medium">
+            <button
+              className="text-sm text-brand-500 hover:text-brand-600 font-medium"
+              onClick={(e) => handleClick(id)}
+            >
               View Profile
             </button>
             <button className="p-2 text-gray-400 hover:text-gray-500 rounded-lg hover:bg-gray-50">

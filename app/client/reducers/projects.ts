@@ -32,6 +32,10 @@ interface ProjectState {
     compSmmPackageNum: number;
     wdsPackageNum: number;
     compWdsPackageNum: number;
+    activeProjects: number;
+    inProgress: number;
+    inReview: number;
+    onHold: number;
   };
 }
 
@@ -49,7 +53,11 @@ const initialState: ProjectState = {
     smmPackageNum: 0,
     compSmmPackageNum: 0,
     wdsPackageNum: 0,
-    compWdsPackageNum: 0
+    compWdsPackageNum: 0,
+    activeProjects: 0,
+    inProgress: 0,
+    inReview: 0,
+    onHold: 0
   }
 };
 
@@ -84,7 +92,16 @@ const projectSlice = createSlice({
           let compSmmPackageNum = 0;
           let wdsPackageNum = 0;
           let compWdsPackageNum = 0;
+          let actProjects = 0;
+          let inProgress = 0;
+          let inReview = 0;
+          let onHold = 0;
+
           for (const project of action.payload) {
+            if (project.project_phase !== 'Completed') actProjects += 1;
+            if (project.project_phase === 'inProgress') inProgress += 1;
+            if (project.project_phase === 'inReview') inReview += 1;
+            if (project.project_phase === 'onHold') onHold += 1;
             if (project.package_type === 'va') {
               vaPackageNum += 1;
               vaPackageHour += project.monthly_hours || 0;
@@ -124,7 +141,11 @@ const projectSlice = createSlice({
             smmPackageNum,
             compSmmPackageNum,
             wdsPackageNum,
-            compWdsPackageNum
+            compWdsPackageNum,
+            activeProjects: actProjects,
+            inProgress,
+            inReview,
+            onHold
           };
         }
       )
