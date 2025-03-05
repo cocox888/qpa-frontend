@@ -99,7 +99,7 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
           <div>
             <div className="flex items-center justify-between text-sm mb-1">
               <span className="text-gray-500">Monthly Hours</span>
-              <span className="text-gray-900 font-medium">28/40 hrs</span>
+              <span className="text-gray-900 font-medium">{project?.totalTimeForMonth}/{project?.monthly_hours} hrs</span>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-1.5">
               <div

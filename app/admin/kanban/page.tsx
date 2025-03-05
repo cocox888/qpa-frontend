@@ -757,9 +757,9 @@ const KanbanBoard: React.FC = () => {
                           />
                         </svg>
                         <p className="text-sm">No tasks yet</p>
-                        <button className="mt-2 text-xs text-brand-500 hover:text-brand-600">
+                        {/* <button className="mt-2 text-xs text-brand-500 hover:text-brand-600">
                           Add a task
-                        </button>
+                        </button> */}
                       </div>
                     ) : (
                       column.tasks.map((task) => (
