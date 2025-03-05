@@ -390,7 +390,7 @@ export default function Notes() {
               {
                 totalDocuments.length > 0 ? (
                   totalDocuments.map((item, index) => (
-                    <div className="p-4 border cursor-pointer border-gray-100 rounded-xl hover:shadow-lg transition-all"
+                    <div key={index} className="p-4 border cursor-pointer border-gray-100 rounded-xl hover:shadow-lg transition-all"
                       onClick={() => handleDownload(item.file_path || "")}>
                       <div className="flex gap-4">
                         <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
