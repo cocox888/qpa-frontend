@@ -1,14 +1,14 @@
 'use client';
 import ButtonSecondary from '@/components/button/buttonSecondary';
 import MemberCard from '@/components/card/memberCard';
-import ProjectCard from '@/components/card/projectCard';
+import {ProjectCard} from '@/components/card/projectCard';
 import RevenueCard from '@/components/card/revenueCard';
-import TaskCard from '@/components/card/taskCard';
+import {TaskCard} from '@/components/card/taskCard';
 import ActivityChart from '@/components/charts/LineChart';
 import ClientTable from '@/components/table/clientTable';
 import EmployeeTable from '@/components/table/employeeTable';
-import ProjectTable from '@/components/table/projectTable';
-import TaskTable from '@/components/table/taskTable';
+import {ProjectTable} from '@/components/table/projectTable';
+import {TaskTable} from '@/components/table/taskTable';
 import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
