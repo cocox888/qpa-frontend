@@ -6,15 +6,14 @@ import WDSCard from '@/components/card/DetailCard/wdsCard';
 import SimpleCard from '@/components/card/simpleCard';
 import FilterBar from '@/components/FilterBar';
 import type { TypeProject, TypeTask, TypeUser } from '@/lib/types';
-import ProjectCreateModal from '@/components/modal/adminModal/projectCreateModal';
 import ProjectDetailModal, {
   type ProjectData
 } from '@/components/modal/projectDetailsModal';
 import { useEffect, useState } from 'react';
-import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
+import type { AppDispatch, RootState } from '../reducers/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { getAllProjects } from '@/app/admin/reducers/projects';
+import { getAllProjects } from '../reducers/projects';
 
 export interface ClientProps {
   id?: number;
@@ -46,7 +45,6 @@ const itemVariants = {
 export default function Projects() {
   const [index, setIndex] = useState(0);
   const [detailData, setDetailData] = useState<TypeProject | null>(null);
-  const [createModal, setCreateModal] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
   const [clients, setClients] = useState<ClientProps[]>([]);
   const [users, setUsers] = useState<UserProps[]>([]);
@@ -60,7 +58,7 @@ export default function Projects() {
     const token = localStorage.getItem('refresh_token');
     const fetchClients = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/clients`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/member/clients`,
         {
           method: 'GET',
           headers: {
@@ -84,7 +82,7 @@ export default function Projects() {
 
     const fetchUsers = async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllMembers`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/member/getAllMembers`,
         {
           method: 'GET',
           headers: {
@@ -107,15 +105,11 @@ export default function Projects() {
     };
     fetchClients();
     fetchUsers();
-  }, [dispatch, index, createModal, detailModal]);
+  }, [dispatch, index, detailModal]);
 
   useEffect(() => {
     dispatch(getAllProjects());
   }, [detailModal]);
-
-  const openNewProjectModal = () => {
-    setCreateModal(true);
-  };
 
   const filterData = () => {
     let result = [];
@@ -166,26 +160,6 @@ export default function Projects() {
             <div className="px-4 py-2 text-sm font-medium text-brand-500 bg-brand-50 rounded-lg hover:bg-brand-100 transition-colors">
               Import Projects
             </div>
-            <button
-              onClick={openNewProjectModal}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              New Project
-            </button>
           </div>
         </div>
 
@@ -254,22 +228,6 @@ export default function Projects() {
           ))}
         </motion.div>
       </div>
-      {createModal ? (
-        <>
-          <ProjectCreateModal
-            closeEvent={closeNewProjectModal}
-            clients={clients}
-            users={users}
-          />
-          <button
-            id="modalOverlay"
-            className="active modal-overlay fixed w-screen h-screen inset-0 bg-black/50 backdrop-blur-sm z-50"
-            onClick={closeNewProjectModal}
-          />
-        </>
-      ) : (
-        <></>
-      )}
       {detailModal ? (
         <>
           <button

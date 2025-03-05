@@ -6,15 +6,15 @@ import WDSCard from '@/components/card/DetailCard/wdsCard';
 import SimpleCard from '@/components/card/simpleCard';
 import FilterBar from '@/components/FilterBar';
 import type { TypeProject, TypeTask, TypeUser } from '@/lib/types';
-import ProjectCreateModal from '@/components/modal/adminModal/projectCreateModal';
+import ProjectCreateModal from '@/components/modal/managerModal/projectCreateModal';
 import ProjectDetailModal, {
   type ProjectData
 } from '@/components/modal/projectDetailsModal';
 import { useEffect, useState } from 'react';
-import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
+import type { AppDispatch, RootState } from '../reducers/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { getAllProjects } from '@/app/admin/reducers/projects';
+import { getAllProjects } from '../reducers/projects';
 
 export interface ClientProps {
   id?: number;
@@ -60,7 +60,7 @@ export default function Projects() {
     const token = localStorage.getItem('refresh_token');
     const fetchClients = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/clients`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/manager/clients`,
         {
           method: 'GET',
           headers: {
@@ -84,7 +84,7 @@ export default function Projects() {
 
     const fetchUsers = async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllMembers`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/manager/getAllMembers`,
         {
           method: 'GET',
           headers: {

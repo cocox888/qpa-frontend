@@ -1,10 +1,10 @@
 'use client';
 
-import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
-import { getAllTasks } from '@/app/admin/reducers/tasks';
+import type { AppDispatch, RootState } from '../reducers/store';
+import { getAllTasks } from '../reducers/tasks';
 import EditTaskModal, {
   type TaskItem
-} from '@/components/modal/adminModal/editTaskModal';
+} from '@/components/modal/memberModal/editTaskModal';
 import TasklistItem from '@/components/TasklistItem';
 import { useTotalTime } from '@/hooks/useTotalTime';
 import { isNonEmptyArray } from '@/lib/utils/functions';
@@ -56,7 +56,7 @@ export default function Projects() {
   const handleDelete = async (id: number) => {
     const token = localStorage.getItem('refresh_token');
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/deleteTask?taskId=${id}`,
+      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/member/deleteTask?taskId=${id}`,
       {
         method: 'DELETE',
         headers: {
