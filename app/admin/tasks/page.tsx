@@ -2,7 +2,9 @@
 
 import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
 import { getAllTasks } from '@/app/admin/reducers/tasks';
-import EditTaskModal, { type TaskItem } from '@/components/modal/editTaskModal';
+import EditTaskModal, {
+  type TaskItem
+} from '@/components/modal/adminModal/editTaskModal';
 import TasklistItem from '@/components/TasklistItem';
 import { useTotalTime } from '@/hooks/useTotalTime';
 import { isNonEmptyArray } from '@/lib/utils/functions';
@@ -43,10 +45,7 @@ export default function Projects() {
     setCount(false);
   }, [dispatch, count, editModal]);
 
-  useEffect(() => {
-
-  }, [filter]);
-
+  useEffect(() => {}, [filter]);
 
   const handleTask = (i: number, data: TaskItem) => {
     setIndex(i);
@@ -67,7 +66,7 @@ export default function Projects() {
       }
     );
     const res = await response.json();
-    Toast('success', "Task deleted successfully");
+    Toast('success', 'Task deleted successfully');
     setCount(true);
   };
 
@@ -84,7 +83,6 @@ export default function Projects() {
             </p>
           </div>
           <button
-
             onClick={() => handleTask(0, {})}
             className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
           >
@@ -141,7 +139,9 @@ export default function Projects() {
               <div className="flex items-center gap-4">
                 <div
                   data-filter="all"
-                  className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-lg ${filter ? " text-gray-600" : "text-brand-500  bg-brand-50"}`}
+                  className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-lg ${
+                    filter ? ' text-gray-600' : 'text-brand-500  bg-brand-50'
+                  }`}
                   onClick={() => setFilter(false)}
                 >
                   All Tasks
@@ -154,7 +154,9 @@ export default function Projects() {
                 </div>
                 <div
                   data-filter="my"
-                  className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-lg ${filter ? "text-brand-500  bg-brand-50" : " text-gray-600"}`}
+                  className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-lg ${
+                    filter ? 'text-brand-500  bg-brand-50' : ' text-gray-600'
+                  }`}
                   onClick={() => setFilter(true)}
                 >
                   My Tasks
@@ -213,38 +215,36 @@ export default function Projects() {
           </div>
           {/* <!-- Task List --> */}
           <div className="p-4 space-y-2">
-            {(!filter ? tasks : myTasks).length == 0 && (<div className='text-gray-500 flex justify-center items-center py-10'>No Tasks</div>)}
-            {
-
-              (!filter ? tasks : myTasks)?.map((item, index: number) => {
-
-                const isMyTask = myTasks.reduce((acc, item1) => {
+            {(!filter ? tasks : myTasks).length == 0 && (
+              <div className="text-gray-500 flex justify-center items-center py-10">
+                No Tasks
+              </div>
+            )}
+            {(!filter ? tasks : myTasks)?.map((item, index: number) => {
+              const isMyTask =
+                myTasks.reduce((acc, item1) => {
                   const temp = item1.id == item.id ? 1 : 0;
                   return acc + temp;
                 }, 0) >= 1;
 
-                return (
-                  <TasklistItem
-                    key={index}
-                    isMyTask={isMyTask}
-                    id={item.id || 0}
-                    title={String(item.title)}
-                    project={String(item.taskProject?.title)}
-                    hours={item.estimated_time || 0}
-                    state={item.state || ''}
-                    time={item.due_date || ''}
-                    members={item.assignedTaskUser?.length || 0}
-                    company={
-                      item.taskClient?.business_name || "Undedined"
-                    }
-                    startTime={'Started:Oct 15,2024'}
-                    onDetail={handleTask}
-                    onDelete={handleDelete}
-                  />
-                );
-              })
-
-            }
+              return (
+                <TasklistItem
+                  key={index}
+                  isMyTask={isMyTask}
+                  id={item.id || 0}
+                  title={String(item.title)}
+                  project={String(item.taskProject?.title)}
+                  hours={item.estimated_time || 0}
+                  state={item.state || ''}
+                  time={item.due_date || ''}
+                  members={item.assignedTaskUser?.length || 0}
+                  company={item.taskClient?.business_name || 'Undedined'}
+                  startTime={'Started:Oct 15,2024'}
+                  onDetail={handleTask}
+                  onDelete={handleDelete}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
@@ -266,7 +266,6 @@ export default function Projects() {
       ) : (
         <></>
       )}
-
     </div>
   );
 }

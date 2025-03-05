@@ -8,59 +8,9 @@ interface OBMCardProps {
 }
 
 const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
-  const data: ProjectData = {
-    projectTitle: 'Email Management',
-    clientName: 'DigitalCorp Ltd',
-    status: 'In Progress',
-    dates: { due: '', renewal: '', start: '12/27/2024' },
-    type: 'va',
-    progress: { used: 12, total: 20, percent: Math.floor((12 / 20) * 100) },
-    teamMembers: [
-      {
-        avatar: '/images/person1.jpg',
-        role: 'Business Manager',
-        full_name: 'Sarah',
-        status: 'Active'
-      },
-      {
-        avatar: '/images/person1.jpg',
-        role: 'Business Manager',
-        full_name: 'Sarah',
-        status: 'Active'
-      },
-      {
-        avatar: '/images/person1.jpg',
-        role: 'Business Manager',
-        full_name: 'Sarah',
-        status: 'Active'
-      }
-    ],
-    details: {
-      servicesProvided: [
-        'Project Management',
-        'Team Coordination',
-        'Process Optimization'
-      ],
-      hourlyRate: '$50/hr',
-      monthlyHours: '40 hours',
-
-      packageLevel: 'Premium',
-      postsPerWeek: '7 posts',
-      platforms: ['Instagram, Facebook, Twitter'],
-
-      projectType: 'Project Type',
-      currentPhase: 'Current Phase',
-      technologies: ['React', 'Next.js'],
-      managementAreas: [
-        'Project Management',
-        'Team Coordination',
-        'Process Optimization'
-      ]
-    }
-  };
   return (
     <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
-      <div className="p-6">
+      <div className="p-6 h-[330px]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
@@ -99,12 +49,20 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
           <div>
             <div className="flex items-center justify-between text-sm mb-1">
               <span className="text-gray-500">Monthly Hours</span>
-              <span className="text-gray-900 font-medium">{project?.totalTimeForMonth}/{project?.monthly_hours} hrs</span>
+              <span className="text-gray-900 font-medium">
+                {(project?.totalTimeForMonth || 0) / 60} /{' '}
+                {project?.monthly_hours} hrs
+              </span>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-1.5">
               <div
                 className="bg-indigo-500 h-1.5 rounded-full"
-                style={{ width: `${Math.floor(Number(project?.totalTimeForMonth) / Number(project?.monthly_hours))}` }}
+                style={{
+                  width: `${Math.floor(
+                    Number(project?.totalTimeForMonth) /
+                      Number(project?.monthly_hours)
+                  )}`
+                }}
               />
             </div>
           </div>
@@ -113,45 +71,43 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
             <div className="grid grid-cols-3 gap-2">
               <div className="text-center p-2 bg-white rounded-lg">
                 <div className="text-xs text-gray-500">Today</div>
-                <div className="text-sm font-medium text-gray-900">{project?.totalTimeForDay}</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {project?.totalTimeForDay}
+                </div>
               </div>
               <div className="text-center p-2 bg-white rounded-lg">
                 <div className="text-xs text-gray-500">This Week</div>
-                <div className="text-sm font-medium text-gray-900">{project?.totalTimeForWeek}</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {project?.totalTimeForWeek}
+                </div>
               </div>
               <div className="text-center p-2 bg-white rounded-lg">
                 <div className="text-xs text-gray-500">This Month</div>
-                <div className="text-sm font-medium text-gray-900">{project?.totalTimeForMonth}</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {project?.totalTimeForMonth}
+                </div>
               </div>
             </div>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">
-              Assigned Team Members
-            </span>
+            <span className="text-xs text-gray-500">Assigned Team Members</span>
             <div className="flex -space-x-2">
-              {
-                project?.assignedProjectUser?.map((item) => {
-                  return (
-                    <img
-                      src="/images/person1.jpg"
-                      alt=""
-                      className="w-8 h-8 rounded-lg ring-2 ring-white object-cover transfrom hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
-                    />
-                  )
-                })
-              }
+              {project?.assignedProjectUser?.map((item) => {
+                return (
+                  <img
+                    src="/images/person1.jpg"
+                    alt=""
+                    className="w-8 h-8 rounded-lg ring-2 ring-white object-cover transfrom hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
+                  />
+                );
+              })}
             </div>
-
           </div>
         </div>
       </div>
       <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
-        <div className="flex items-center justify-between">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-50 text-blue-700">
-            In Progress
-          </span>
+        <div className="flex items-center justify-center">
           {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
           <button
             className="text-sm text-brand-500 hover:text-brand-600 font-medium"

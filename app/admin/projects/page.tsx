@@ -6,7 +6,7 @@ import WDSCard from '@/components/card/DetailCard/wdsCard';
 import SimpleCard from '@/components/card/simpleCard';
 import FilterBar from '@/components/FilterBar';
 import type { TypeProject, TypeTask, TypeUser } from '@/lib/types';
-import ProjectCreateModal from '@/components/modal/projectCreateModal';
+import ProjectCreateModal from '@/components/modal/adminModal/projectCreateModal';
 import ProjectDetailModal, {
   type ProjectData
 } from '@/components/modal/projectDetailsModal';

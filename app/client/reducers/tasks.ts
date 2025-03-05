@@ -100,7 +100,9 @@ const taskSlice = createSlice({
             completed,
             dueToday,
             allTasksNum: action.payload.length,
-            activeTasks
+            activeTasks,
+            onGoing,
+            overDue
           };
         }
       )

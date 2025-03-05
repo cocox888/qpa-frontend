@@ -25,7 +25,7 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
-      <div className="p-6">
+      <div className="p-6 h-[330px]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
@@ -57,7 +57,21 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
             </div>
           </div>
           <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                project?.project_phase === 'In Progress'
+                  ? 'bg-blue-500'
+                  : project?.project_phase === 'Pending'
+                  ? 'bg-yellow-500'
+                  : project?.project_phase === 'On Schedule'
+                  ? 'bg-green-500'
+                  : project?.project_phase === 'Publishing'
+                  ? 'bg-purple-500'
+                  : project?.project_phase === 'Completed'
+                  ? 'bg-emerald-500'
+                  : 'bg-gray-300' // Default color if project_phase is undefined
+              }`}
+            />
             {project?.project_phase}
           </span>
         </div>

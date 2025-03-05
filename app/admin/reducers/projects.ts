@@ -16,7 +16,6 @@ export const getAllProjects = createAsyncThunk(
     return data;
   }
 );
-
 interface ProjectState {
   isFetching: boolean;
   projects: TypeProject[];
@@ -32,6 +31,10 @@ interface ProjectState {
     compSmmPackageNum: number;
     wdsPackageNum: number;
     compWdsPackageNum: number;
+    activeProjects: number;
+    inProgress: number;
+    inReview: number;
+    onHold: number;
   };
 }
 
@@ -49,7 +52,11 @@ const initialState: ProjectState = {
     smmPackageNum: 0,
     compSmmPackageNum: 0,
     wdsPackageNum: 0,
-    compWdsPackageNum: 0
+    compWdsPackageNum: 0,
+    activeProjects: 0,
+    inProgress: 0,
+    inReview: 0,
+    onHold: 0
   }
 };
 
@@ -84,30 +91,39 @@ const projectSlice = createSlice({
           let compSmmPackageNum = 0;
           let wdsPackageNum = 0;
           let compWdsPackageNum = 0;
+          let actProjects = 0;
+          let inProgress = 0;
+          let inReview = 0;
+          let onHold = 0;
+
           for (const project of action.payload) {
+            if (project.project_phase !== 'Completed') actProjects += 1;
+            if (project.project_phase === 'In Progress') inProgress += 1;
+            if (project.project_phase === 'Review') inReview += 1;
+            if (project.project_phase === 'Pending') onHold += 1;
             if (project.package_type === 'va') {
               vaPackageNum += 1;
               vaPackageHour += project.monthly_hours || 0;
               project.projectTask?.forEach((task) => {
-                vaPackageUsedHour += task.estimated_time || 0;
+                vaPackageUsedHour += task.estimated_time / 60 || 0;
               });
             }
             if (project.package_type === 'obm') {
               obmPackageNum += 1;
               obmPackageHour += project.monthly_hours || 0;
               project?.projectTask?.forEach((task) => {
-                obmPackageUsedHour += task.estimated_time || 0;
+                obmPackageUsedHour += task.estimated_time / 60 || 0;
               });
             }
             if (project.package_type === 'smm') {
               smmPackageNum += 1;
-              if (project.state === 'completed') {
+              if (project.state === 'Completed') {
                 compSmmPackageNum += 1;
               }
             }
             if (project.package_type === 'wds') {
               wdsPackageNum += 1;
-              if (project.state === 'completed') {
+              if (project.state === 'Completed') {
                 compWdsPackageNum += 1;
               }
             }
@@ -124,7 +140,11 @@ const projectSlice = createSlice({
             smmPackageNum,
             compSmmPackageNum,
             wdsPackageNum,
-            compWdsPackageNum
+            compWdsPackageNum,
+            activeProjects: actProjects,
+            inProgress,
+            inReview,
+            onHold
           };
         }
       )

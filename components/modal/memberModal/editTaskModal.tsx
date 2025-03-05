@@ -3,12 +3,12 @@
 import { TypeProject, TypeTask, type TypeUser } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Toast from '../toast';
+import Toast from '../../toast';
 import { client } from '@/lib/utils/customAxios';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
+import type { AppDispatch, RootState } from '@/app/member/reducers/store';
 import { useTotalTime } from '@/hooks/useTotalTime';
-import { getAllTasks } from '@/app/admin/reducers/tasks';
+import { getAllTasks } from '@/app/member/reducers/tasks';
 import { calculateTotalTime } from '@/lib/utils/calculate';
 import { getRecentTasksAndReturnTotalTime } from '@/lib/utils/taskUtils';
 
@@ -63,14 +63,18 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   const handleProjectSelect = async (projectId: number) => {
     setProjectID(projectId);
     const token = localStorage.getItem('refresh_token');
-    const response = await fetch('http://localhost:5173/admin/getprojectbyid', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ projectId: projectId })
-    });
+    const role = localStorage.getItem('role');
+    const response = await fetch(
+      `http://localhost:5173/${role}/getprojectbyid`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ projectId: projectId })
+      }
+    );
     const data = await response.json();
     setTotalMembers(data.assignedProjectUser);
   };
@@ -92,9 +96,10 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
   useEffect(() => {
     const token = localStorage.getItem('refresh_token');
+    const role = localStorage.getItem('role');
     const fetchProjects = async () => {
       const response = await fetch(
-        'http://localhost:5173/admin/getAllProjects',
+        `http://localhost:5173/${role}/getAllProjects`,
         {
           method: 'GET',
           headers: {
@@ -143,7 +148,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
     if (members.length !== 0 && (estimateMinute !== 0 || estimateHour !== 0)) {
       try {
-        const user_name = localStorage.getItem("username");
+        const user_name = localStorage.getItem('username');
         const user_id = localStorage.getItem('userId');
         const payload = {
           data: {
@@ -154,11 +159,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             description: description,
             estimated_time: estimateHour * 60 + estimateMinute,
             state: 'completed',
-            user_name: user_name,
+            user_name: user_name
           },
           members
         };
-        const res = await client('http://localhost:5173/admin/createTask', {
+        const role = localStorage.getItem('role');
+        const res = await client(`http://localhost:5173/${role}/createTask`, {
           body: JSON.stringify(payload)
         });
         dispatch(getAllTasks());
@@ -230,7 +236,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
         },
         members
       };
-      console.log(payload);
+      const role = localStorage.getItem('role');
       const res = await client('http://localhost:5173/admin/updateTaskbyId', {
         body: JSON.stringify(payload)
       });

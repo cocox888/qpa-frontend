@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import type { TypeProject } from '@/lib/types';
-import Toast from '../toast';
+import Toast from '../../toast';
 import { ToastContainer } from 'react-toastify';
 import type { ClientProps, UserProps } from '@/app/admin/projects/page';
 import { AppDispatch } from '@/app/admin/reducers/store';
@@ -19,7 +19,7 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
   clients,
   users
 }) => {
-  const dispatch:AppDispatch= useDispatch()
+  const dispatch: AppDispatch = useDispatch();
 
   const progressBar = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(0);
@@ -107,9 +107,6 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
     updateProgress();
   }, [step]);
 
-
-
-
   const createProject = async () => {
     if (validation()) {
       try {
@@ -121,10 +118,10 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
             packageType === 'va'
               ? startDate
               : packageType === 'obm'
-                ? startDate2
-                : packageType === 'smm'
-                  ? startDate1
-                  : startDate3,
+              ? startDate2
+              : packageType === 'smm'
+              ? startDate1
+              : startDate3,
           additional_setting: additional.join(','),
           portal_access: portals.join(','),
           projectTimeTrack: [],
@@ -172,8 +169,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
         };
 
         const token = localStorage.getItem('refresh_token');
+        const role = localStorage.getItem('role');
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/createProject`,
+          `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/${role}/createProject`,
           {
             method: 'POST',
             headers: {
@@ -508,24 +506,27 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
 
                 <div className="relative flex flex-col items-center z-10 group">
                   <div
-                    className={`w-12 h-12 rounded-xl ${step > 0
+                    className={`w-12 h-12 rounded-xl ${
+                      step > 0
                         ? 'bg-primary shadow-green-500/30'
                         : 'bg-gray-100 '
-                      }  flex items-center justify-center transition-transform hover:-translate-y-0.5`}
+                    }  flex items-center justify-center transition-transform hover:-translate-y-0.5`}
                   >
                     <span
-                      className={`${step > 0 ? 'text-white ' : ' text-gray-400'
-                        } font-medium`}
+                      className={`${
+                        step > 0 ? 'text-white ' : ' text-gray-400'
+                      } font-medium`}
                     >
                       2
                     </span>
                   </div>
                   <div className="mt-3 flex flex-col items-center">
                     <span
-                      className={`text-sm  ${step > 0
+                      className={`text-sm  ${
+                        step > 0
                           ? 'text-gray-900 font-semibold'
                           : 'text-gray-400 font-medium'
-                        }`}
+                      }`}
                     >
                       Package Details
                     </span>
@@ -534,24 +535,27 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
 
                 <div className="relative flex flex-col items-center z-10 group">
                   <div
-                    className={`w-12 h-12 rounded-xl ${step > 1
+                    className={`w-12 h-12 rounded-xl ${
+                      step > 1
                         ? 'bg-primary shadow-green-500/30'
                         : 'bg-gray-100 '
-                      }  flex items-center justify-center transition-transform hover:-translate-y-0.5`}
+                    }  flex items-center justify-center transition-transform hover:-translate-y-0.5`}
                   >
                     <span
-                      className={`${step > 1 ? 'text-white ' : ' text-gray-400'
-                        } font-medium`}
+                      className={`${
+                        step > 1 ? 'text-white ' : ' text-gray-400'
+                      } font-medium`}
                     >
                       3
                     </span>
                   </div>
                   <div className="mt-3 flex flex-col items-center">
                     <span
-                      className={`text-sm  ${step > 1
+                      className={`text-sm  ${
+                        step > 1
                           ? 'text-gray-900 font-semibold'
                           : 'text-gray-400 font-medium'
-                        }`}
+                      }`}
                     >
                       Team Setup
                     </span>
@@ -575,8 +579,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                     name="projectName"
                     value={projectName}
                     required
-                    className={`${projectNameError ? 'border-red-500' : ''
-                      } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                    className={`${
+                      projectNameError ? 'border-red-500' : ''
+                    } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                     placeholder="Enter project name"
                     onChange={(e) => {
                       setProjectName(e.target.value);
@@ -603,8 +608,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                     name="client"
                     value={client}
                     required
-                    className={`${clientError ? 'border-red-500' : ''
-                      } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                    className={`${
+                      clientError ? 'border-red-500' : ''
+                    } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                     onChange={(e) => {
                       const val = Number(e.target.value);
                       setClient(val);
@@ -844,8 +850,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                         id="monthlyHours"
                         name="monthlyHours"
                         min="1"
-                        className={`${monthlyHoursError ? 'border-red-500' : ' '
-                          } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                        className={`${
+                          monthlyHoursError ? 'border-red-500' : ' '
+                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                         placeholder="Enter hours"
                         value={monthlyHours}
                         onChange={(e) => {
@@ -872,8 +879,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                         name="hourlyRate"
                         min="1"
                         step="0.01"
-                        className={`${rateError ? 'border-red-500' : ' '
-                          } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                        className={`${
+                          rateError ? 'border-red-500' : ' '
+                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                         placeholder="Enter rate"
                         value={rate}
                         onChange={(e) => {
@@ -898,8 +906,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                       type="date"
                       id="vaStartDate"
                       name="startDate"
-                      className={`${startDateError ? 'border-red-500' : ''
-                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                      className={`${
+                        startDateError ? 'border-red-500' : ''
+                      } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                       onChange={(e) => {
                         setStartDate(e.target.value);
                       }}
@@ -979,8 +988,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                         id="smmStartDate"
                         name="startDate"
                         value={startDate1}
-                        className={`${startDateError1 ? 'border-red-500' : ''
-                          } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                        className={`${
+                          startDateError1 ? 'border-red-500' : ''
+                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                         onChange={(e) => {
                           setStartDate1(e.target.value);
                         }}
@@ -1001,8 +1011,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                       <select
                         id="smmDuration"
                         name="duration"
-                        className={`${durationError ? 'border-red-500' : ''
-                          } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                        className={`${
+                          durationError ? 'border-red-500' : ''
+                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                         value={duration}
                         onChange={(e) => {
                           setDuration(e.target.value);
@@ -1031,8 +1042,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                     <select
                       id="smmPackageLevel"
                       name="packageLevel"
-                      className={`${packageLevelError ? 'border-red-500' : ''
-                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                      className={`${
+                        packageLevelError ? 'border-red-500' : ''
+                      } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                       onChange={(e) => {
                         setPackageLevel(e.target.value);
                       }}
@@ -1064,8 +1076,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                     <select
                       id="projectType"
                       name="projectType"
-                      className={`${projectTypeError ? 'border-red-500' : ''
-                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                      className={`${
+                        projectTypeError ? 'border-red-500' : ''
+                      } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                       onChange={(e) => {
                         setProjectType(e.target.value);
                       }}
@@ -1096,8 +1109,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                         type="date"
                         id="wdsStartDate"
                         name="wdsStartDate"
-                        className={`${startDateError3 ? 'border-red-500' : ''
-                          } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                        className={`${
+                          startDateError3 ? 'border-red-500' : ''
+                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                         onChange={(e) => {
                           setStartDate3(e.target.value);
                         }}
@@ -1124,8 +1138,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                         onChange={(e) => {
                           setDuration1(e.target.value);
                         }}
-                        className={`${durationError1 ? 'border-red-500' : ''
-                          } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                        className={`${
+                          durationError1 ? 'border-red-500' : ''
+                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                       >
                         <option value="">Select duration</option>
                         <option value="w2">2 weeks</option>
@@ -1199,8 +1214,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                         id="obmMonthlyHours"
                         name="monthlyHours"
                         min="1"
-                        className={`${monthlyHoursError1 ? 'border-red-500' : ''
-                          } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                        className={`${
+                          monthlyHoursError1 ? 'border-red-500' : ''
+                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                         placeholder="Enter hours"
                         value={monthlyHours1}
                         onChange={(e) => {
@@ -1227,8 +1243,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                         name="hourlyRate"
                         min="1"
                         step="0.01"
-                        className={`${rateError1 ? 'border-red-500' : ''
-                          } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                        className={`${
+                          rateError1 ? 'border-red-500' : ''
+                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                         placeholder="Enter rate"
                         value={rate1}
                         onChange={(e) => {
@@ -1257,8 +1274,9 @@ const ProjectCreateModal: React.FC<ProjectModalProps> = ({
                       onChange={(e) => {
                         setStartDate2(e.target.value);
                       }}
-                      className={`${startDateError2 ? 'border-red-500' : ''
-                        } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
+                      className={`${
+                        startDateError2 ? 'border-red-500' : ''
+                      } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
                     />
                     {startDateError2 ? (
                       <div className="active error-message text-sm text-red-500 mt-1">

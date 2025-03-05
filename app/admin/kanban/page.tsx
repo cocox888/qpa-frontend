@@ -3,7 +3,7 @@ import type React from 'react';
 import { useState, type DragEvent, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import StatsGrid from '@/components/StatsGrid';
-import KanbanTaskCreateModal from '@/components/modal/kanbanTaskCreateModal';
+import KanbanTaskCreateModal from '@/components/modal/adminModal/kanbanTaskCreateModal';
 import { ToastContainer } from 'react-toastify';
 import api from '@/app/api/customApi';
 import { useDispatch, useSelector } from 'react-redux';
