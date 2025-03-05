@@ -11,13 +11,13 @@ import ProjectTable from '@/components/table/projectTable';
 import TaskTable from '@/components/table/taskTable';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../reducers/store';
+import type { AppDispatch, RootState } from '../reducers/store';
 import { getAllProjects } from '../reducers/projects';
 import { getAllTasks } from '../reducers/tasks';
 
 export default function Dashboard() {
   const [index, setIndex] = useState(0);
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getAllProjects());

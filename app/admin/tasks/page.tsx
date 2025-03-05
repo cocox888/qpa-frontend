@@ -164,7 +164,7 @@ export default function Projects() {
                     data-my-count
                     className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600"
                   >
-                    {taskCounts.myTaskNum}
+                    {myTasks.length}
                   </span>
                 </div>
               </div>
