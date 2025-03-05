@@ -34,26 +34,26 @@ const KanbanTaskCreateModal: React.FC<KanbanTaskCreateModalProps> = ({
       due_date: '',
       label: '',
       status: 'todo',
-      user_id: userID
+      user_id: userID,
+      deleted: false,
+
     }
   });
 
   const onSubmit = async () => {
     const data = getValues();
-
     const role = localStorage.getItem('role');
-
     api
       .post(`/${role}/createKanbanBoardTask`, data)
       .then(() => {
         Toast('success', 'Kanban Created Successfully');
+        dispatch(fetchKanbanTasks());
         closeHandle(false);
       })
       .catch((e) => {
         console.log(e);
       });
 
-    dispatch(fetchKanbanTasks());
   };
 
   return (

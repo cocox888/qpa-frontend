@@ -142,12 +142,27 @@ const KanbanBoard: React.FC = () => {
     console.log(kanbanTasks);
     if (kanbanTasks.length > 0) {
       setColumns((prevColumns) =>
-        prevColumns.map((column) => ({
-          ...column,
-          tasks: kanbanTasks.filter((item, index) => {
-            return item.status == column.id;
-          })
-        }))
+        prevColumns.map((column) => {
+          if (column.id == "done") {
+            return (
+              {
+                ...column,
+                tasks: kanbanTasks.filter((item, index) => {
+                  return item.deleted == false && item.status == column.id;
+                })
+              }
+            )
+          } else {
+            return (
+              {
+                ...column,
+                tasks: kanbanTasks.filter((item, index) => {
+                  return item.deleted == false && item.status == column.id;
+                })
+              }
+            )
+          }
+        })
       );
     }
   }, [kanbanTasks]);
@@ -274,29 +289,43 @@ const KanbanBoard: React.FC = () => {
 
   // Handle task delete
   const handleTaskDelete = (taskId: number) => {
-    setColumns((prevColumns) =>
-      prevColumns.map((column) => ({
-        ...column,
-        tasks: column.tasks.filter((task) => task.id !== taskId)
-      }))
-    );
-    setIsDeleteModalOpen(false);
-    setTaskToDelete(null);
+
+    api.delete(`/admin/kanbanTask/${taskId}`).then((res) => {
+      setColumns((prevColumns) =>
+        prevColumns.map((column) => ({
+          ...column,
+          tasks: column.tasks.filter((task) => task.id !== taskId)
+        }))
+      );
+      setIsDeleteModalOpen(false);
+      setTaskToDelete(null);
+    }).catch((e) => {
+      console.log(e);
+    });
+
+
   };
 
   // Quick actions menu handler
-  const handleQuickAction = (action: string, task: KanbanTask) => {
-    switch (action) {
-      case 'edit':
-        setSelectedTask(task);
-        setIsDetailModalOpen(true);
-        break;
-      case 'delete':
-        setTaskToDelete(task);
-        setIsDeleteModalOpen(true);
-        break;
-      // Add more actions as needed
-    }
+  const handleQuickAction = (deleted_task: KanbanTask) => {
+    setColumns((prevColumns) =>
+      prevColumns.map((column) => ({
+        ...column,
+        tasks: column.tasks.filter((task) => task.id !== deleted_task.id)
+      }))
+    );
+    setIsDeleteModalOpen(true);
+    // switch (action) {
+    //   case 'edit':
+    //     setSelectedTask(task);
+    //     setIsDetailModalOpen(true);
+    //     break;
+    //   case 'delete':
+    //     setTaskToDelete(task);
+    //     setIsDeleteModalOpen(true);
+    //     break;
+    //   // Add more actions as needed
+    // }
   };
 
   // Add this helper function for column capacity percentage
@@ -667,9 +696,8 @@ const KanbanBoard: React.FC = () => {
               <div
                 key={column.id}
                 id={`column-${column.id}`}
-                className={`flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 ${
-                  column.isCollapsed ? 'w-20' : ''
-                }`}
+                className={`flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 ${column.isCollapsed ? 'w-20' : ''
+                  }`}
                 onDragOver={(e) => handleDragOver(e)}
                 onDrop={(e) => handleDrop(e, column.id)}
               >
@@ -704,11 +732,10 @@ const KanbanBoard: React.FC = () => {
                   {/* Add column capacity progress bar */}
                   <div className="w-full bg-gray-100 rounded-full h-1.5">
                     <div
-                      className={`h-1.5 rounded-full ${
-                        getColumnProgress(column.id, column.tasks.length) > 80
-                          ? 'bg-red-500'
-                          : 'bg-brand-500'
-                      }`}
+                      className={`h-1.5 rounded-full ${getColumnProgress(column.id, column.tasks.length) > 80
+                        ? 'bg-red-500'
+                        : 'bg-brand-500'
+                        }`}
                       style={{
                         width: `${Math.min(
                           getColumnProgress(column.id, column.tasks.length),
@@ -771,10 +798,10 @@ const KanbanBoard: React.FC = () => {
                           }
                           onDragEnd={handleDragEnd}
                           className="group relative bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 cursor-move"
-                          onClick={() => {
-                            setSelectedTask(task);
-                            setIsDetailModalOpen(true);
-                          }}
+                        // onClick={() => {
+                        //   setSelectedTask(task);
+                        //   setIsDetailModalOpen(true);
+                        // }}
                         >
                           {/* Quick Actions Menu */}
                           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -782,21 +809,26 @@ const KanbanBoard: React.FC = () => {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleQuickAction('menu', task);
+                                  if (column.id == "done") {
+                                    setSelectedTask(task);
+                                    setIsDeleteModalOpen(true);
+                                  }
+
                                 }}
                                 className="p-1 hover:bg-gray-100 rounded-lg"
                               >
                                 <svg
-                                  className="w-4 h-4 text-gray-500"
+                                  className="w-4 h-4"
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
+                                  aria-hidden={true}
                                 >
                                   <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                     strokeWidth="2"
-                                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                   />
                                 </svg>
                               </button>
@@ -1148,13 +1180,12 @@ const KanbanBoard: React.FC = () => {
         )}
 
         {/* Delete Confirmation Modal */}
-        {isDeleteModalOpen && taskToDelete && (
+        {isDeleteModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl p-6 w-full max-w-md">
               <h2 className="text-xl font-bold mb-4">Delete Task</h2>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete &quot;{taskToDelete.title}
-                &quot;?
+                Are you sure you want to delete?
               </p>
               <div className="flex justify-end gap-4">
                 <button
@@ -1164,7 +1195,7 @@ const KanbanBoard: React.FC = () => {
                   Cancel
                 </button>
                 <button
-                  // onClick={() => handleTaskDelete(taskToDelete.id)}
+                  onClick={() => handleTaskDelete(Number(selectedTask?.id))}
                   className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded-lg"
                 >
                   Delete
@@ -1175,7 +1206,7 @@ const KanbanBoard: React.FC = () => {
         )}
 
         {isCreateModalOpen && (
-          <KanbanTaskCreateModal closeHandle={setIsCreateModalOpen} />
+          <KanbanTaskCreateModal closeHandle={() => { setIsCreateModalOpen(false); }} />
         )}
       </div>
     </>

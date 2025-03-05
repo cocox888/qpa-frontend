@@ -83,6 +83,7 @@ export interface KanbanTask {
   label?: string;
   status?: string;
   user_id?: number;
+  deleted?:boolean
 }
 
 export interface TypeProject {
