@@ -91,7 +91,7 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
           </div>
           <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
             <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-            In Progress
+            {project?.project_phase}
           </span>
         </div>
 
@@ -145,16 +145,16 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
 
           <div className="flex items-center justify-between">
             <div className="flex -space-x-2">
-              <img
-                src="/images/person1.jpg"
-                alt=""
-                className="w-8 h-8 rounded-lg ring-2 ring-white object-cover"
-              />
-              <img
-                src="/images/person1.jpg"
-                alt=""
-                className="w-8 h-8 rounded-lg ring-2 ring-white object-cover"
-              />
+              {project?.assignedProjectUser?.map((item, index) => {
+                return (
+                  <img
+                    key={item.id}
+                    src="/images/person1.png"
+                    alt=""
+                    className="w-8 h-8 rounded-lg ring-2 ring-white object-cover transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
+                  />
+                );
+              })}
             </div>
             <div className="flex items-center gap-4">
               <span className="text-xs text-gray-500">Due: Sep 15</span>
@@ -166,10 +166,7 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
         </div>
       </div>
       <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
-        <div className="flex items-center justify-between">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-50 text-blue-700">
-            In Progress
-          </span>
+        <div className="flex items-center justify-center">
           {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
           <button
             className="text-sm text-brand-500 hover:text-brand-600 font-medium"

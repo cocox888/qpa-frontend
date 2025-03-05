@@ -169,12 +169,14 @@ export default function AppSidebar() {
             </div> */}
 
             {/* Other Menu Items */}
-            <SidebarItem
-              url={`/${role}/kanban`}
-              title="Kanban Board"
-              icon={KanbanIcon}
-              isActive={currentPath === `/${role}/kanban`}
-            />
+            {role !== 'client' && (
+              <SidebarItem
+                url={`/${role}/kanban`}
+                title="Kanban Board"
+                icon={KanbanIcon}
+                isActive={currentPath === `/${role}/kanban`}
+              />
+            )}
 
             <div className="text-xs font-medium text-gray-400 uppercase px-3 mb-2 mt-6">
               Workspace

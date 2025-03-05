@@ -9,12 +9,12 @@ import type { TypeProject, TypeTask, TypeUser } from '@/lib/types';
 import ProjectCreateModal from '@/components/modal/projectCreateModal';
 import ProjectDetailModal, {
   type ProjectData
-} from '@/components/modal/projectDetailsModal';
+} from '@/components/ClientComponent/clientProjectDetail';
 import { useEffect, useState } from 'react';
 import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { getAllProjects } from '@/app/admin/reducers/projects';
+import { getAllProjects } from '@/app/client/reducers/projects';
 
 export interface ClientProps {
   id?: number;
@@ -48,8 +48,6 @@ export default function Projects() {
   const [detailData, setDetailData] = useState<TypeProject | null>(null);
   const [createModal, setCreateModal] = useState(false);
   const [detailModal, setDetailModal] = useState(false);
-  const [clients, setClients] = useState<ClientProps[]>([]);
-  const [users, setUsers] = useState<UserProps[]>([]);
   const dispatch: AppDispatch = useDispatch();
   const projectCounts = useSelector(
     (state: RootState) => state.projects.projectCounts
@@ -58,55 +56,6 @@ export default function Projects() {
 
   useEffect(() => {
     const token = localStorage.getItem('refresh_token');
-    const fetchClients = async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/clients`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${token}`
-          }
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      const clientsArray = data.map((user: TypeUser) => {
-        const temp = {
-          full_name: user.full_name,
-          id: user.id
-        };
-        return temp;
-      });
-      // console.log(clientsArray);
-      setClients(clientsArray);
-    };
-
-    const fetchUsers = async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/team`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${token}`
-          }
-        }
-      );
-      const userData = await res.json();
-      const userArray = userData.map((user: TypeUser) => {
-        const temp = {
-          full_name: user.full_name,
-          position: user.position,
-          id: user.id
-        };
-        return temp;
-      });
-      // console.log(userArray);
-      setUsers(userArray);
-    };
-    fetchClients();
-    fetchUsers();
   }, [dispatch, index, createModal, detailModal]);
 
   useEffect(() => {
@@ -159,33 +108,8 @@ export default function Projects() {
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">Projects</h1>
             <p className="text-sm text-gray-500 mt-1">
-              Manage your hourly and fixed-price projects
+              Here's the projects that you requested!
             </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="px-4 py-2 text-sm font-medium text-brand-500 bg-brand-50 rounded-lg hover:bg-brand-100 transition-colors">
-              Import Projects
-            </div>
-            <button
-              onClick={openNewProjectModal}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              New Project
-            </button>
           </div>
         </div>
 
@@ -254,22 +178,6 @@ export default function Projects() {
           ))}
         </motion.div>
       </div>
-      {createModal ? (
-        <>
-          <ProjectCreateModal
-            closeEvent={closeNewProjectModal}
-            clients={clients}
-            users={users}
-          />
-          <button
-            id="modalOverlay"
-            className="active modal-overlay fixed w-screen h-screen inset-0 bg-black/50 backdrop-blur-sm z-50"
-            onClick={closeNewProjectModal}
-          />
-        </>
-      ) : (
-        <></>
-      )}
       {detailModal ? (
         <>
           <button
