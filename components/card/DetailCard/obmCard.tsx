@@ -74,11 +74,10 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
               <div
                 className="bg-indigo-500 h-1.5 rounded-full"
                 style={{
-                  width: `${
-                    (project?.totalTimeForMonth || 0) /
-                    0.6 /
-                    (project?.monthly_hours || 1)
-                  }`
+                  width: `${Math.floor(
+                    Number(project?.totalTimeForMonth) /
+                      Number(project?.monthly_hours)
+                  )}`
                 }}
               />
             </div>
@@ -87,36 +86,39 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
           <div className="bg-gray-50 rounded-lg p-3">
             <div className="grid grid-cols-3 gap-2">
               <div className="text-center p-2 bg-white rounded-lg">
-                <div className="text-xs text-gray-500">Strategy</div>
-                <div className="text-sm font-medium text-gray-900">12h</div>
+                <div className="text-xs text-gray-500">Today</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {project?.totalTimeForDay}
+                </div>
               </div>
               <div className="text-center p-2 bg-white rounded-lg">
-                <div className="text-xs text-gray-500">Planning</div>
-                <div className="text-sm font-medium text-gray-900">8h</div>
+                <div className="text-xs text-gray-500">This Week</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {project?.totalTimeForWeek}
+                </div>
               </div>
               <div className="text-center p-2 bg-white rounded-lg">
-                <div className="text-xs text-gray-500">Review</div>
-                <div className="text-sm font-medium text-gray-900">8h</div>
+                <div className="text-xs text-gray-500">This Month</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {project?.totalTimeForMonth}
+                </div>
               </div>
             </div>
           </div>
 
           <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">Assigned Team Members</span>
             <div className="flex -space-x-2">
-              {project?.assignedProjectUser?.map((item, index) => {
+              {project?.assignedProjectUser?.map((item) => {
                 return (
                   <img
-                    key={item.id}
-                    src="/images/person1.png"
+                    src="/images/person1.jpg"
                     alt=""
-                    className="w-8 h-8 rounded-lg ring-2 ring-white object-cover transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
+                    className="w-8 h-8 rounded-lg ring-2 ring-white object-cover transfrom hover:-translate-y-2 transition-transform duration-300 cursor-pointer"
                   />
                 );
               })}
             </div>
-            {/* <span className="text-xs text-gray-500">
-              Monthly Review: {project.}
-            </span> */}
           </div>
         </div>
       </div>

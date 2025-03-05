@@ -213,6 +213,7 @@ export default function Projects() {
           </div>
           {/* <!-- Task List --> */}
           <div className="p-4 space-y-2">
+            {(!filter ? tasks : myTasks).length == 0 && (<div className='text-gray-500 flex justify-center items-center py-10'>No Tasks</div>)}
             {
 
               (!filter ? tasks : myTasks)?.map((item, index: number) => {

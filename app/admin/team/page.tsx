@@ -168,11 +168,11 @@ export default function Team() {
 
         {/* <!-- Stats Cards --> */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-         
+
           <div className="stats-card gradient-border card-shine p-4 rounded-xl">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              
+
                 <svg
                   className="w-5 h-5 text-blue-500"
                   fill="none"
@@ -198,7 +198,7 @@ export default function Team() {
             </div>
           </div>
 
-        
+
           {/* <div className="stats-card gradient-border card-shine p-4 rounded-xl">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
@@ -295,11 +295,10 @@ export default function Team() {
                 {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                 <button
                   onClick={() => setFilter(0)}
-                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${
-                    filter === 0
-                      ? 'text-brand-500 bg-brand-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  } `}
+                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${filter === 0
+                    ? 'text-brand-500 bg-brand-50'
+                    : 'text-gray-600 hover:bg-gray-50'
+                    } `}
                 >
                   All Members
                   <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
@@ -309,11 +308,10 @@ export default function Team() {
                 {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                 <button
                   onClick={() => setFilter(1)}
-                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${
-                    filter === 1
-                      ? 'text-brand-500 bg-brand-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  } `}
+                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${filter === 1
+                    ? 'text-brand-500 bg-brand-50'
+                    : 'text-gray-600 hover:bg-gray-50'
+                    } `}
                 >
                   Active
                   <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
@@ -323,11 +321,10 @@ export default function Team() {
                 {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                 <button
                   onClick={() => setFilter(2)}
-                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${
-                    filter === 2
-                      ? 'text-brand-500 bg-brand-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  } `}
+                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${filter === 2
+                    ? 'text-brand-500 bg-brand-50'
+                    : 'text-gray-600 hover:bg-gray-50'
+                    } `}
                 >
                   Admin
                   <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
@@ -337,11 +334,10 @@ export default function Team() {
                 {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                 <button
                   onClick={() => setFilter(3)}
-                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${
-                    filter === 3
-                      ? 'text-brand-500 bg-brand-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  } `}
+                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${filter === 3
+                    ? 'text-brand-500 bg-brand-50'
+                    : 'text-gray-600 hover:bg-gray-50'
+                    } `}
                 >
                   Managers
                   <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
@@ -351,11 +347,10 @@ export default function Team() {
                 {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                 <button
                   onClick={() => setFilter(4)}
-                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${
-                    filter === 4
-                      ? 'text-brand-500 bg-brand-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  } `}
+                  className={`filter-btn active px-4 py-2 text-sm font-medium rounded-lg ${filter === 4
+                    ? 'text-brand-500 bg-brand-50'
+                    : 'text-gray-600 hover:bg-gray-50'
+                    } `}
                 >
                   Members
                   <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
@@ -417,6 +412,7 @@ export default function Team() {
             {/* <!-- Members grid will be rendered here --> */}
             <div className="team-members-grid p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* <!-- Team members will be dynamically inserted here --> */}
+              {filterData().length == 0 && (<div className='text-gray-500 flex justify-center items-center col-span-3 py-10'>No Team Members</div>)}
               {filterData().map((item: Item, index: number) => {
                 // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                 return <MemberCard2 key={index} member={item} />;

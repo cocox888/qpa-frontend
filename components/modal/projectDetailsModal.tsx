@@ -310,7 +310,7 @@ export default function ProjectDetailModal({
               Management Areas
             </span>
             <div className="mt-2 flex flex-wrap gap-2">
-              {(data.platforms?.split(",") || []).map((area, index) => (
+              {(data.services?.split(",") || []).map((area, index) => (
                 <span
                   key={index}
                   className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700"
@@ -544,6 +544,7 @@ export default function ProjectDetailModal({
               </h3>
               <div id="activityTimeline" className="space-y-4">
                 {/* <!-- Timeline will be inserted dynamically --> */}
+                {data.projectHasLogs?.length == 0 && (<div className='text-gray-500 flex justify-center items-center'>No Activity Logs</div>)}
                 {getTimelineTemplate()}
               </div>
             </div>
