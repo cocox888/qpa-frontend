@@ -1,9 +1,9 @@
 'use client';
 import ButtonSecondary from '@/components/button/buttonSecondary';
 import MemberCard from '@/components/card/memberCard';
-import ProjectCard from '@/components/card/projectCard';
+import { ProjectCard } from '@/components/card/projectCard';
 import RevenueCard from '@/components/card/revenueCard';
-import TaskCard from '@/components/card/taskCard';
+import { TaskCard } from '@/components/card/taskCard';
 import ActivityChart from '@/components/charts/LineChart';
 import ClientTable from '@/components/table/clientTable';
 import EmployeeTable from '@/components/table/employeeTable';
