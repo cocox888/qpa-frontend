@@ -156,3 +156,9 @@ export interface TypeDocument {
   file_size?: number;
   file_path: string;
 }
+
+export interface TypeChartData {
+  date?: string;
+  count?: number;
+}
+

@@ -33,14 +33,14 @@ export default function RevenueCard() {
           <span className="text-xs text-gray-400 mt-1">vs last month</span>
         </div>
       </div>
-      <div className="neon-line my-4"></div>
-      <div className="flex items-center justify-between text-sm">
+      {/* <div className="neon-line my-4"></div> */}
+      {/* <div className="flex items-center justify-between text-sm">
         <span className="text-gray-500">Monthly Goal</span>
         <span className="text-gray-900 font-medium">$30,000</span>
       </div>
       <div className="progress-bar mt-2">
         <div className="progress-value" style={{ width: '82%' }}></div>
-      </div>
+      </div> */}
     </div>
   );
 }

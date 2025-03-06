@@ -1,5 +1,7 @@
 import type { FC } from 'react';
 import ColorBadge from '../badge/colorBadge';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/app/admin/reducers/store';
 
 interface TaskCardProps {
   activeTasks?: number;
@@ -15,6 +17,8 @@ export const TaskCard: FC<TaskCardProps> = ({
   pending,
   completed
 }) => {
+  const totalTasks = useSelector((state:RootState)=>state.tasks.tasks);
+
   return (
     <div
       className="stats-card gradient-border card-shine p-6 rounded-2xl animate-in bg-white"
@@ -40,7 +44,7 @@ export const TaskCard: FC<TaskCardProps> = ({
           <div>
             <h3 className="font-medium text-gray-500">Active Tasks</h3>
             <div className="text-2xl font-bold text-gray-900">
-              {activeTasks}
+              {totalTasks.length}
             </div>
           </div>
         </div>

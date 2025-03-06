@@ -6,11 +6,9 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect, useContext } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import { Spinner, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { AuthenticationContext } from '@/providers/AuthenticationProvider';
-import { useAuthentication } from '@/hooks/useAthentication';
+
 type dataType = { email: string; password: string };
 
 export default function Login() {

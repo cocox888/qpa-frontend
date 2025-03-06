@@ -1,6 +1,42 @@
+import { RootState } from '@/app/admin/reducers/store';
+import { TypeUser } from '@/lib/types';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function MemberCard() {
+  const [users, setUsers] = useState<TypeUser[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = localStorage.getItem('refresh_token');
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllMembers`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${token}`
+          }
+        }
+      );
+      const userData = await res.json();
+      const userArray = userData.map((user: TypeUser) => {
+        const temp = {
+          full_name: user.full_name,
+          position: user.position,
+          id: user.id
+        };
+        return temp;
+      });
+      // console.log(userArray);
+      setUsers(userArray);
+    };
+    fetchUsers();
+  }, []);
+
   return (
     <div
       className="stats-card gradient-border card-shine p-6 rounded-2xl animate-in bg-white"
@@ -25,7 +61,7 @@ export default function MemberCard() {
           </div>
           <div>
             <h3 className="font-medium text-gray-500">Team Members</h3>
-            <div className="text-2xl font-bold text-gray-900">248</div>
+            <div className="text-2xl font-bold text-gray-900">{users.length}</div>
           </div>
         </div>
         <div className="flex flex-col items-end">
@@ -38,34 +74,51 @@ export default function MemberCard() {
       <div className="neon-line my-4"></div>
       <div className="flex items-center justify-between">
         <div className="flex -space-x-2">
-          <Image
-            src="/images/person1.jpg"
-            alt="Team member"
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-lg ring-2 ring-white object-cover hover:z-10 transition-all"
-          />
-          <Image
-            src="/images/person1.jpg"
-            alt="Team member"
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-lg ring-2 ring-white object-cover hover:z-10 transition-all"
-          />
-          <Image
-            src="/images/person1.jpg"
-            alt="Team member"
-            width={32}
-            height={32}
-            className="w-8 h-8 rounded-lg ring-2 ring-white object-cover hover:z-10 transition-all"
-          />
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-teal-500 flex items-center justify-center text-xs text-white font-medium ring-2 ring-white hover:z-10 transition-all">
-            +5
-          </div>
+          {
+            (users.length <= 3 && users.length > 0) && (
+              users.map((item, index) => {
+                return (
+                  <Image
+                    key={index}
+                    src="/images/person1.jpg"
+                    alt="Team member"
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 rounded-lg ring-2 ring-white object-cover hover:z-10 transition-all"
+                  />
+                )
+              })
+            )
+          }
+          {
+            users.length > 3 && (
+              <>{
+                users.slice(0, 3).map((item, index) => {
+                  return (
+                    <Image
+                      key={index}
+                      src="/images/person1.jpg"
+                      alt="Team member"
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 cursor-pointer rounded-lg ring-2 ring-white object-cover hover:z-10  hover:-translate-y-2 transition-transform duration-300"
+                    />
+                  )
+                })}
+                <div className='w-8 h-8 bg-brand-500  cursor-pointer  hover:-translate-y-2 transition-transform duration-300 rounded-lg text-white flex justify-center items-center'>+{users.length - 3}</div>
+              </>
+
+
+
+            )
+          }
         </div>
-        <button className="text-sm text-brand-500 hover:text-brand-600 font-medium">
-          View All
-        </button>
+        <Link href='/admin/team'>
+          <button className="text-sm text-brand-500 hover:text-brand-600 font-medium">
+            View All
+          </button>
+        </Link>
+
       </div>
     </div>
   );

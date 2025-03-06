@@ -139,7 +139,7 @@ const VACard: React.FC<VACardProps> = ({ onClick, project }) => {
               <div className="flex items-center justify-between text-sm mb-1">
                 <span className="text-gray-500">Monthly Hours</span>
                 <span className="text-gray-900 font-medium">
-                  {(project?.totalTimeForMonth || 0) / 60} /
+                  {((project?.totalTimeForMonth || 0) / 60).toFixed(1)} /
                   {project?.monthly_hours} hrs
                 </span>
               </div>

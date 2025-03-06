@@ -50,7 +50,7 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
             <div className="flex items-center justify-between text-sm mb-1">
               <span className="text-gray-500">Monthly Hours</span>
               <span className="text-gray-900 font-medium">
-                {(project?.totalTimeForMonth || 0) / 60} /{' '}
+                {((project?.totalTimeForMonth || 0) / 60).toFixed(1)} /
                 {project?.monthly_hours} hrs
               </span>
             </div>
@@ -58,10 +58,10 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
               <div
                 className="bg-indigo-500 h-1.5 rounded-full"
                 style={{
-                  width: `${Math.floor(
-                    Number(project?.totalTimeForMonth) /
-                      Number(project?.monthly_hours)
-                  )}`
+                  width: `${((Number(project?.totalTimeForMonth) / 60 || 0) /
+                    (project?.monthly_hours || 1)) *
+                    100
+                    }%`
                 }}
               />
             </div>
@@ -72,19 +72,19 @@ const OBMCard: React.FC<OBMCardProps> = ({ onClick, project }) => {
               <div className="text-center p-2 bg-white rounded-lg">
                 <div className="text-xs text-gray-500">Today</div>
                 <div className="text-sm font-medium text-gray-900">
-                  {project?.totalTimeForDay}
+                  {Number(project?.totalTimeForDay) / 60} hrs
                 </div>
               </div>
               <div className="text-center p-2 bg-white rounded-lg">
                 <div className="text-xs text-gray-500">This Week</div>
                 <div className="text-sm font-medium text-gray-900">
-                  {project?.totalTimeForWeek}
+                  {Number(project?.totalTimeForWeek) / 60} hrs
                 </div>
               </div>
               <div className="text-center p-2 bg-white rounded-lg">
                 <div className="text-xs text-gray-500">This Month</div>
                 <div className="text-sm font-medium text-gray-900">
-                  {project?.totalTimeForMonth}
+                  {Number(project?.totalTimeForMonth) / 60} hrs
                 </div>
               </div>
             </div>

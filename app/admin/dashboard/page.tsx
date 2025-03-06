@@ -9,38 +9,62 @@ import ClientTable from '@/components/table/clientTable';
 import EmployeeTable from '@/components/table/employeeTable';
 import ProjectTable from '@/components/table/projectTable';
 import TaskTable from '@/components/table/taskTable';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../reducers/store';
 import { getAllProjects } from '../reducers/projects';
 import { getAllTasks } from '../reducers/tasks';
+import api from '@/app/api/customApi';
+import { TypeChartData } from '@/lib/types';
+
 
 export default function Dashboard() {
-  const [index, setIndex] = useState(0);
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
+  const projects = useSelector((state: RootState) => state.projects.projects);
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const projectCounts = useSelector((state: RootState) => state.projects.projectCounts);
+  const taskCounts = useSelector((state: RootState) => state.tasks.taskCounts);
 
+  /**
+   * State & Refs
+   */
+  const [index, setIndex] = useState(0);
+  const [chartData, setChartData] = useState<TypeChartData[]>([]);
+
+  /**
+   * Hook Functions
+   */
   useEffect(() => {
     dispatch(getAllProjects());
     dispatch(getAllTasks());
+    getAndSetActivityData("week")
   }, []);
 
+  /**
+   * Handlers & Event Functions
+   */
   const handleIndex = (index: number) => {
     setIndex(index);
   };
 
-  const projects = useSelector((state: RootState) => state.projects.projects);
-  const tasks = useSelector((state: RootState) => state.tasks.tasks);
-  const projectCounts = useSelector(
-    (state: RootState) => state.projects.projectCounts
-  );
-  const taskCounts = useSelector((state: RootState) => state.tasks.taskCounts);
+  const getAndSetActivityData = (index: string) => {
+    api.post('/admin/allActivityLogs', JSON.stringify({ filter: index })).then((res) => {
+      console.log(res.data)
+      setChartData(res.data);
+    }).catch((e) => {
+      console.log(e)
+    })
+  }
+  const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+    getAndSetActivityData(e.target.value);
+  }
 
   return (
     <>
       <div className="py-20 pl-64 pr-6 w-screen min-h-screen overflow-x-hidden">
         <div className="space-y-8">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-            <RevenueCard />
+            {/* <RevenueCard /> */}
             <ProjectCard {...projectCounts} />
             <TaskCard {...taskCounts} />
             <MemberCard />
@@ -56,14 +80,14 @@ export default function Dashboard() {
                   Monthly performance metrics
                 </p>
               </div>
-              <select className="px-4 py-2 rounded-xl bg-gray-50 text-sm font-medium text-gray-600 border-none focus:ring-2 focus:ring-brand-500/20">
-                <option>Last 30 days</option>
-                <option>Last 90 days</option>
-                <option>This Year</option>
+              <select className="px-4 py-2 rounded-xl bg-gray-50 text-sm font-medium text-gray-600 border-none focus:ring-2 focus:ring-brand-500/20"
+                onChange={handleSelect}>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
               </select>
             </div>
             <div className="w-100 h-[300]" id="chart">
-              <ActivityChart />
+              <ActivityChart chartData={chartData} />
             </div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8 overflow-x-auto">
