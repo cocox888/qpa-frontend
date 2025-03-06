@@ -131,7 +131,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
     setDueDate(editData?.due_date || '');
     setPriority(editData?.priority || 'low');
 
-    handleProjectSelect(editData?.project_id || 0);
     setMembers(
       editData?.assignedTaskUser?.map((user) => Number(user.id)) || []
     );
