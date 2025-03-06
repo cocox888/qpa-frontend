@@ -16,7 +16,7 @@ interface MemberCard2Props {
 
 const MemberCard2: React.FC<MemberCard2Props> = ({ member }) => {
   const { name, role, status, projects, tasks } = member;
-
+  const status1 = status === '1' ? 'online' : 'offline';
   return (
     <div className="animate-in p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all bg-white ">
       <div className="flex items-start gap-4">
@@ -34,14 +34,16 @@ const MemberCard2: React.FC<MemberCard2Props> = ({ member }) => {
             <div className="flex items-center gap-1">
               <span
                 className={`${
-                  status == 'online'
+                  status1 == 'online'
                     ? 'bg-green-500 '
-                    : status == 'idle'
+                    : status1 == 'idle'
                     ? 'bg-yellow-500'
                     : 'bg-gray-400 '
                 } w-2 h-2 rounded-full`}
               ></span>
-              <span className="text-xs text-gray-500 capitalize">{status}</span>
+              <span className="text-xs text-gray-500 capitalize">
+                {status1}
+              </span>
             </div>
           </div>
           <div className="mt-4 flex items-center justify-between">

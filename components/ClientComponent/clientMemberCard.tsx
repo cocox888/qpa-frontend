@@ -16,7 +16,7 @@ interface MemberCard2Props {
 
 const MemberCard2: React.FC<MemberCard2Props> = ({ member, handleClick }) => {
   const { id, name, role, status, totalAssignedTime } = member;
-  const status1 = status === '1' ? 'online' : status;
+  const status1 = status === '1' ? 'online' : 'offline';
   return (
     <div className="animate-in p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all bg-white ">
       <div className="flex items-start gap-4">
