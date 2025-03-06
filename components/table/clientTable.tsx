@@ -1,7 +1,12 @@
+import { TypeClient } from '@/lib/types';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 
-export default function ClientTable() {
+interface ClientTableProps {
+  data: TypeClient[]
+}
+
+const ClientTable: React.FC<ClientTableProps> = ({ data }) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -47,18 +52,18 @@ export default function ClientTable() {
   }, [checkedItems]);
 
   return (
-    <div id="clients-panel" role="tabpanel">
+    <div id="clients-panel" role="tabpanel" className='h-[400px]'>
       <table className="w-full border-spacing-0">
         <thead>
           <tr>
-            <th className="w-12 p-4 bg-gray-50/50">
+            {/* <th className="w-12 p-4 bg-gray-50/50">
               <input
                 type="checkbox"
                 className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
                 checked={isSelectAllChecked}
                 onChange={handleSelectAllChange}
               />
-            </th>
+            </th> */}
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
                 Company
@@ -157,53 +162,63 @@ export default function ClientTable() {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
-          <tr className="table-row-hover">
-            <td className="p-4 whitespace-nowrap">
-              <input
-                type="checkbox"
-                className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                checked={checkedItems[1] || false}
-                onChange={(e) => handleCheckboxChange(e, 1)}
-              />
-            </td>
-            <td className="px-4 py-3 whitespace-nowrap">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <span className="text-sm font-medium text-blue-600">TC</span>
-                </div>
-                <span className="font-medium text-gray-900">
-                  TechCorp Industries
-                </span>
-              </div>
-            </td>
-            <td className="px-4 py-3">
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/images/person1.jpg"
-                  alt="user"
-                  width={32}
-                  height={32}
-                  className="w-6 h-6 rounded-full"
-                />
-                <span className="text-gray-600">Sarah Johnson</span>
-              </div>
-            </td>
-            <td className="px-4 py-3">
-              <span className="text-gray-900 font-medium">3</span>
-              <span className="text-gray-500"> active projects</span>
-            </td>
-            <td className="px-4 py-3 text-gray-900 font-medium">$45,000</td>
-            <td className="px-4 py-3">
-              <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
-                  Active
-                </span>
-              </div>
-            </td>
-          </tr>
+          {
+            data.map((item, index) => {
+              return (
+                <tr className="table-row-hover">
+                  {/* <td className="p-4 whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      checked={checkedItems[1] || false}
+                      onChange={(e) => handleCheckboxChange(e, 1)}
+                    />
+                  </td> */}
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                        <span className="text-sm font-medium text-blue-600">TC</span>
+                      </div>
+                      <span className="font-medium text-gray-900">
+                        {item.business_name || "Unknown"}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src="/images/person1.jpg"
+                        alt="user"
+                        width={32}
+                        height={32}
+                        className="w-6 h-6 rounded-full"
+                      />
+                      <span className="text-gray-600">{item.full_name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-gray-900 font-medium">{item.clientProject?.length || 0}</span>
+                    <span className="text-gray-500"> active projects</span>
+                  </td>
+                  <td className="px-4 py-3 text-gray-900 font-medium">$45,000</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                        Active
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+
+              )
+            })
+          }
+
         </tbody>
       </table>
     </div>
   );
 }
+
+export default ClientTable;

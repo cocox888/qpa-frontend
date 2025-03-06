@@ -55,7 +55,7 @@ export interface TypeClient {
   emergency_relationship?: string;
   digital_sign?: string;
   sign_date?: string;
-  requestedClientProject?: TypeProject[];
+  clientProject?: TypeProject[];
   clientTask?: TypeTask[];
   clientTimeTrack?: TypeTimeTrack[];
 }

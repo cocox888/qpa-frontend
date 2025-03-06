@@ -1,7 +1,12 @@
+import { TypeTask } from '@/lib/types';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 
-export default function TaskTable() {
+interface TaskTableProps {
+  data: TypeTask[]
+}
+
+const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -47,18 +52,18 @@ export default function TaskTable() {
   }, [checkedItems]);
 
   return (
-    <div id="tasks-panel" role="tabpanel">
+    <div id="tasks-panel" role="tabpanel" className='h-[400px]'>
       <table className="w-full border-spacing-0">
         <thead>
           <tr>
-            <th className="w-12 p-4 bg-gray-50/50">
+            {/* <th className="w-12 p-4 bg-gray-50/50">
               <input
                 type="checkbox"
                 className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
                 checked={isSelectAllChecked}
                 onChange={handleSelectAllChange}
               />
-            </th>
+            </th> */}
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
                 Task
@@ -170,50 +175,60 @@ export default function TaskTable() {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
-          <tr className="table-row-hover">
-            <td className="p-4 whitespace-nowrap">
-              <input
-                type="checkbox"
-                className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                checked={checkedItems[1] || false}
-                onChange={(e) => handleCheckboxChange(e, 1)}
-              />
-            </td>
-            <td className="px-4 py-3 whitespace-nowrap">
-              <span className="font-medium text-gray-900">
-                Update User Interface
-              </span>
-            </td>
-            <td className="px-4 py-3 whitespace-nowrap">
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/images/person1.jpg"
-                  alt="user"
-                  width={32}
-                  height={32}
-                  className="w-6 h-6 rounded-full"
-                />
-                <span className="text-gray-600">Anatoly Belik</span>
-              </div>
-            </td>
-            <td className="px-4 py-3 whitespace-nowrap">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
-                High
-              </span>
-            </td>
-            <td className="px-4 py-3 text-gray-600">Nov 30, 2024</td>
-            <td className="px-4 py-3 text-gray-600">Website Redesign</td>
-            <td className="px-4 py-3">
-              <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700">
-                  In Review
-                </span>
-              </div>
-            </td>
-          </tr>
+          {
+            data.map((item, index) => {
+              return (
+                <tr className="table-row-hover">
+                  {/* <td className="p-4 whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      checked={checkedItems[1] || false}
+                      onChange={(e) => handleCheckboxChange(e, 1)}
+                    />
+                  </td> */}
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className="font-medium text-gray-900">
+                      {item.title}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src="/images/person1.jpg"
+                        alt="user"
+                        width={32}
+                        height={32}
+                        className="w-6 h-6 rounded-full"
+                      />
+                      <span className="text-gray-600">Anatoly Belik</span>
+
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
+                      {item.priority}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">{item.due_date}</td>
+                  <td className="px-4 py-3 text-gray-600">{item.taskProject?.title}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-green-700">
+                        {item.state}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })
+          }
+
         </tbody>
       </table>
     </div>
   );
 }
+
+export default TaskTable;

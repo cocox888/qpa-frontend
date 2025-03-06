@@ -3,6 +3,8 @@ import taskReducer from "./tasks"; // Adjust path as necessary
 import projectReducer from "./projects";
 import timerRecordsReducer from "./timetracks";
 import kanbanTaskReducer from "./kanbanTasks";
+import clientReducer from "./clients";
+import userReducer from "./users";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ const store = configureStore({
     projects: projectReducer,
     timer: timerRecordsReducer,
     kanbanTasks: kanbanTaskReducer,
+    clients:clientReducer,
+    users:userReducer,
   },
 });
 

@@ -1,25 +1,25 @@
-import { KanbanTask } from "@/lib/types";
+import { KanbanTask, TypeUser } from "@/lib/types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getUniqPayload } from "recharts/types/util/payload/getUniqPayload";
 
-interface TaskState {
-  tasks: KanbanTask[];
+interface UserState {
+  users: TypeUser[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
-const initialState: TaskState = {
-  tasks: [],
+const initialState: UserState = {
+  users: [],
   status: "idle",
   error: null,
 };
 
-export const fetchKanbanTasks = createAsyncThunk<KanbanTask[]>(
-  "kanban/fetchAllTasks",
+export const getAllMembers = createAsyncThunk<TypeUser[]>(
+  "member/getAllMembers",
   async () => {
     const role = localStorage.getItem("role");
     const token = localStorage.getItem("refresh_token");
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/${role}/getAllKanbanTasks`,
+      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/${role}/getAllMembers`,
       {
         method: "GET",
         headers: {
@@ -33,46 +33,47 @@ export const fetchKanbanTasks = createAsyncThunk<KanbanTask[]>(
   }
 );
 
-const taskSlice = createSlice({
-  name: "kanbanTasks",
+const memberSlice = createSlice({
+  name: "members",
   initialState,
   reducers: {
-    addKanbanTask: (state, action: PayloadAction<KanbanTask>) => {
-      state.tasks.push(action.payload);
+    addKanbanTask: (state, action: PayloadAction<TypeUser>) => {
+      state.users.push(action.payload);
     },
-    updateKanbanTaskById: (state, action: PayloadAction<KanbanTask>) => {
-      const index = state.tasks.findIndex(
-        (task) => task.id === action.payload.id
+    updateKanbanTaskById: (state, action: PayloadAction<TypeUser>) => {
+      const index = state.users.findIndex(
+        (member) => member.id === action.payload.id
       );
       if (index !== -1) {
-        state.tasks[index] = action.payload;
+        state.users[index] = action.payload;
       }
     },
     deleteKanbanTask: (state, action: PayloadAction<number>) => {
-      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+      state.users = state.users.filter(
+        (task) => task.id !== action.payload
+      );
     },
     updateKanbanTaskStatusById: (
       state,
       action: PayloadAction<{ id: number; status: string }>
     ) => {
-      const index = state.tasks.findIndex(
-        (task) => task.id === action.payload.id
+      const index = state.users.findIndex(
+        (member) => member.id === action.payload.id
       );
-      state.tasks[index].status = action.payload.status;
+      state.users[index].status = action.payload.status;
     },
-    
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchKanbanTasks.pending, (state) => {
+      .addCase(getAllMembers.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchKanbanTasks.fulfilled, (state, action) => {
+      .addCase(getAllMembers.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.tasks = action.payload;
+        state.users = action.payload;
         // console.log(action.payload);
       })
-      .addCase(fetchKanbanTasks.rejected, (state, action) => {
+      .addCase(getAllMembers.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message || "Failed to load tasks";
       });
@@ -84,5 +85,5 @@ export const {
   deleteKanbanTask,
   updateKanbanTaskStatusById,
   updateKanbanTaskById,
-} = taskSlice.actions;
-export default taskSlice.reducer;
+} = memberSlice.actions;
+export default memberSlice.reducer;
