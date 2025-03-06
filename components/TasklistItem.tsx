@@ -22,7 +22,7 @@ interface TasklistItemProps {
   startTime: string;
   isMyTask?: boolean;
   onDetail: (param1: number, param2: object) => void;
-  onDelete: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 const TasklistItem: React.FC<TasklistItemProps> = ({

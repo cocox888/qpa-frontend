@@ -1,5 +1,6 @@
 import { RootState } from '@/app/admin/reducers/store';
 import { TypeUser } from '@/lib/types';
+import { isNonEmptyArray } from '@/lib/utils/functions';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -11,9 +12,10 @@ export default function MemberCard() {
   useEffect(() => {
     const fetchUsers = async () => {
       const token = localStorage.getItem('refresh_token');
+      const role = localStorage.getItem('role');
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllMembers`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/${role}/getAllMembers`,
         {
           method: 'GET',
           headers: {
@@ -23,14 +25,16 @@ export default function MemberCard() {
         }
       );
       const userData = await res.json();
-      const userArray = userData.map((user: TypeUser) => {
-        const temp = {
-          full_name: user.full_name,
-          position: user.position,
-          id: user.id
-        };
-        return temp;
-      });
+      const userArray = isNonEmptyArray(userData)
+        ? userData.map((user: TypeUser) => {
+            const temp = {
+              full_name: user.full_name,
+              position: user.position,
+              id: user.id
+            };
+            return temp;
+          })
+        : [];
       // console.log(userArray);
       setUsers(userArray);
     };
@@ -61,7 +65,9 @@ export default function MemberCard() {
           </div>
           <div>
             <h3 className="font-medium text-gray-500">Team Members</h3>
-            <div className="text-2xl font-bold text-gray-900">{users.length}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {users.length}
+            </div>
           </div>
         </div>
         <div className="flex flex-col items-end">
@@ -74,9 +80,23 @@ export default function MemberCard() {
       <div className="neon-line my-4"></div>
       <div className="flex items-center justify-between">
         <div className="flex -space-x-2">
-          {
-            (users.length <= 3 && users.length > 0) && (
-              users.map((item, index) => {
+          {users.length <= 3 &&
+            users.length > 0 &&
+            users.map((item, index) => {
+              return (
+                <Image
+                  key={index}
+                  src="/images/person1.jpg"
+                  alt="Team member"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 rounded-lg ring-2 ring-white object-cover hover:z-10 transition-all"
+                />
+              );
+            })}
+          {users.length > 3 && (
+            <>
+              {users.slice(0, 3).map((item, index) => {
                 return (
                   <Image
                     key={index}
@@ -84,41 +104,21 @@ export default function MemberCard() {
                     alt="Team member"
                     width={32}
                     height={32}
-                    className="w-8 h-8 rounded-lg ring-2 ring-white object-cover hover:z-10 transition-all"
+                    className="w-8 h-8 cursor-pointer rounded-lg ring-2 ring-white object-cover hover:z-10  hover:-translate-y-2 transition-transform duration-300"
                   />
-                )
-              })
-            )
-          }
-          {
-            users.length > 3 && (
-              <>{
-                users.slice(0, 3).map((item, index) => {
-                  return (
-                    <Image
-                      key={index}
-                      src="/images/person1.jpg"
-                      alt="Team member"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 cursor-pointer rounded-lg ring-2 ring-white object-cover hover:z-10  hover:-translate-y-2 transition-transform duration-300"
-                    />
-                  )
-                })}
-                <div className='w-8 h-8 bg-brand-500  cursor-pointer  hover:-translate-y-2 transition-transform duration-300 rounded-lg text-white flex justify-center items-center'>+{users.length - 3}</div>
-              </>
-
-
-
-            )
-          }
+                );
+              })}
+              <div className="w-8 h-8 bg-brand-500  cursor-pointer  hover:-translate-y-2 transition-transform duration-300 rounded-lg text-white flex justify-center items-center">
+                +{users.length - 3}
+              </div>
+            </>
+          )}
         </div>
-        <Link href='/admin/team'>
+        <Link href="/admin/team">
           <button className="text-sm text-brand-500 hover:text-brand-600 font-medium">
             View All
           </button>
         </Link>
-
       </div>
     </div>
   );

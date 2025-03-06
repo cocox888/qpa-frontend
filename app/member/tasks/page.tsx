@@ -5,7 +5,7 @@ import { getAllTasks } from '../reducers/tasks';
 import EditTaskModal, {
   type TaskItem
 } from '@/components/modal/memberModal/editTaskModal';
-import TasklistItem from '@/components/TasklistItem';
+import TasklistItem from '@/components/ClientComponent/TasklistItem';
 import { useTotalTime } from '@/hooks/useTotalTime';
 import { isNonEmptyArray } from '@/lib/utils/functions';
 import { useEffect, useState } from 'react';
@@ -53,22 +53,22 @@ export default function Projects() {
     setEditModal(true);
   };
 
-  const handleDelete = async (id: number) => {
-    const token = localStorage.getItem('refresh_token');
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/member/deleteTask?taskId=${id}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${token}`
-        }
-      }
-    );
-    const res = await response.json();
-    Toast('success', 'Task deleted successfully');
-    setCount(true);
-  };
+  // const handleDelete = async (id: number) => {
+  //   const token = localStorage.getItem('refresh_token');
+  //   const response = await fetch(
+  //     `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/member/deleteTask?taskId=${id}`,
+  //     {
+  //       method: 'DELETE',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         authorization: `Bearer ${token}`
+  //       }
+  //     }
+  //   );
+  //   const res = await response.json();
+  //   Toast('success', 'Task deleted successfully');
+  //   setCount(true);
+  // };
 
   return (
     <div className="pt-20 pl-64 pr-6 pb-20 h-screen w-screen overflow-x-hidden">
@@ -79,28 +79,9 @@ export default function Projects() {
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">Task List</h1>
             <p className="text-sm text-gray-500 mt-1">
-              Manage and track your tasks across all projects
+              See All Your Tasks Here!
             </p>
           </div>
-          <button
-            onClick={() => handleTask(0, {})}
-            className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            New Task
-          </button>
         </div>
 
         {/* <!-- Stats Cards --> */}
@@ -150,21 +131,6 @@ export default function Projects() {
                     className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600"
                   >
                     {taskCounts.allTasksNum}
-                  </span>
-                </div>
-                <div
-                  data-filter="my"
-                  className={`cursor-pointer px-4 py-2 text-sm font-medium rounded-lg ${
-                    filter ? 'text-brand-500  bg-brand-50' : ' text-gray-600'
-                  }`}
-                  onClick={() => setFilter(true)}
-                >
-                  My Tasks
-                  <span
-                    data-my-count
-                    className="ml-2 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600"
-                  >
-                    {taskCounts.myTaskNum}
                   </span>
                 </div>
               </div>
@@ -237,11 +203,9 @@ export default function Projects() {
                   hours={item.estimated_time || 0}
                   state={item.state || ''}
                   time={item.due_date || ''}
-                  members={item.assignedTaskUser?.length || 0}
+                  members={item.assignedTaskUser || []}
                   company={item.taskClient?.business_name || 'Undedined'}
                   startTime={'Started:Oct 15,2024'}
-                  onDetail={handleTask}
-                  onDelete={handleDelete}
                 />
               );
             })}
