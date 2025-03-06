@@ -45,7 +45,7 @@ export default function Team() {
     const token = localStorage.getItem('refresh_token');
     const fetchUsers = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllMembers`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/member/getAllMembers`,
         {
           method: 'GET',
           headers: {
@@ -95,7 +95,7 @@ export default function Team() {
 
     const fetchActiveProjects = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/activeProjects`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/member/activeProjects`,
         {
           method: 'GET',
           headers: {
@@ -109,7 +109,7 @@ export default function Team() {
     };
     const fetchTasksInProgress = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/tasksInProgress`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/member/tasksInProgress`,
         {
           method: 'GET',
           headers: {
