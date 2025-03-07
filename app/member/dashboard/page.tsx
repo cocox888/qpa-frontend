@@ -11,13 +11,13 @@ import ProjectTable from '@/components/table/projectTable';
 import TaskTable from '@/components/table/taskTable';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../reducers/store';
+import type { AppDispatch, RootState } from '../reducers/store';
 import { getAllProjects } from '../reducers/projects';
 import { getAllTasks } from '../reducers/tasks';
 
 export default function Dashboard() {
   const [index, setIndex] = useState(0);
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch= useDispatch();
 
   useEffect(() => {
     dispatch(getAllProjects());
@@ -45,7 +45,7 @@ export default function Dashboard() {
             <TaskCard {...taskCounts} />
             <MemberCard />
           </div>
-
+{/* 
           <div className="flex flex-col stats-card gradient-border card-shine p-6 rounded-2xl bg-white">
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -65,7 +65,7 @@ export default function Dashboard() {
             <div className="w-100 h-[300]" id="chart">
               <ActivityChart />
             </div>
-          </div>
+          </div> */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8 overflow-x-auto">
             <div className="border-b border-gray-100">
               <div className="flex items-center justify-between p-4">
