@@ -1,86 +1,92 @@
 'use client';
 
-import api from "@/app/api/customApi";
-import apiForFile from "@/app/api/customApiForFile";
-import Toast from "@/components/toast";
-import { TypeDocument } from "@/lib/types";
-import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { ToastContainer } from "react-toastify";
-import { fileSizeFormat } from "@/lib/utils/fileUtils";
-
+import api from '@/app/api/customApi';
+import apiForFile from '@/app/api/customApiForFile';
+import Toast from '@/components/toast';
+import { TypeDocument } from '@/lib/types';
+import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { ToastContainer } from 'react-toastify';
+import { fileSizeFormat } from '@/lib/utils/fileUtils';
 
 export default function Notes() {
-
   const [totalDocuments, setTotalDocuments] = useState<TypeDocument[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    api.get('/getAllUploads').then((res) => {
-      console.log(res.data);
-      setTotalDocuments(res.data)
-    }).catch((e) => {
-      Toast('error', e);
-    })
+    api
+      .get('/getAllUploads')
+      .then((res) => {
+        console.log(res.data);
+        setTotalDocuments(res.data);
+      })
+      .catch((e) => {
+        Toast('error', e);
+      });
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log(file)
+    console.log(file);
     if (file) {
       setLoading(true);
       const formData = new FormData();
-      const userId = localStorage.getItem("userId");
+      const userId = localStorage.getItem('userId');
 
       const payload = {
         user_id: Number(userId),
         title: file.name,
-        upload_time: (new Date()).toISOString().split('T')[0].replace(/^(\d{4}-\d{2}-)(\d{1,2})$/, '$1$2'),
+        upload_time: new Date()
+          .toISOString()
+          .split('T')[0]
+          .replace(/^(\d{4}-\d{2}-)(\d{1,2})$/, '$1$2'),
         badge: 'important',
         file_format: file.name.split('.')[1].toUpperCase(),
-        file_size: Math.floor((file.size / 1024)),
-        file_path: ""
-      }
+        file_size: Math.floor(file.size / 1024),
+        file_path: ''
+      };
 
       formData.append('file', file);
       formData.append('extraData', JSON.stringify(payload));
 
-      apiForFile.post('/upload', formData).then((res) => {
-        console.log(res.data)
-        setTotalDocuments(res.data);
-        Toast('success', 'File Upload Completed')
-      }).catch((e) => {
-        Toast('error', 'File Upload Failed')
-      }).finally(() => {
-        setLoading(false);
-      })
-
+      apiForFile
+        .post('/upload', formData)
+        .then((res) => {
+          console.log(res.data);
+          setTotalDocuments(res.data);
+          Toast('success', 'File Upload Completed');
+        })
+        .catch((e) => {
+          Toast('error', 'File Upload Failed');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
       console.error('No file selected');
     }
-  }
+  };
 
   const handleDownload = async (filename: string) => {
-    console.log(filename)
-    const role = localStorage.getItem("role");
-    api.get(`/${role}/download/${filename}`, { responseType: 'blob' }).then( (response) => {
-      console.log(response.data)
-      const blob:Blob = response.data
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click(); // Programmatically click the link to trigger the download
-      document.body.removeChild(link); // Clean up by removing the link element
-    }).catch(() => {
-
-    });
-
+    console.log(filename);
+    const role = localStorage.getItem('role');
+    api
+      .get(`/${role}/download/${filename}`, { responseType: 'blob' })
+      .then((response) => {
+        console.log(response.data);
+        const blob: Blob = response.data;
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click(); // Programmatically click the link to trigger the download
+        document.body.removeChild(link); // Clean up by removing the link element
+      })
+      .catch(() => {});
   };
 
   return (
-
     <div className="pt-20 pl-64 pr-6 min-h-screen w-screen overflow-x-hidden">
       <ToastContainer />
       {loading ? (
@@ -135,7 +141,10 @@ export default function Notes() {
               Upload Document
             </div> */}
 
-              <label htmlFor="file-upload" className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors">
+              <label
+                htmlFor="file-upload"
+                className="flex items-center cursor-pointer gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
+              >
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -151,7 +160,12 @@ export default function Notes() {
                 </svg>
                 Click to Upload File
               </label>
-              <input id="file-upload" type="file" onChange={handleFileChange} accept=".doc,.pdf,.docx" />
+              <input
+                id="file-upload"
+                type="file"
+                onChange={handleFileChange}
+                accept=".doc,.pdf,.docx"
+              />
             </div>
           </div>
 
@@ -178,7 +192,9 @@ export default function Notes() {
                   <p className="text-sm font-medium text-gray-500">
                     Total Documents
                   </p>
-                  <h3 className="text-xl font-bold text-gray-900">{totalDocuments.length}</h3>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {totalDocuments.length}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -387,60 +403,71 @@ export default function Notes() {
               </div> */}
 
               {/* <!-- More Note Cards --> */}
-              {
-                totalDocuments.length > 0 ? (
-                  totalDocuments.map((item, index) => (
-                    <div key={index} className="p-4 border cursor-pointer border-gray-100 rounded-xl hover:shadow-lg transition-all"
-                      onClick={() => handleDownload(item.file_path || "")}>
-                      <div className="flex gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                          <svg
-                            className="w-5 h-5 text-purple-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="1.5"
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                          </svg>
-                        </div>
-                        <div className="flex-1 truncate">
-                          <div className="flex justify-between items-start ">
-                            <div className="w-3/4">
-                              <h3 className="font-medium text-gray-900 ">
-                                {item.title}
-                                <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-max px-2 py-1 text-xs text-white bg-gray-800 rounded">
-                                  Your tooltip text here
-                                </span>
-                              </h3>
-                              <p className="text-sm text-gray-500">{item.upload_time}</p>
-                            </div>
-                            {item.badge == "important" && (<span className="px-2 py-1 text-xs font-medium bg-yellow-50 text-yellow-600 rounded-lg">
+              {totalDocuments.length > 0 ? (
+                totalDocuments.map((item, index) => (
+                  <div
+                    key={index}
+                    className="p-4 border cursor-pointer border-gray-100 rounded-xl hover:shadow-lg transition-all"
+                    onClick={() => handleDownload(item.file_path || '')}
+                  >
+                    <div className="flex gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <svg
+                          className="w-5 h-5 text-purple-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="1.5"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex-1 truncate">
+                        <div className="flex justify-between items-start ">
+                          <div className="w-3/4">
+                            <h3 className="font-medium text-gray-900 ">
+                              {item.title}
+                              <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-max px-2 py-1 text-xs text-white bg-gray-800 rounded">
+                                Your tooltip text here
+                              </span>
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              {item.upload_time}
+                            </p>
+                          </div>
+                          {item.badge == 'important' && (
+                            <span className="px-2 py-1 text-xs font-medium bg-yellow-50 text-yellow-600 rounded-lg">
                               Important
-                            </span>)}
-                            {item.badge == 'confidential' && (<span className="px-2 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-lg">
+                            </span>
+                          )}
+                          {item.badge == 'confidential' && (
+                            <span className="px-2 py-1 text-xs font-medium bg-red-50 text-red-600 rounded-lg">
                               Confidential
-                            </span>)}
-                            {item.badge == "none" && (<></>)}
-
-                          </div>
-                          <div className="mt-3 flex items-center gap-4">
-                            <span className="text-xs text-gray-500">{fileSizeFormat(Number(item.file_size))}</span>
-                            <span className="text-xs text-gray-500">{item.file_format} Document</span>
-                          </div>
+                            </span>
+                          )}
+                          {item.badge == 'none' && <></>}
+                        </div>
+                        <div className="mt-3 flex items-center gap-4">
+                          <span className="text-xs text-gray-500">
+                            {fileSizeFormat(Number(item.file_size))}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {item.file_format} Document
+                          </span>
                         </div>
                       </div>
                     </div>
-                  ))
-
-                ) : (
-                  <div className="flex col-span-3 justify-center items-center w-full py-10 text-gray-500">No Uploaded Files</div>
-                )
-              }
+                  </div>
+                ))
+              ) : (
+                <div className="flex col-span-3 justify-center items-center w-full py-10 text-gray-500">
+                  No Uploaded Files
+                </div>
+              )}
               {/* <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
                 <div className="flex gap-4">
                   <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center flex-shrink-0">
@@ -500,7 +527,6 @@ export default function Notes() {
               </div> */}
 
               {/* <!-- Document Card --> */}
-
 
               {/* <!-- Shared Document Card --> */}
               {/* <div className="p-4 border border-gray-100 rounded-xl hover:shadow-lg transition-all">
@@ -615,9 +641,7 @@ export default function Notes() {
             </div>
           </div>
         </div>
-      )
-      }
-
-    </div >
+      )}
+    </div>
   );
 }
