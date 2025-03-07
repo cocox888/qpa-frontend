@@ -20,22 +20,7 @@ import { getAllClients } from '../reducers/clients';
 import { getAllMembers } from '../reducers/users';
 
 export default function Dashboard() {
-<<<<<<< HEAD
-  const [index, setIndex] = useState(0);
-  const dispatch:AppDispatch= useDispatch();
-
-  useEffect(() => {
-    dispatch(getAllProjects());
-    dispatch(getAllTasks());
-  }, []);
-
-  const handleIndex = (index: number) => {
-    setIndex(index);
-  };
-
-=======
   const dispatch: AppDispatch = useDispatch();
->>>>>>> d2aa00a0ff6fde9dee70aba999e5cfe87aef357a
   const projects = useSelector((state: RootState) => state.projects.projects);
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const projectCounts = useSelector(
@@ -76,30 +61,6 @@ export default function Dashboard() {
             <TaskCard {...taskCounts} />
             <MemberCard />
           </div>
-<<<<<<< HEAD
-{/* 
-          <div className="flex flex-col stats-card gradient-border card-shine p-6 rounded-2xl bg-white">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Activity Overview
-                </h3>
-                <p className="text-sm text-gray-500">
-                  Monthly performance metrics
-                </p>
-              </div>
-              <select className="px-4 py-2 rounded-xl bg-gray-50 text-sm font-medium text-gray-600 border-none focus:ring-2 focus:ring-brand-500/20">
-                <option>Last 30 days</option>
-                <option>Last 90 days</option>
-                <option>This Year</option>
-              </select>
-            </div>
-            <div className="w-100 h-[300]" id="chart">
-              <ActivityChart />
-            </div>
-          </div> */}
-=======
->>>>>>> d2aa00a0ff6fde9dee70aba999e5cfe87aef357a
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8 overflow-x-auto">
             <div className="border-b border-gray-100  sticky top-0 bg-white">
               <div className="flex items-center justify-between p-4">
