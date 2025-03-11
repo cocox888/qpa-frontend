@@ -32,10 +32,10 @@ export default function AppSidebar() {
   // Finance submenu items
   const financeMenuItems = [
     { url: `/${role}/finance`, title: 'Overview' },
-    { url: `/${role}/finance/packages`, title: 'Package Management' },
-    { url: `/${role}/finance/client-billing`, title: 'Client Billing' },
-    { url: `/${role}/finance/payroll`, title: 'Payroll' },
-    { url: `/${role}/finance/expenses`, title: 'Expenses' },
+    // { url: `/${role}/finance/packages`, title: 'Package Management' },
+    // { url: `/${role}/finance/client-billing`, title: 'Client Billing' },
+    // { url: `/${role}/finance/payroll`, title: 'Payroll' },
+    // { url: `/${role}/finance/expenses`, title: 'Expenses' },
     { url: `/${role}/finance/invoices`, title: 'Invoices' },
     { url: `/${role}/finance/reports`, title: 'Financial Reports' }
   ];
@@ -124,6 +124,17 @@ export default function AppSidebar() {
               {isFinanceOpen && (
                 <div className="ml-7 mt-1 border-l border-gray-100/80 pl-3 max-h-[200px] overflow-y-auto custom-scrollbar">
                   <div className="space-y-1">
+                    {role === 'client' && (
+                      <SidebarItem
+                        key={'/${role}/acefinn/client-billing'}
+                        url={'/${role}/acefinn/client-billing'}
+                        title={'Client Billing'}
+                        isSubmenu={true}
+                        isActive={
+                          currentPath === '/${role}/acefinn/client-billing'
+                        }
+                      />
+                    )}
                     {financeMenuItems
                       .filter((item) => item.title !== 'Overview')
                       .map((item) => (

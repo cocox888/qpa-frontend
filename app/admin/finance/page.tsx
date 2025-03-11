@@ -99,10 +99,10 @@ export default function FinanceOverviewPage() {
 
   // Quick actions
   const quickActions = [
-    { label: 'New Invoice', type: 'primary' },
-    { label: 'Record Payment', type: 'secondary' },
-    { label: 'Add Package', type: 'secondary' },
-    { label: 'Financial Report', type: 'secondary' }
+    { label: 'New Invoice', type: 'primary', url: '/invoices' },
+    // { label: 'Record Payment', type: 'secondary' },
+    // { label: 'Add Package', type: 'secondary' },
+    { label: 'Financial Report', type: 'secondary', url: '/reports' }
   ];
 
   // Recent activities combining different types of financial events
