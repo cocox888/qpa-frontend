@@ -169,6 +169,19 @@ export interface TypeReport {
   end_date?: string;
 }
 
+export interface TypeInvoice {
+  account_country?: string;
+  account_name?: string;
+  amount_du?: number;
+  amount_paid?: number;
+  amount_remaining?: number;
+  amount_shipping: number;
+  customer_email?: string;
+  customer_name?: number;
+  currency?: string;
+  paid?: boolean;
+}
+
 export interface TypeChartData {
   date?: string;
   count?: number;
