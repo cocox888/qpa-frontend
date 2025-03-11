@@ -16,12 +16,17 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
   phaseMap.set('Content', 2);
   phaseMap.set('Publishing', 3);
   phaseMap.set('Review', 4);
+  phaseMap.set('Completed', 5);
 
   phaseMap.set('Design', 1);
   phaseMap.set('Development', 2);
   phaseMap.set('Testing', 3);
   phaseMap.set('Launch', 4);
-  const [phase, setPhase] = React.useState(phaseMap.get(project?.project_phase || 'Strategy') || 0);
+  phaseMap.set('Completed', 5);
+
+  const [phase, setPhase] = React.useState(
+    phaseMap.get(project?.project_phase || 'Strategy') || 0
+  );
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
@@ -46,14 +51,14 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-medium text-gray-900">
-                  {project?.title}
-                </h3>
+                <h3 className="font-medium text-gray-900">{project?.title}</h3>
                 <span className="px-2 py-0.5 rounded text-xs font-medium bg-rose-50 text-rose-600">
                   WDS
                 </span>
               </div>
-              <p className="text-sm text-gray-500">{project?.projectClient?.full_name}</p>
+              <p className="text-sm text-gray-500">
+                {project?.projectClient?.full_name}
+              </p>
             </div>
           </div>
           <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
@@ -81,12 +86,14 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
           <div>
             <div className="flex items-center justify-between text-sm mb-2">
               <span className="text-gray-500">Project Progress</span>
-              <span className="text-gray-900 font-medium">{phase / 4 * 100}%</span>
+              <span className="text-gray-900 font-medium">
+                {((phase - 1) / 4) * 100}%
+              </span>
             </div>
             <div className="w-full bg-gray-100 rounded-full h-1.5">
               <div
                 className="bg-rose-500 h-1.5 rounded-full"
-                style={{ width: `${phase / 4 * 100}%` }}
+                style={{ width: `${((phase - 1) / 4) * 100}%` }}
               />
             </div>
           </div>
@@ -96,23 +103,37 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                  {phase == 1 ? PhaseSVGForWDS('progress') : PhaseSVGForWDS('completed')}
+                  {phase == 1
+                    ? PhaseSVGForWDS('progress')
+                    : PhaseSVGForWDS('completed')}
                   <span className="text-sm ">Design</span>
                 </div>
                 <div className="flex items-center gap-2">
                   {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                  {phase < 2 ? PhaseSVGForWDS('upcoming') : phase == 2 ? PhaseSVGForWDS('progress') : PhaseSVGForWDS('completed')}
-                  <span className="text-sm ">Development</span>
+                  {phase < 2
+                    ? PhaseSVGForWDS('upcoming')
+                    : phase == 2
+                    ? PhaseSVGForWDS('progress')
+                    : PhaseSVGForWDS('completed')}
+                  <span className="text-sm ">Develop</span>
                 </div>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  {phase < 3 ? PhaseSVGForWDS('upcoming') : phase == 3 ? PhaseSVGForWDS('progress') : PhaseSVGForWDS('completed')}
+                  {phase < 3
+                    ? PhaseSVGForWDS('upcoming')
+                    : phase == 3
+                    ? PhaseSVGForWDS('progress')
+                    : PhaseSVGForWDS('completed')}
 
                   <span className="text-sm">Testing</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {phase < 4 ? PhaseSVGForWDS('upcoming') : phase == 4 ? PhaseSVGForWDS('progress') : PhaseSVGForWDS('completed')}
+                  {phase < 4
+                    ? PhaseSVGForWDS('upcoming')
+                    : phase == 4
+                    ? PhaseSVGForWDS('progress')
+                    : PhaseSVGForWDS('completed')}
 
                   <span className="text-sm">Launch</span>
                 </div>
@@ -134,13 +155,18 @@ const WDSCard: React.FC<WDSCardProps> = ({ onClick, project }) => {
                     />
                   );
                 })}
-
               </div>
               {/* <div className="px-2.5 py-1 rounded-lg bg-gray-100">
                 <span className="text-xs text-gray-600">3 Deliverables</span>
               </div> */}
             </div>
-            <span className="text-xs text-gray-500">Start Date: {project?.start_date?.toString().split('T')[0].replace(/^(\d{4}-\d{2}-)(\d{1,2})$/, '$1$2')}</span>
+            <span className="text-xs text-gray-500">
+              Start Date:{' '}
+              {project?.start_date
+                ?.toString()
+                .split('T')[0]
+                .replace(/^(\d{4}-\d{2}-)(\d{1,2})$/, '$1$2')}
+            </span>
           </div>
         </div>
       </div>
