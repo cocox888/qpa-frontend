@@ -125,6 +125,8 @@ export default function Onboarding() {
           body: JSON.stringify(data)
         }
       );
+      const report = await response.json();
+      localStorage.setItem('stripe_account_link', report.stripe_account_id);
 
       if (response.ok) {
         toast.success('Onboarding completed successfully!');

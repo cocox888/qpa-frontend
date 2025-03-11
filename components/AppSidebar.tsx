@@ -37,7 +37,7 @@ export default function AppSidebar() {
     { url: `/${role}/finance/payroll`, title: 'Payroll' },
     { url: `/${role}/finance/expenses`, title: 'Expenses' },
     { url: `/${role}/finance/invoices`, title: 'Invoices' },
-    { url: `/${role}/finance/reporting`, title: 'Financial Reports' }
+    { url: `/${role}/finance/reports`, title: 'Financial Reports' }
   ];
 
   // const timerMenuItems = [
