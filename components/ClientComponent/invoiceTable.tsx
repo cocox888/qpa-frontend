@@ -102,7 +102,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
           }
         );
         const data = await response.json();
-        alert(`Successfully Paid ${data.amount_due / 100}$!`);
+        alert(`Successfully Paid!`);
       }
     } catch (error) {
       console.error('Payment error:', error);
