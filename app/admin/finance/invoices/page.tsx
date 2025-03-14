@@ -62,7 +62,7 @@ export default function Notes() {
   }, [reFetch]);
 
   useEffect(() => {
-    console.log(client);
+    if (!client) return;
     const token = localStorage.getItem('refresh_token');
     const fetchProject = async () => {
       const pro_res = await fetch(
@@ -97,7 +97,8 @@ export default function Notes() {
         }
       );
       const proj = await pro_res.json();
-      setInvoices(proj.invoices.data);
+      console.log(proj);
+      setInvoices(proj.data);
     };
     fetchInvoice();
   }, [client]);
@@ -106,14 +107,6 @@ export default function Notes() {
     console.log('ok');
     if (!client) {
       console.log('Please Select Client!');
-      return;
-    }
-    if (!startDate) {
-      setStartDateError(true);
-      return;
-    }
-    if (!endDate) {
-      setEndDateError(true);
       return;
     }
     const token = localStorage.getItem('refresh_token');
@@ -265,72 +258,6 @@ export default function Notes() {
                       );
                     })}
                 </select>
-              </div>
-            </div>
-            <div className="flex gap-2 content-center py-2">
-              <div className="py-1">
-                {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Start Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  id="vaStartDate"
-                  name="startDate"
-                  className={`${
-                    startDateError ? 'border-red-500' : ''
-                  } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
-                  onChange={(e) => {
-                    setStartDate(e.target.value);
-                    console.log(e.target.value, revenue);
-
-                    const startDateObj = new Date(e.target.value);
-                    if (revenue === 'Daily') {
-                      startDateObj.setDate(startDateObj.getDate() + 1);
-                    }
-                    if (revenue === 'Weekly') {
-                      startDateObj.setDate(startDateObj.getDate() + 7);
-                    }
-                    if (revenue === 'Monthly') {
-                      startDateObj.setDate(startDateObj.getDate() + 30);
-                    }
-                    const newEndDate = startDateObj.toISOString().split('T')[0];
-                    setEndDate(newEndDate);
-                  }}
-                  value={startDate}
-                />
-                {startDateError ? (
-                  <div className="active error-message text-sm text-red-500 mt-1">
-                    Please select a start date
-                  </div>
-                ) : (
-                  <div />
-                )}
-              </div>
-              <div className="px-4 py-1">
-                {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  End Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  id="vaEndDate"
-                  name="endDate"
-                  className={`${
-                    endDateError ? 'border-red-500' : ''
-                  } w-full h-10 px-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors`}
-                  onChange={(e) => {
-                    setEndDate(e.target.value);
-                  }}
-                  value={endDate}
-                />
-                {endDateError ? (
-                  <div className="active error-message text-sm text-red-500 mt-1">
-                    Please select a end date
-                  </div>
-                ) : (
-                  <div />
-                )}
               </div>
             </div>
             <div className="flex content-center py-2">

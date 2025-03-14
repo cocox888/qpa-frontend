@@ -36,7 +36,7 @@ export default function AppSidebar() {
     // { url: `/${role}/finance/client-billing`, title: 'Client Billing' },
     // { url: `/${role}/finance/payroll`, title: 'Payroll' },
     // { url: `/${role}/finance/expenses`, title: 'Expenses' },
-    { url: `/${role}/finance/invoices`, title: 'Invoices' },
+    // { url: `/${role}/finance/invoices`, title: 'Invoices' },
     { url: `/${role}/finance/reports`, title: 'Financial Reports' }
   ];
 
@@ -111,45 +111,46 @@ export default function AppSidebar() {
             />
 
             {/* Finance Dropdown */}
-            <div className="relative">
-              <SidebarItem
-                url={`/${role}/finance`}
-                title="Finance"
-                icon={FinanceIcon}
-                isActive={isFinanceActive}
-                onClick={() => setIsFinanceOpen(!isFinanceOpen)}
-              />
+            {(role === 'client' || role === 'admin') && (
+              <div className="relative">
+                <SidebarItem
+                  url={`/${role}/finance`}
+                  title="Finance"
+                  icon={FinanceIcon}
+                  isActive={isFinanceActive}
+                  onClick={() => setIsFinanceOpen(!isFinanceOpen)}
+                />
 
-              {/* Finance Submenu */}
-              {isFinanceOpen && (
-                <div className="ml-7 mt-1 border-l border-gray-100/80 pl-3 max-h-[200px] overflow-y-auto custom-scrollbar">
-                  <div className="space-y-1">
-                    {role === 'client' && (
-                      <SidebarItem
-                        key={'/${role}/acefinn/client-billing'}
-                        url={'/${role}/acefinn/client-billing'}
-                        title={'Client Billing'}
-                        isSubmenu={true}
-                        isActive={
-                          currentPath === '/${role}/acefinn/client-billing'
-                        }
-                      />
-                    )}
-                    {financeMenuItems
-                      .filter((item) => item.title !== 'Overview')
-                      .map((item) => (
+                {/* Finance Submenu */}
+                {isFinanceOpen && (
+                  <div className="ml-7 mt-1 border-l border-gray-100/80 pl-3 max-h-[200px] overflow-y-auto custom-scrollbar">
+                    <div className="space-y-1">
+                      {role === 'admin' && (
                         <SidebarItem
-                          key={item.url}
-                          url={item.url}
-                          title={item.title}
+                          key={'/admin/finance/invoices'}
+                          url={'/admin/finance/invoices'}
+                          title={'Invoices'}
                           isSubmenu={true}
-                          isActive={currentPath === item.url}
+                          isActive={currentPath === '/admin/finance/invoices'}
                         />
-                      ))}
+                      )}
+                      {financeMenuItems
+                        .filter((item) => item.title !== 'Overview')
+                        .map((item) => (
+                          <SidebarItem
+                            key={item.url}
+                            url={item.url}
+                            title={item.title}
+                            isSubmenu={true}
+                            isActive={currentPath === item.url}
+                          />
+                        ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
+
             {/* <div className="relative">
               <SidebarItem
                 url={`/${role}/timer`}

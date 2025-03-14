@@ -5,7 +5,7 @@ import type { TypeProject } from '@/lib/types';
 import Toast from '../../toast';
 import { ToastContainer } from 'react-toastify';
 import type { ClientProps, UserProps } from '@/app/admin/projects/page';
-import { AppDispatch } from '@/app/admin/reducers/store';
+import type { AppDispatch } from '@/app/admin/reducers/store';
 import { useDispatch } from 'react-redux';
 import { getAllProjects } from '@/app/admin/reducers/projects';
 export interface ProjectModalProps {

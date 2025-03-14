@@ -1,6 +1,6 @@
 'use client';
 
-import { TypeProject, TypeTask, type TypeUser } from '@/lib/types';
+import { TypeProject, type TypeUser } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Toast from '../../toast';
@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/app/member/reducers/store';
 import { useTotalTime } from '@/hooks/useTotalTime';
 import { getAllTasks } from '@/app/member/reducers/tasks';
-import { calculateTotalTime } from '@/lib/utils/calculate';
 import { getRecentTasksAndReturnTotalTime } from '@/lib/utils/taskUtils';
 
 export interface TaskItem {

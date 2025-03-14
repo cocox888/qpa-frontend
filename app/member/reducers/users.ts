@@ -1,5 +1,9 @@
-import { KanbanTask, TypeUser } from '@/lib/types';
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { KanbanTask, type TypeUser } from '@/lib/types';
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction
+} from '@reduxjs/toolkit';
 import { getUniqPayload } from 'recharts/types/util/payload/getUniqPayload';
 
 interface UserState {

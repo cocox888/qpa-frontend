@@ -1,9 +1,10 @@
-import { TypeClient } from '@/lib/types';
+import type { TypeClient } from '@/lib/types';
 import Image from 'next/image';
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 
 interface ClientTableProps {
-  data: TypeClient[]
+  data: TypeClient[];
 }
 
 const ClientTable: React.FC<ClientTableProps> = ({ data }) => {
@@ -52,7 +53,7 @@ const ClientTable: React.FC<ClientTableProps> = ({ data }) => {
   }, [checkedItems]);
 
   return (
-    <div id="clients-panel" role="tabpanel" className='h-[400px]'>
+    <div id="clients-panel" role="tabpanel" className="h-[400px]">
       <table className="w-full border-spacing-0">
         <thead>
           <tr>
@@ -162,11 +163,10 @@ const ClientTable: React.FC<ClientTableProps> = ({ data }) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
-          {
-            data.map((item, index) => {
-              return (
-                <tr className="table-row-hover">
-                  {/* <td className="p-4 whitespace-nowrap">
+          {data.map((item, index) => {
+            return (
+              <tr className="table-row-hover">
+                {/* <td className="p-4 whitespace-nowrap">
                     <input
                       type="checkbox"
                       className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
@@ -174,51 +174,52 @@ const ClientTable: React.FC<ClientTableProps> = ({ data }) => {
                       onChange={(e) => handleCheckboxChange(e, 1)}
                     />
                   </td> */}
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                        <span className="text-sm font-medium text-blue-600">TC</span>
-                      </div>
-                      <span className="font-medium text-gray-900">
-                        {item.business_name || "Unknown"}
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <span className="text-sm font-medium text-blue-600">
+                        TC
                       </span>
                     </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/images/person1.jpg"
-                        alt="user"
-                        width={32}
-                        height={32}
-                        className="w-6 h-6 rounded-full"
-                      />
-                      <span className="text-gray-600">{item.full_name}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-gray-900 font-medium">{item.clientProject?.length || 0}</span>
-                    <span className="text-gray-500"> active projects</span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-900 font-medium">$45,000</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
-                        Active
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-
-              )
-            })
-          }
-
+                    <span className="font-medium text-gray-900">
+                      {item.business_name || 'Unknown'}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="/images/person1.jpg"
+                      alt="user"
+                      width={32}
+                      height={32}
+                      className="w-6 h-6 rounded-full"
+                    />
+                    <span className="text-gray-600">{item.full_name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <span className="text-gray-900 font-medium">
+                    {item.clientProject?.length || 0}
+                  </span>
+                  <span className="text-gray-500"> active projects</span>
+                </td>
+                <td className="px-4 py-3 text-gray-900 font-medium">$45,000</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                      Active
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
   );
-}
+};
 
 export default ClientTable;

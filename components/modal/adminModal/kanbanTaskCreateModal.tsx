@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Toast from '../../toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/app/admin/reducers/store';
+import type { AppDispatch, RootState } from '@/app/admin/reducers/store';
 import { fetchKanbanTasks } from '@/app/admin/reducers/kanbanTasks';
 import { useEffect } from 'react';
 
@@ -35,8 +35,7 @@ const KanbanTaskCreateModal: React.FC<KanbanTaskCreateModalProps> = ({
       label: '',
       status: 'todo',
       user_id: userID,
-      deleted: false,
-
+      deleted: false
     }
   });
 
@@ -53,7 +52,6 @@ const KanbanTaskCreateModal: React.FC<KanbanTaskCreateModalProps> = ({
       .catch((e) => {
         console.log(e);
       });
-
   };
 
   return (

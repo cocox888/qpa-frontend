@@ -37,8 +37,7 @@ const AppHeader = () => {
     getRecentTasksAndReturnTotalTime().then((totalTime) => {
       console.log(totalTime);
       setTotalTime(Number(totalTime));
-    })
-
+    });
 
     const handleOutsideClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -58,8 +57,6 @@ const AppHeader = () => {
     setRole(localStorage.getItem('role') || '');
     setEmail(localStorage.getItem('email') || '');
     document.addEventListener('mousedown', handleOutsideClick);
-
-
 
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -123,7 +120,8 @@ const AppHeader = () => {
                   </svg>
                   <div className="text-sm font-medium text-gray-900">
                     {/* <DailyWorkWatch /> */}
-                    {Math.floor(Number(totalTime) / 60)}h : {Number(totalTime) % 60}m
+                    {Math.floor(Number(totalTime) / 60)}h :{' '}
+                    {Number(totalTime) % 60}m
                   </div>
                 </div>
                 <button className="flex items-center gap-2 px-3 py-1.5 bg-brand-500 text-white rounded-lg text-sm hover:bg-brand-600 transition-colors">
@@ -293,7 +291,7 @@ const AppHeader = () => {
                         View Profile
                       </a>
                       <a
-                        href="#"
+                        href="/client/settings"
                         className="flex items-center gap-3 p-3 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-colors"
                       >
                         <svg

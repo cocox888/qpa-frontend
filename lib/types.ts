@@ -170,16 +170,34 @@ export interface TypeReport {
 }
 
 export interface TypeInvoice {
+  id?: string;
+  invoice_pdf?: string;
   account_country?: string;
   account_name?: string;
-  amount_du?: number;
+  amount_due?: number;
   amount_paid?: number;
   amount_remaining?: number;
   amount_shipping: number;
   customer_email?: string;
   customer_name?: number;
   currency?: string;
+  finalized_at?: string;
+  paid_at?: number;
+  status?: string;
   paid?: boolean;
+  project_id?: number;
+  project_title?: string;
+  project_type?: string;
+  webhooks_delivered_at?: number;
+}
+
+export interface TypeAllInvoice {
+  project_id?: number;
+  project_title?: string;
+  project_type?: string;
+  client_id?: number;
+  client_name?: string;
+  stripe_invoice?: TypeInvoice;
 }
 
 export interface TypeChartData {

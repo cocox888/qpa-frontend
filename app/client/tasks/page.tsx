@@ -2,13 +2,11 @@
 
 import type { AppDispatch, RootState } from '@/app/client/reducers/store';
 import { getAllTasks } from '@/app/client/reducers/tasks';
-import EditTaskModal, { type TaskItem } from '@/components/modal/editTaskModal';
 import TasklistItem from '@/components/ClientComponent/TasklistItem';
 import { useTotalTime } from '@/hooks/useTotalTime';
-import { isNonEmptyArray } from '@/lib/utils/functions';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 export default function Projects() {
   const [editModal, setEditModal] = useState(false);
@@ -16,17 +14,6 @@ export default function Projects() {
   const [count, setCount] = useState(false);
   const [filter, setFilter] = useState(false);
 
-  const [taskData, setTaskData] = useState<TaskItem>({
-    task_id: 0,
-    title: '',
-    project: '',
-    hours: '',
-    members: 0,
-    state: '',
-    time: '',
-    company: '',
-    startTime: ''
-  });
   const dispatch: AppDispatch = useDispatch();
   const taskCounts = useSelector((state: RootState) => state.tasks.taskCounts);
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
@@ -40,12 +27,6 @@ export default function Projects() {
   }, [dispatch, count, editModal]);
 
   useEffect(() => {}, [filter]);
-
-  const handleTask = (i: number, data: TaskItem) => {
-    setIndex(i);
-    setTaskData(data);
-    setEditModal(true);
-  };
 
   return (
     <div className="pt-20 pl-64 pr-6 pb-20 h-screen w-screen overflow-x-hidden">
@@ -138,7 +119,7 @@ export default function Projects() {
                 hours={item.estimated_time || 0}
                 state={item.state || ''}
                 time={item.due_date || ''}
-                members={item.assignedTaskUser}
+                members={item.assignedTaskUser || []}
                 company={item.taskClient?.business_name || 'Undefined'}
                 startTime={'Started: Oct 15, 2024'}
               />

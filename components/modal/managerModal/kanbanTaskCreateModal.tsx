@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Toast from '../../toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/app/manager/reducers/store';
+import type { AppDispatch, RootState } from '@/app/manager/reducers/store';
 import { fetchKanbanTasks } from '@/app/manager/reducers/kanbanTasks';
 import { useEffect } from 'react';
 
