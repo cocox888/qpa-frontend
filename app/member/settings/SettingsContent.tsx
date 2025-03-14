@@ -12,6 +12,7 @@ import {
   Info,
   Check
 } from 'lucide-react';
+import AddNewMethod from '@/components/ClientComponent/AddNewMethod';
 
 const SettingsContent = () => {
   const router = useRouter();
@@ -171,369 +172,417 @@ const SettingsContent = () => {
     </div>
   );
 
-  const BillingSection = () => (
-    <div className={activeTab === 'billing' ? '' : 'hidden'}>
-      <div>
-        <h2 className="text-lg font-medium text-gray-900 mb-4">
-          Financial Settings
-        </h2>
+  const BillingSection = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-        {/* Payment Methods Configuration */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-medium text-gray-900">Payment Methods</h3>
-            <div className="px-3 py-1.5 text-sm font-medium text-brand-500 border border-brand-500 rounded-lg hover:bg-brand-50 transition-colors">
-              Add New Method
-            </div>
-          </div>
+    const close = () => {
+      setIsModalOpen(false);
+    };
 
-          <div className="space-y-4">
-            {/* Primary Card */}
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="w-12 h-8 bg-gray-200 rounded flex items-center justify-center">
-                {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                <svg
-                  className="w-8 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div className="font-medium text-gray-900">•••• 4242</div>
-                <div className="text-sm text-gray-500">Expires 12/24</div>
-              </div>
-              <span className="px-2 py-1 text-xs font-medium bg-brand-50 text-brand-700 rounded-full ml-auto mr-2">
-                Primary
-              </span>
-              <div className="text-sm text-brand-500 font-medium">Edit</div>
-            </div>
-          </div>
-        </div>
+    const handlePaymentMethodCreated = async (paymentMethodId: string) => {
+      try {
+        const token = localStorage.getItem('refresh_token');
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/client/attach-payment-method`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              paymentMethodId
+            })
+          }
+        );
 
-        {/* Finance Preferences */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-          <h3 className="font-medium text-gray-900 mb-4">
-            Finance Preferences
-          </h3>
-          <div className="space-y-6">
-            {/* Currency Settings */}
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-1">
-                Base Currency
-              </div>
-              <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                <option>GBP (£)</option>
-                <option>USD ($)</option>
-                <option>EUR (€)</option>
-                <option>GHS (₵)</option>
-              </select>
-              <p className="mt-1 text-sm text-gray-500">
-                Used for reporting and internal calculations
-              </p>
-            </div>
+        const data = await response.json();
 
-            {/* Accounting Preferences */}
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-3">
-                Accounting Settings
-              </div>
-              <div className="space-y-3">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                    defaultChecked
-                  />
-                  <span className="ml-2 text-sm text-gray-600">
-                    Round up minutes to nearest hour for billing
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                    defaultChecked
-                  />
-                  <span className="ml-2 text-sm text-gray-600">
-                    Enable carryover hours for monthly packages
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                    defaultChecked
-                  />
-                  <span className="ml-2 text-sm text-gray-600">
-                    Auto-generate monthly invoices
-                  </span>
-                </label>
-              </div>
-            </div>
+        if (data.success) {
+          alert('Payment method attached successfully!');
+        } else {
+          alert('Failed to attach payment method');
+        }
+      } catch (error) {
+        console.error('Error attaching payment method:', error);
+        alert('An error occurred while attaching the payment method');
+      }
+    };
+    return (
+      <div className={activeTab === 'billing' ? '' : 'hidden'}>
+        <div>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">
+            Financial Settings
+          </h2>
 
-            {/* Financial Reports */}
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-3">
-                Report Preferences
-              </div>
-              <div className="space-y-3">
-                <div>
-                  <div className="block text-sm text-gray-600 mb-1">
-                    Default Report Currency
-                  </div>
-                  <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                    <option>Use client&apos;s currency</option>
-                    <option>Use base currency</option>
-                  </select>
-                </div>
-                <div>
-                  <div className="block text-sm text-gray-600 mb-1">
-                    Financial Year Start
-                  </div>
-                  <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                    <option>January</option>
-                    <option>April</option>
-                    <option>July</option>
-                    <option>October</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Invoice Settings */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-          <h3 className="font-medium text-gray-900 mb-4">
-            Invoice Configuration
-          </h3>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="block text-sm font-medium text-gray-700 mb-1">
-                  Invoice Prefix
-                </div>
-                <input
-                  type="text"
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
-                  placeholder="e.g., INV-"
-                />
-              </div>
-              <div>
-                <div className="block text-sm font-medium text-gray-700 mb-1">
-                  Next Invoice Number
-                </div>
-                <input
-                  type="number"
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
-                  placeholder="e.g., 1001"
-                />
-              </div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-1">
-                Default Payment Terms
-              </div>
-              <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                <option>Due on receipt</option>
-                <option>Net 15</option>
-                <option>Net 30</option>
-                <option>Net 60</option>
-              </select>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-1">
-                Invoice Notes Template
-              </div>
-              <textarea
-                className="w-full h-20 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300 resize-none"
-                placeholder="Enter default invoice notes"
+          {/* Payment Methods Configuration */}
+          <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-medium text-gray-900">Payment Methods</h3>
+              <div
+                onClick={(e) => setIsModalOpen((prev) => !prev)}
+                className="px-3 py-1.5 text-sm font-medium text-brand-500 border border-brand-500 rounded-lg hover:bg-brand-50 transition-colors"
               >
-                &nbsp;
-              </textarea>
+                Add New Method
+              </div>
+            </div>
+            {isModalOpen && (
+              <AddNewMethod
+                onPaymentMethodCreated={handlePaymentMethodCreated}
+                Close={close}
+              />
+            )}
+
+            <div className="space-y-4">
+              {/* Primary Card */}
+              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="w-12 h-8 bg-gray-200 rounded flex items-center justify-center">
+                  {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+                  <svg
+                    className="w-8 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <div className="font-medium text-gray-900">•••• 4242</div>
+                  <div className="text-sm text-gray-500">Expires 12/24</div>
+                </div>
+                <span className="px-2 py-1 text-xs font-medium bg-brand-50 text-brand-700 rounded-full ml-auto mr-2">
+                  Primary
+                </span>
+                <div className="text-sm text-brand-500 font-medium">Edit</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Notification Preferences */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-          <h3 className="font-medium text-gray-900 mb-4">
-            Financial Notifications
-          </h3>
-          <div className="space-y-3">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                defaultChecked
-              />
-              <span className="ml-2 text-sm text-gray-600">
-                Send invoice notifications
-              </span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                defaultChecked
-              />
-              <span className="ml-2 text-sm text-gray-600">
-                Send payment reminders
-              </span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                defaultChecked
-              />
-              <span className="ml-2 text-sm text-gray-600">
-                Notify on low package hours
-              </span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                defaultChecked
-              />
-              <span className="ml-2 text-sm text-gray-600">
-                Monthly financial reports
-              </span>
-            </label>
-          </div>
-        </div>
-
-        {/* Payroll Settings */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-          <h3 className="font-medium text-gray-900 mb-4">
-            Payroll Configuration
-          </h3>
-          <div className="space-y-6">
-            {/* Pay Period Settings */}
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-3">
-                Pay Period
+          {/* Finance Preferences */}
+          <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+            <h3 className="font-medium text-gray-900 mb-4">
+              Finance Preferences
+            </h3>
+            <div className="space-y-6">
+              {/* Currency Settings */}
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-1">
+                  Base Currency
+                </div>
+                <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                  <option>GBP (£)</option>
+                  <option>USD ($)</option>
+                  <option>EUR (€)</option>
+                  <option>GHS (₵)</option>
+                </select>
+                <p className="mt-1 text-sm text-gray-500">
+                  Used for reporting and internal calculations
+                </p>
               </div>
+
+              {/* Accounting Preferences */}
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-3">
+                  Accounting Settings
+                </div>
+                <div className="space-y-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      defaultChecked
+                    />
+                    <span className="ml-2 text-sm text-gray-600">
+                      Round up minutes to nearest hour for billing
+                    </span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      defaultChecked
+                    />
+                    <span className="ml-2 text-sm text-gray-600">
+                      Enable carryover hours for monthly packages
+                    </span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      defaultChecked
+                    />
+                    <span className="ml-2 text-sm text-gray-600">
+                      Auto-generate monthly invoices
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Financial Reports */}
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-3">
+                  Report Preferences
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <div className="block text-sm text-gray-600 mb-1">
+                      Default Report Currency
+                    </div>
+                    <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                      <option>Use client&apos;s currency</option>
+                      <option>Use base currency</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div className="block text-sm text-gray-600 mb-1">
+                      Financial Year Start
+                    </div>
+                    <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                      <option>January</option>
+                      <option>April</option>
+                      <option>July</option>
+                      <option>October</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Invoice Settings */}
+          <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+            <h3 className="font-medium text-gray-900 mb-4">
+              Invoice Configuration
+            </h3>
+            <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="block text-sm text-gray-600 mb-1">
-                    Pay Cycle
+                  <div className="block text-sm font-medium text-gray-700 mb-1">
+                    Invoice Prefix
                   </div>
-                  <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                    <option>Monthly</option>
-                    <option>Bi-weekly</option>
-                    <option>Weekly</option>
-                  </select>
+                  <input
+                    type="text"
+                    className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
+                    placeholder="e.g., INV-"
+                  />
                 </div>
                 <div>
-                  <div className="block text-sm text-gray-600 mb-1">
-                    Payment Date
-                  </div>
-                  <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                    <option>Last day of month</option>
-                    <option>1st of month</option>
-                    <option>15th of month</option>
-                    <option>Custom</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Rate Configuration */}
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-3">
-                Default Rate Settings
-              </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="block text-sm text-gray-600 mb-1">
-                      VA Base Rate
-                    </div>
-                    <input
-                      type="number"
-                      className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
-                      placeholder="Enter hourly rate"
-                    />
-                  </div>
-                  <div>
-                    <div className="block text-sm text-gray-600 mb-1">
-                      OBM Base Rate
-                    </div>
-                    <input
-                      type="number"
-                      className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
-                      placeholder="Enter hourly rate"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="block text-sm text-gray-600 mb-1">
-                    Overtime Rate Multiplier
-                  </div>
-                  <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                    <option>1.5x</option>
-                    <option>2x</option>
-                    <option>Custom</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Tax Settings */}
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-3">
-                Tax Configuration
-              </div>
-              <div className="space-y-3">
-                <div>
-                  <div className="block text-sm text-gray-600 mb-1">
-                    Default Tax Rate (%)
+                  <div className="block text-sm font-medium text-gray-700 mb-1">
+                    Next Invoice Number
                   </div>
                   <input
                     type="number"
                     className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
-                    placeholder="Enter tax rate"
+                    placeholder="e.g., 1001"
                   />
                 </div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                    defaultChecked
-                  />
-                  <span className="ml-2 text-sm text-gray-600">
-                    Auto-calculate tax deductions
-                  </span>
-                </label>
+              </div>
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-1">
+                  Default Payment Terms
+                </div>
+                <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                  <option>Due on receipt</option>
+                  <option>Net 15</option>
+                  <option>Net 30</option>
+                  <option>Net 60</option>
+                </select>
+              </div>
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-1">
+                  Invoice Notes Template
+                </div>
+                <textarea
+                  className="w-full h-20 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300 resize-none"
+                  placeholder="Enter default invoice notes"
+                >
+                  &nbsp;
+                </textarea>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Benefits & Deductions */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-          <h3 className="font-medium text-gray-900 mb-4">
-            Benefits & Deductions
-          </h3>
-          <div className="space-y-4">
-            {/* Standard Deductions */}
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-3">
-                Standard Deductions
+          {/* Notification Preferences */}
+          <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+            <h3 className="font-medium text-gray-900 mb-4">
+              Financial Notifications
+            </h3>
+            <div className="space-y-3">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                  defaultChecked
+                />
+                <span className="ml-2 text-sm text-gray-600">
+                  Send invoice notifications
+                </span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                  defaultChecked
+                />
+                <span className="ml-2 text-sm text-gray-600">
+                  Send payment reminders
+                </span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                  defaultChecked
+                />
+                <span className="ml-2 text-sm text-gray-600">
+                  Notify on low package hours
+                </span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                  defaultChecked
+                />
+                <span className="ml-2 text-sm text-gray-600">
+                  Monthly financial reports
+                </span>
+              </label>
+            </div>
+          </div>
+
+          {/* Payroll Settings */}
+          <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+            <h3 className="font-medium text-gray-900 mb-4">
+              Payroll Configuration
+            </h3>
+            <div className="space-y-6">
+              {/* Pay Period Settings */}
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-3">
+                  Pay Period
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="block text-sm text-gray-600 mb-1">
+                      Pay Cycle
+                    </div>
+                    <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                      <option>Monthly</option>
+                      <option>Bi-weekly</option>
+                      <option>Weekly</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div className="block text-sm text-gray-600 mb-1">
+                      Payment Date
+                    </div>
+                    <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                      <option>Last day of month</option>
+                      <option>1st of month</option>
+                      <option>15th of month</option>
+                      <option>Custom</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-3">
-                {['Health Insurance', 'Pension Contribution', 'Income Tax'].map(
-                  (item) => (
+
+              {/* Rate Configuration */}
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-3">
+                  Default Rate Settings
+                </div>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="block text-sm text-gray-600 mb-1">
+                        VA Base Rate
+                      </div>
+                      <input
+                        type="number"
+                        className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
+                        placeholder="Enter hourly rate"
+                      />
+                    </div>
+                    <div>
+                      <div className="block text-sm text-gray-600 mb-1">
+                        OBM Base Rate
+                      </div>
+                      <input
+                        type="number"
+                        className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
+                        placeholder="Enter hourly rate"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="block text-sm text-gray-600 mb-1">
+                      Overtime Rate Multiplier
+                    </div>
+                    <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                      <option>1.5x</option>
+                      <option>2x</option>
+                      <option>Custom</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tax Settings */}
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-3">
+                  Tax Configuration
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <div className="block text-sm text-gray-600 mb-1">
+                      Default Tax Rate (%)
+                    </div>
+                    <input
+                      type="number"
+                      className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
+                      placeholder="Enter tax rate"
+                    />
+                  </div>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                      defaultChecked
+                    />
+                    <span className="ml-2 text-sm text-gray-600">
+                      Auto-calculate tax deductions
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Benefits & Deductions */}
+          <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+            <h3 className="font-medium text-gray-900 mb-4">
+              Benefits & Deductions
+            </h3>
+            <div className="space-y-4">
+              {/* Standard Deductions */}
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-3">
+                  Standard Deductions
+                </div>
+                <div className="space-y-3">
+                  {[
+                    'Health Insurance',
+                    'Pension Contribution',
+                    'Income Tax'
+                  ].map((item) => (
                     <label key={item} className="flex items-center">
                       <input
                         type="checkbox"
@@ -542,74 +591,76 @@ const SettingsContent = () => {
                       />
                       <span className="ml-2 text-sm text-gray-600">{item}</span>
                     </label>
-                  )
-                )}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Bonus Configuration */}
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-3">
-                Bonus Settings
-              </div>
-              <div className="space-y-3">
-                <div>
-                  <div className="block text-sm text-gray-600 mb-1">
-                    Performance Bonus Calculation
+              {/* Bonus Configuration */}
+              <div>
+                <div className="block text-sm font-medium text-gray-700 mb-3">
+                  Bonus Settings
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <div className="block text-sm text-gray-600 mb-1">
+                      Performance Bonus Calculation
+                    </div>
+                    <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                      <option>Percentage of base salary</option>
+                      <option>Fixed amount</option>
+                      <option>Custom formula</option>
+                    </select>
                   </div>
-                  <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                    <option>Percentage of base salary</option>
-                    <option>Fixed amount</option>
-                    <option>Custom formula</option>
-                  </select>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Expense Management */}
-        <div className="bg-white rounded-xl border border-gray-100 p-6">
-          <h3 className="font-medium text-gray-900 mb-4">Expense Management</h3>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          {/* Expense Management */}
+          <div className="bg-white rounded-xl border border-gray-100 p-6">
+            <h3 className="font-medium text-gray-900 mb-4">
+              Expense Management
+            </h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="block text-sm font-medium text-gray-700 mb-1">
+                    Approval Threshold
+                  </div>
+                  <input
+                    type="number"
+                    className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
+                    placeholder="Enter amount"
+                  />
+                </div>
+                <div>
+                  <div className="block text-sm font-medium text-gray-700 mb-1">
+                    Default Category
+                  </div>
+                  <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
+                    <option>Office Supplies</option>
+                    <option>Travel</option>
+                    <option>Software</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
               <div>
                 <div className="block text-sm font-medium text-gray-700 mb-1">
-                  Approval Threshold
+                  Expense Categories
                 </div>
-                <input
-                  type="number"
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300"
-                  placeholder="Enter amount"
-                />
-              </div>
-              <div>
-                <div className="block text-sm font-medium text-gray-700 mb-1">
-                  Default Category
-                </div>
-                <select className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-white transition-colors hover:border-gray-300">
-                  <option>Office Supplies</option>
-                  <option>Travel</option>
-                  <option>Software</option>
-                  <option>Other</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <div className="block text-sm font-medium text-gray-700 mb-1">
-                Expense Categories
-              </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <div className="text-sm text-gray-500">
-                  Configure expense categories in the finance section
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="text-sm text-gray-500">
+                    Configure expense categories in the finance section
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const NotificationsSection = () => (
     <div className={activeTab === 'notifications' ? '' : 'hidden'}>

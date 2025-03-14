@@ -1,4 +1,4 @@
-import { RootState } from '@/app/admin/reducers/store';
+import type { RootState } from '@/app/admin/reducers/store';
 import { Card } from '@/components/card/kanbanCard';
 import { ArrowUp, ArrowDown, SwatchBook } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -17,7 +17,9 @@ interface StatsType {
 }
 
 const StatsGrid = () => {
-  const kanbanTasks = useSelector((state: RootState) => state.kanbanTasks.tasks);
+  const kanbanTasks = useSelector(
+    (state: RootState) => state.kanbanTasks.tasks
+  );
   const [stats, setStats] = useState<StatsType[]>([
     {
       id: 0,
@@ -79,10 +81,14 @@ const StatsGrid = () => {
             count = kanbanTasks.length;
             break;
           case 1:
-            count = kanbanTasks.filter((item) => item.status == 'in-progress').length;
+            count = kanbanTasks.filter(
+              (item) => item.status == 'in-progress'
+            ).length;
             break;
           case 2:
-            count = kanbanTasks.filter((item) => item.status == 'review').length;
+            count = kanbanTasks.filter(
+              (item) => item.status == 'review'
+            ).length;
             break;
           case 3:
             count = kanbanTasks.filter((item) => item.status == 'done').length;
@@ -90,17 +96,16 @@ const StatsGrid = () => {
           default:
             count = kanbanTasks.length;
         }
-        return { ...item, count: count }
+        return { ...item, count: count };
       })
     );
-  }
+  };
   useEffect(() => {
-    updateState()
-
+    updateState();
   }, []);
 
   useEffect(() => {
-    updateState()
+    updateState();
   }, [kanbanTasks]);
 
   return (

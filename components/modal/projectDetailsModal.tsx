@@ -1,5 +1,5 @@
 import { getAllProjects } from '@/app/admin/reducers/projects';
-import { AppDispatch } from '@/app/admin/reducers/store';
+import type { AppDispatch } from '@/app/admin/reducers/store';
 import api from '@/app/api/customApi';
 import type { Logs, TypeProject, TypeUser } from '@/lib/types';
 import { isNonEmptyArray } from '@/lib/utils/functions';

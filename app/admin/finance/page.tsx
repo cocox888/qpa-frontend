@@ -1,14 +1,83 @@
 'use client';
 
+import type { TypeAllInvoice, TypeInvoice } from '@/lib/types';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
 export default function FinanceOverviewPage() {
+  const [invoices, setInvoices] = useState<TypeAllInvoice[]>([]);
+  const [mmetrics, setMetrics] = useState({
+    monthlyRevenue: 0,
+    outstanding: 0,
+    vaPackageTotal: 0,
+    obmPackageTotal: 0,
+    vaPackageCount: 0,
+    obmPackageCount: 0,
+    clientCount: 0
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem('refresh_token');
+    const fetchInvoice = async () => {
+      const pro_res = await fetch(
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/getAllInvoiceForProjects`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${token}`
+          }
+        }
+      );
+      const proj = await pro_res.json();
+      console.log(proj);
+      setInvoices(proj.invoices);
+      let revenue = 0;
+      let outstanding = 0;
+      let vaTotal = 0;
+      let obmTotal = 0;
+      let vaCount = 0;
+      let obmCount = 0;
+      let clientSet = new Set<string>();
+      // biome-ignore lint/complexity/noForEach: <explanation>
+      proj?.invoices.forEach((invoice: TypeAllInvoice) => {
+        // biome-ignore lint/complexity/noForEach: <explanation>
+        if (invoice?.stripe_invoice?.amount_paid)
+          revenue += invoice?.stripe_invoice?.amount_paid;
+        if (invoice?.stripe_invoice?.amount_remaining)
+          outstanding += invoice?.stripe_invoice?.amount_remaining;
+
+        if (invoice?.project_type === 'va') {
+          vaTotal += invoice?.stripe_invoice?.amount_paid ?? 0;
+          vaCount++;
+        } else if (invoice.project_type === 'obm') {
+          obmTotal += invoice?.stripe_invoice?.amount_paid ?? 0;
+          obmCount++;
+        }
+        if (invoice?.client_name) clientSet.add(invoice?.client_name);
+      });
+
+      setMetrics({
+        monthlyRevenue: revenue,
+        outstanding: outstanding,
+        vaPackageTotal: vaTotal,
+        obmPackageTotal: obmTotal,
+        vaPackageCount: vaCount,
+        obmPackageCount: obmCount,
+        clientCount: clientSet.size
+      });
+    };
+    fetchInvoice();
+  }, []);
+
   // Top-level metrics
   const metrics = [
     {
       title: 'Monthly Revenue',
-      value: '£24,500',
-      trend: '+12.5%',
+      value: `${mmetrics.monthlyRevenue}$`,
       trendUp: true,
-      breakdown: 'VA: £15,500 | OBM: £9,000',
+      breakdown: `VA: ${mmetrics.vaPackageTotal}$ | OBM: ${mmetrics.obmPackageTotal}$`,
       icon: (
         // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
         <svg
@@ -27,34 +96,9 @@ export default function FinanceOverviewPage() {
       )
     },
     {
-      title: 'Package Hours',
-      value: '468/570',
-      trend: '82%',
-      trendUp: true,
-      breakdown: '25 packages active',
-      icon: (
-        // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      )
-    },
-    {
       title: 'Outstanding',
-      value: '£3,240',
-      trend: '-15%',
+      value: `${mmetrics.outstanding}$`,
       trendUp: false,
-      breakdown: '5 invoices pending',
       icon: (
         // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
         <svg
@@ -74,10 +118,9 @@ export default function FinanceOverviewPage() {
     },
     {
       title: 'Active Clients',
-      value: '32',
-      trend: '+4',
+      value: mmetrics.clientCount,
       trendUp: true,
-      breakdown: 'VA: 18 | OBM: 14',
+      breakdown: `VA: ${mmetrics.vaPackageCount} | OBM: ${mmetrics.obmPackageCount}`,
       icon: (
         // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
         <svg
@@ -99,59 +142,40 @@ export default function FinanceOverviewPage() {
 
   // Quick actions
   const quickActions = [
-    { label: 'New Invoice', type: 'primary', url: '/invoices' },
+    { label: 'New Invoice', type: 'primary', url: '/admin/finance/invoices' },
     // { label: 'Record Payment', type: 'secondary' },
     // { label: 'Add Package', type: 'secondary' },
-    { label: 'Financial Report', type: 'secondary', url: '/reports' }
-  ];
-
-  // Recent activities combining different types of financial events
-  const recentActivity = [
     {
-      type: 'payment',
-      client: 'Sarah Johnson',
-      package: 'VA Package - 25hrs',
-      amount: '£450',
-      status: 'Payment Received',
-      date: 'Today, 2:30 PM',
-      badgeColor: 'green'
-    },
-    {
-      type: 'hours',
-      client: 'Tech Solutions Ltd',
-      package: 'OBM Package - 40hrs',
-      amount: '35 hrs',
-      status: 'Hours Updated',
-      date: 'Today, 11:15 AM',
-      badgeColor: 'blue'
-    },
-    {
-      type: 'invoice',
-      client: 'Digital Nomads Co',
-      package: 'SMM Package',
-      amount: '£750',
-      status: 'Invoice Overdue',
-      date: 'Yesterday',
-      badgeColor: 'red'
-    },
-    {
-      type: 'package',
-      client: 'Global Ventures Inc',
-      package: 'VA Package - 30hrs',
-      amount: '£600',
-      status: 'Package Renewed',
-      date: 'Yesterday',
-      badgeColor: 'purple'
+      label: 'Financial Report',
+      type: 'secondary',
+      url: '/admin/finance/reports'
     }
   ];
 
-  // Package utilization data
-  const packageUtilization = [
-    { type: 'VA Basic', total: 8, hours: { used: 160, total: 200 } },
-    { type: 'VA Premium', total: 12, hours: { used: 280, total: 300 } },
-    { type: 'OBM Standard', total: 6, hours: { used: 180, total: 240 } },
-    { type: 'OBM Premium', total: 4, hours: { used: 150, total: 160 } }
-  ];
+  // Recent activities combining different types of financial events
+  const recentActivity = invoices
+    .filter((invoice) => (invoice?.stripe_invoice?.amount_paid || 0) >= 0) // Ensure only paid invoices
+    .map((invoice) => {
+      const latestPayment = invoice?.stripe_invoice?.webhooks_delivered_at
+        ? invoice?.stripe_invoice
+        : null;
+
+      return {
+        type: 'payment',
+        client: invoice?.client_name,
+        package: `${invoice?.project_type?.toUpperCase()} Package`,
+        amount: `$${latestPayment?.amount_paid || 0 / 100}`, // Assuming amount is in cents
+        status: 'Payment Received',
+        date: formatDistanceToNow(
+          new Date((latestPayment?.webhooks_delivered_at || 0) * 1000),
+          {
+            addSuffix: true
+          }
+        ),
+        badgeColor: 'green'
+      };
+    })
+    .slice(0, 5);
 
   return (
     <main className="py-20 pl-64 pr-6 w-screen min-h-screen overflow-x-hidden">
@@ -170,8 +194,9 @@ export default function FinanceOverviewPage() {
             {quickActions.map((action, index) => (
               // biome-ignore lint/a11y/useButtonType: <explanation>
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              <button
+              <Link
                 key={index}
+                href={action.url}
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                   action.type === 'primary'
                     ? 'text-white bg-brand-500 hover:bg-brand-600'
@@ -179,7 +204,7 @@ export default function FinanceOverviewPage() {
                 }`}
               >
                 {action.label}
-              </button>
+              </Link>
             ))}
           </div>
         </div>
@@ -212,45 +237,7 @@ export default function FinanceOverviewPage() {
             </div>
           ))}
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Package Utilization */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
-              <h2 className="text-lg font-medium text-gray-900">
-                Package Utilization
-              </h2>
-            </div>
-            <div className="p-6 space-y-4">
-              {packageUtilization.map((pkg, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                <div key={index} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900">
-                      {pkg.type}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {pkg.total} clients
-                    </span>
-                  </div>
-                  <div className="relative">
-                    <div className="h-2 bg-gray-100 rounded-full">
-                      <div
-                        className="h-2 bg-brand-500 rounded-full"
-                        style={{
-                          width: `${(pkg.hours.used / pkg.hours.total) * 100}%`
-                        }}
-                      />
-                    </div>
-                    <span className="text-xs text-gray-500 mt-1">
-                      {pkg.hours.used} / {pkg.hours.total} hours used
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        <div>
           {/* Recent Activity Feed */}
           <div className="bg-white rounded-xl border border-gray-100">
             <div className="p-6 border-b border-gray-100">

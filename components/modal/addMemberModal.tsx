@@ -15,7 +15,12 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const { register, formState: { errors }, handleSubmit, getValues } = useForm({
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    getValues
+  } = useForm({
     defaultValues: {
       first_name: '',
       last_name: '',
@@ -46,16 +51,18 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
       let data = getValues();
       data.full_name = `${data.first_name} ${data.last_name}`;
       data.password = password;
-      const role = localStorage.getItem('role')
-      api.post(`/${role}/createMembers`, data).then(() => {
-        Toast('success', 'User Created Successfully.');
-        closeModal(false);
-      }).catch((e) => {
-        Toast('error', String(e));
-      })
+      const role = localStorage.getItem('role');
+      api
+        .post(`/${role}/createMembers`, data)
+        .then(() => {
+          Toast('success', 'User Created Successfully.');
+          closeModal(false);
+        })
+        .catch((e) => {
+          Toast('error', String(e));
+        });
     }
   };
-
 
   return (
     <div>
@@ -120,15 +127,15 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       <input
                         type="text"
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        {...register('first_name', { required: "First Name is required" })}
+                        {...register('first_name', {
+                          required: 'First Name is required'
+                        })}
                       />
-                      {
-                        errors.first_name && (
-                          <div className="mt-0.5 text-xs text-red-600">
-                            {errors.first_name.message}
-                          </div>
-                        )
-                      }
+                      {errors.first_name && (
+                        <div className="mt-0.5 text-xs text-red-600">
+                          {errors.first_name.message}
+                        </div>
+                      )}
                     </div>
 
                     {/* <!-- Last Name --> */}
@@ -138,17 +145,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="text"
-
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        {...register('last_name', { required: 'Last Name is required' })}
+                        {...register('last_name', {
+                          required: 'Last Name is required'
+                        })}
                       />
-                      {
-                        errors.last_name && (
-                          <div className="mt-0.5 text-xs text-red-600">
-                            {errors.last_name.message}
-                          </div>
-                        )
-                      }
+                      {errors.last_name && (
+                        <div className="mt-0.5 text-xs text-red-600">
+                          {errors.last_name.message}
+                        </div>
+                      )}
                     </div>
 
                     {/* <!-- Email --> */}
@@ -159,15 +165,15 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       <input
                         type="email"
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        {...register('email', { required: 'Email is required' })}
+                        {...register('email', {
+                          required: 'Email is required'
+                        })}
                       />
-                      {
-                        errors.email && (
-                          <div className="mt-0.5 text-xs text-red-600">
-                            {errors.email.message}
-                          </div>
-                        )
-                      }
+                      {errors.email && (
+                        <div className="mt-0.5 text-xs text-red-600">
+                          {errors.email.message}
+                        </div>
+                      )}
                     </div>
 
                     {/* <!-- Phone --> */}
@@ -177,17 +183,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="tel"
-
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        {...register('phone', { required: 'Phone is required' })}
+                        {...register('phone', {
+                          required: 'Phone is required'
+                        })}
                       />
-                      {
-                        errors.phone && (
-                          <div className="mt-0.5 text-xs text-red-600">
-                            {errors.phone.message}
-                          </div>
-                        )
-                      }
+                      {errors.phone && (
+                        <div className="mt-0.5 text-xs text-red-600">
+                          {errors.phone.message}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -245,18 +250,17 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="text"
-
                         placeholder="e.g. Product Manager, Frontend Developer"
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        {...register('position', { required: 'Position is required' })}
+                        {...register('position', {
+                          required: 'Position is required'
+                        })}
                       />
-                      {
-                        errors.position && (
-                          <div className="mt-0.5 text-xs text-red-600">
-                            {errors.position.message}
-                          </div>
-                        )
-                      }
+                      {errors.position && (
+                        <div className="mt-0.5 text-xs text-red-600">
+                          {errors.position.message}
+                        </div>
+                      )}
                     </div>
 
                     {/* <!-- Role with enhanced select --> */}
@@ -267,7 +271,9 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       <div className="relative">
                         <select
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow appearance-none bg-white"
-                          {...register('role', { required: 'Role is required' })}
+                          {...register('role', {
+                            required: 'Role is required'
+                          })}
                         >
                           {/* <option value="">Select Role</option> */}
                           {/* <option value="admin">Admin</option> */}
@@ -275,13 +281,11 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                           <option value="manager">Manager</option>
                           {/* <option value="client">Client</option> */}
                         </select>
-                        {
-                          errors.role && (
-                            <div className="mt-0.5 text-xs text-red-600">
-                              {errors.role.message}
-                            </div>
-                          )
-                        }
+                        {errors.role && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.role.message}
+                          </div>
+                        )}
                         <svg
                           className="w-5 h-5 absolute right-3 top-3 text-gray-400 pointer-events-none"
                           fill="none"
@@ -305,18 +309,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                       </label>
                       <input
                         type="date"
-
                         className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                        {...register('dob', { required: 'Date of birth is required' })}
-
+                        {...register('dob', {
+                          required: 'Date of birth is required'
+                        })}
                       />
-                      {
-                        errors.dob && (
-                          <div className="mt-0.5 text-xs text-red-600">
-                            {errors.dob.message}
-                          </div>
-                        )
-                      }
+                      {errors.dob && (
+                        <div className="mt-0.5 text-xs text-red-600">
+                          {errors.dob.message}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -332,19 +334,17 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         Address <span className="text-red-500">*</span>
                       </label>
                       <textarea
-
                         rows={2}
                         className="w-full px-3 py-2 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow resize-none"
-                        {...register('address', { required: 'Address is required' })}
-
+                        {...register('address', {
+                          required: 'Address is required'
+                        })}
                       />
-                      {
-                        errors.address && (
-                          <div className="mt-0.5 text-xs text-red-600">
-                            {errors.address.message}
-                          </div>
-                        )
-                      }
+                      {errors.address && (
+                        <div className="mt-0.5 text-xs text-red-600">
+                          {errors.address.message}
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -355,18 +355,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         </label>
                         <input
                           type="text"
-
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                          {...register('city', { required: 'City is required' })}
-
+                          {...register('city', {
+                            required: 'City is required'
+                          })}
                         />
-                        {
-                          errors.city && (
-                            <div className="mt-0.5 text-xs text-red-600">
-                              {errors.city.message}
-                            </div>
-                          )
-                        }
+                        {errors.city && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.city.message}
+                          </div>
+                        )}
                       </div>
 
                       {/* <!-- State --> */}
@@ -376,18 +374,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         </label>
                         <input
                           type="text"
-                          {...register('state', { required: 'State is required' })}
-
+                          {...register('state', {
+                            required: 'State is required'
+                          })}
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-
                         />
-                        {
-                          errors.state && (
-                            <div className="mt-0.5 text-xs text-red-600">
-                              {errors.state.message}
-                            </div>
-                          )
-                        }
+                        {errors.state && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.state.message}
+                          </div>
+                        )}
                       </div>
 
                       {/* <!-- Country --> */}
@@ -397,18 +393,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         </label>
                         <input
                           type="text"
-                          {...register('country', { required: 'Country is required' })}
-
+                          {...register('country', {
+                            required: 'Country is required'
+                          })}
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-
                         />
-                        {
-                          errors.country && (
-                            <div className="mt-0.5 text-xs text-red-600">
-                              {errors.country.message}
-                            </div>
-                          )
-                        }
+                        {errors.country && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.country.message}
+                          </div>
+                        )}
                       </div>
 
                       {/* <!-- Zip Code --> */}
@@ -418,18 +412,16 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ closeModal }) => {
                         </label>
                         <input
                           type="text"
-
                           className="w-full h-11 px-3 rounded-xl border-2 border-gray-100 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-shadow"
-                          {...register('zip_code', { required: 'Zip Code is required' })}
-
+                          {...register('zip_code', {
+                            required: 'Zip Code is required'
+                          })}
                         />
-                        {
-                          errors.zip_code && (
-                            <div className="mt-0.5 text-xs text-red-600">
-                              {errors.zip_code.message}
-                            </div>
-                          )
-                        }
+                        {errors.zip_code && (
+                          <div className="mt-0.5 text-xs text-red-600">
+                            {errors.zip_code.message}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

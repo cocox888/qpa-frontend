@@ -205,25 +205,27 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
                       height={32}
                       className="w-6 h-6 rounded-full"
                     />
-                    <span className="text-gray-600">{item.customer_name}</span>
+                    <span className="text-gray-600">
+                      {item.customer_name || 'Undefined'}
+                    </span>
                   </div>
                 </td>
                 <td className="px-4 py-3">
                   <span className="text-gray-900 font-medium">
-                    {item.amount_du || 0}
+                    {(item.amount_due / 100).toFixed(2)}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-gray-900 font-medium">
-                  {item.amount_paid}
+                  {(item.amount_paid / 100).toFixed(2)}
                 </td>
                 <td className="px-4 py-3 text-gray-900 font-medium">
-                  {item.amount_remaining}
+                  {(item.amount_remaining / 100).toFixed(2)}
                 </td>
                 <td className="px-4 py-3 text-gray-900 font-medium">
-                  {item.amount_shipping}
+                  {(item.amount_shipping / 100).toFixed(2)}
                 </td>
                 <td className="px-4 py-3 text-gray-900 font-medium text-center">
-                  {item.currency}
+                  {item.currency?.toUpperCase()}
                 </td>
                 <td className="px-4 py-3 justify-center">
                   <div className="flex justify-center items-center gap-1.5">

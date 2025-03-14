@@ -3,7 +3,7 @@
 import api from '@/app/api/customApi';
 import apiForFile from '@/app/api/customApiForFile';
 import Toast from '@/components/toast';
-import { TypeDocument } from '@/lib/types';
+import type { TypeDocument } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons';

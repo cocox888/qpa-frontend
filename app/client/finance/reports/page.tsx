@@ -172,7 +172,7 @@ export default function Notes() {
           </div>
           {pdfUrl && viewPreview && (
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 w-[650px] max-h-[90vh] overflow-y-auto z-[101] transition-all duration-300">
-              <iframe src={pdfUrl} width="100%" height="600px"></iframe>
+              <iframe src={pdfUrl} width="100%" height="600px" />
               <div className=" flex gap-3 justify-end">
                 <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-200 text-gray-600 rounded-b-lg hover:bg-gray-50 transition-colors">
                   Go To Pay
