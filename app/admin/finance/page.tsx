@@ -154,7 +154,7 @@ export default function FinanceOverviewPage() {
 
   // Recent activities combining different types of financial events
   const recentActivity = invoices
-    .filter((invoice) => (invoice?.stripe_invoice?.amount_paid || 0) >= 0) // Ensure only paid invoices
+    .filter((invoice) => (invoice?.stripe_invoice?.amount_paid || 0) > 0) // Ensure only paid invoices
     .map((invoice) => {
       const latestPayment = invoice?.stripe_invoice?.webhooks_delivered_at
         ? invoice?.stripe_invoice
@@ -164,7 +164,7 @@ export default function FinanceOverviewPage() {
         type: 'payment',
         client: invoice?.client_name,
         package: `${invoice?.project_type?.toUpperCase()} Package`,
-        amount: `$${latestPayment?.amount_paid || 0 / 100}`, // Assuming amount is in cents
+        amount: `$${latestPayment?.amount_paid / 100 || 0 / 100}`, // Assuming amount is in cents
         status: 'Payment Received',
         date: formatDistanceToNow(
           new Date((latestPayment?.webhooks_delivered_at || 0) * 1000),
@@ -175,7 +175,8 @@ export default function FinanceOverviewPage() {
         badgeColor: 'green'
       };
     })
-    .slice(0, 5);
+    .slice(0, 5)
+    .reverse();
 
   return (
     <main className="py-20 pl-64 pr-6 w-screen min-h-screen overflow-x-hidden">

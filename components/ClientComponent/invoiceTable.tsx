@@ -6,9 +6,10 @@ import AddNewMethod from './AddNewMethod';
 
 interface InvoiceTableProps {
   data: TypeInvoice[];
+  onClick?: () => void;
 }
 
-const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
+const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -72,38 +73,23 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
       const paymentMethods = await resp.json();
       console.log(paymentMethods.hasPaymentMethod);
       if (paymentMethods.hasPaymentMethod === false) {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/client/pay-invoice`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ invoiceId })
-          }
-        );
-        const data = await response.json();
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          alert('Failed to initiate payment');
-        }
-      } else {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/client/pay-default-invoice`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ invoiceId })
-          }
-        );
-        const data = await response.json();
-        alert(`Successfully Paid!`);
+        setIsModalOpen(true);
+        return;
       }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/client/pay-default-invoice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ invoiceId })
+        }
+      );
+      const data = await response.json();
+      alert(`Successfully Paid!`);
+      if (onClick) onClick();
     } catch (error) {
       console.error('Payment error:', error);
     }
