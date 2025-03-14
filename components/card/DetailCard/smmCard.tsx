@@ -15,14 +15,18 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
   phaseMap.set('Content', 2);
   phaseMap.set('Publishing', 3);
   phaseMap.set('Review', 4);
+  phaseMap.set('Completed', 5);
 
   phaseMap.set('Design', 1);
   phaseMap.set('Development', 2);
   phaseMap.set('Testing', 3);
   phaseMap.set('Launch', 4);
-  const [phase, setPhase] = React.useState(phaseMap.get(project?.project_phase || 'Strategy') || 0);
- 
- 
+  phaseMap.set('Completed', 5);
+
+  const [phase, setPhase] = React.useState(
+    phaseMap.get(project?.project_phase || 'Strategy') || 0
+  );
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 h-96">
       <div className="p-6">
@@ -51,7 +55,9 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
                   SMM
                 </span>
               </div>
-              <p className="text-sm text-gray-500">{project?.projectClient?.full_name}</p>
+              <p className="text-sm text-gray-500">
+                {project?.projectClient?.full_name}
+              </p>
             </div>
           </div>
           <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
@@ -82,28 +88,40 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
                 Current Phase
               </span>
               <span className="px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-600">
-                {phase} of 4
+                {phase} of 5
               </span>
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                {phase == 1 ? PhaseSVGForSMM('progress') : PhaseSVGForSMM('completed')}
+                {phase == 1
+                  ? PhaseSVGForSMM('progress')
+                  : PhaseSVGForSMM('completed')}
 
                 <span className="text-sm ">Strategy</span>
               </div>
               <div className="flex items-center gap-2">
-                {phase < 2 ? PhaseSVGForSMM('upcoming') : phase == 2 ? PhaseSVGForSMM('progress') : PhaseSVGForSMM('completed')}
-                <span className="text-sm">
-                  Content
-                </span>
+                {phase < 2
+                  ? PhaseSVGForSMM('upcoming')
+                  : phase == 2
+                  ? PhaseSVGForSMM('progress')
+                  : PhaseSVGForSMM('completed')}
+                <span className="text-sm">Content</span>
               </div>
               <div className="flex items-center gap-2">
-                {phase < 3 ? PhaseSVGForSMM('upcoming') : phase == 3 ? PhaseSVGForSMM('progress') : PhaseSVGForSMM('completed')}
+                {phase < 3
+                  ? PhaseSVGForSMM('upcoming')
+                  : phase == 3
+                  ? PhaseSVGForSMM('progress')
+                  : PhaseSVGForSMM('completed')}
                 <span className="text-sm ">Publishing</span>
               </div>
               <div className="flex items-center gap-2">
-                {phase < 4 ? PhaseSVGForSMM('upcoming') : phase == 4 ? PhaseSVGForSMM('progress') : PhaseSVGForSMM('completed')}
+                {phase < 4
+                  ? PhaseSVGForSMM('upcoming')
+                  : phase == 4
+                  ? PhaseSVGForSMM('progress')
+                  : PhaseSVGForSMM('completed')}
                 <span className="text-sm ">Review</span>
               </div>
             </div>
@@ -123,7 +141,13 @@ const SMMCard: React.FC<SMMCardProps> = ({ onClick, project }) => {
               })}
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-xs text-gray-500">Start Date: {project?.start_date?.toString().split('T')[0].replace(/^(\d{4}-\d{2}-)(\d{1,2})$/, '$1$2')}</span>
+              <span className="text-xs text-gray-500">
+                Start Date:{' '}
+                {project?.start_date
+                  ?.toString()
+                  .split('T')[0]
+                  .replace(/^(\d{4}-\d{2}-)(\d{1,2})$/, '$1$2')}
+              </span>
               {/* <span className="px-2 py-0.5 rounded-lg text-xs font-medium bg-green-50 text-green-600">
                 On Track
               </span> */}

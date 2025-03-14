@@ -14,11 +14,11 @@ type dataType = { email: string; password: string };
 export default function Login() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [isClient, setIsClient] = useState(false); // Track client-side rendering
-  // const { setToken } = useAuthentication();
+  const [isClient, setIsClient] = useState(false);
+  const url = localStorage.getItem('stripe_account_link');
 
   useEffect(() => {
-    setIsClient(true); // Set to true once component is mounted on the client side
+    setIsClient(true);
   }, []);
 
   const {
@@ -101,7 +101,6 @@ export default function Login() {
       </div>
 
       <ToastContainer />
-
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <div className="block text-gray-700 mb-2">Email*</div>

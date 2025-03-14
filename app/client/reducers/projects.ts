@@ -105,13 +105,15 @@ const projectSlice = createSlice({
             if (project.package_type === 'va') {
               vaPackageNum += 1;
               vaPackageHour += project.monthly_hours || 0;
-              project.projectTask?.forEach((task) => {
+              // biome-ignore lint/complexity/noForEach: <explanation>
+              project?.projectTask?.forEach((task) => {
                 vaPackageUsedHour += task.estimated_time / 60 || 0;
               });
             }
             if (project.package_type === 'obm') {
               obmPackageNum += 1;
               obmPackageHour += project.monthly_hours || 0;
+              // biome-ignore lint/complexity/noForEach: <explanation>
               project?.projectTask?.forEach((task) => {
                 obmPackageUsedHour += task.estimated_time / 60 || 0;
               });

@@ -1,5 +1,5 @@
 import { getAllProjects } from '@/app/admin/reducers/projects';
-import { AppDispatch } from '@/app/admin/reducers/store';
+import type { AppDispatch } from '@/app/admin/reducers/store';
 import api from '@/app/api/customApi';
 import type { Logs, TypeProject, TypeUser } from '@/lib/types';
 import { isNonEmptyArray } from '@/lib/utils/functions';
@@ -49,12 +49,16 @@ export default function ProjectDetailModal({
   phaseMap.set('Content', 2);
   phaseMap.set('Publishing', 3);
   phaseMap.set('Review', 4);
+  phaseMap.set('Completed', 5);
 
   phaseMap.set('Design', 1);
   phaseMap.set('Development', 2);
   phaseMap.set('Testing', 3);
   phaseMap.set('Launch', 4);
-  const [phase, setPhase] = React.useState(phaseMap.get(data?.project_phase || 'Strategy') || 0);
+  phaseMap.set('Completed', 5);
+  const [phase, setPhase] = React.useState(
+    phaseMap.get(data?.project_phase || 'Strategy') || 0
+  );
   const dispatch: AppDispatch = useDispatch();
   if (!data) {
     return null;
@@ -99,13 +103,15 @@ export default function ProjectDetailModal({
         </div>
         <div className="w-full bg-gray-100 rounded-full h-1.5">
           <div
-            className={`bg-${data.project_type === 'va' ? 'blue' : 'indigo'
-              }-500 h-1.5 rounded-full`}
+            className={`bg-${
+              data.project_type === 'va' ? 'blue' : 'indigo'
+            }-500 h-1.5 rounded-full`}
             style={{
-              width: `${(Number(data.totalTimeForMonth) /
-                Number(Number(data.monthly_hours) * 60)) *
-                100 || 0
-                }%`
+              width: `${
+                (Number(data.totalTimeForMonth) /
+                  Number(Number(data.monthly_hours) * 60)) *
+                  100 || 0
+              }%`
             }}
           />
         </div>
@@ -137,62 +143,64 @@ export default function ProjectDetailModal({
     );
   };
 
+  const updateProjectStatus = (data: TypeProject, index: number) => {
+    const role = localStorage.getItem('role');
+    const res = api
+      .post(`/${role}/updateProjectPhase`, {
+        projectId: data.id,
+        phase: index + 1
+      })
+      .then((res) => {
+        setPhase(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // dispatch(getAllProjects());
+  };
+
   const getMilestonesTemplate = (data: TypeProject) => {
     console.log(phase);
     const milestones: Record<string, string[]> = {
       smm: ['Strategy', 'Content', 'Publishing', 'Review'],
       wds: ['Design', 'Development', 'Testing', 'Launch']
     };
-    const updateProjectStatus = (index: number) => {
-      const role = localStorage.getItem('role');
-      const res = api
-        .post(`/${role}/updateProjectPhase`, {
-          projectId: data.id,
-          phase: index + 1
-        })
-        .then((res) => {
-          setPhase(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      // dispatch(getAllProjects());
 
-    }
     return (milestones[data?.package_type || ''] || []).map(
       (milestone, index) => (
         <div
           key={index}
-          className={`cursor-pointer text-center p-2 ${index < 2
-            ? 'bg-green-50'
-            : index === 2
+          className={`cursor-pointer text-center p-2 ${
+            index < 2
+              ? 'bg-green-50'
+              : index === 2
               ? 'bg-blue-50'
               : 'bg-gray-50'
-            } rounded-lg`}
-          onClick={(e) => updateProjectStatus(index)}
+          } rounded-lg`}
+          onClick={(e) => updateProjectStatus(data, index)}
         >
           <div
-            className={`text-xs ${index < 2
-              ? 'text-green-600'
-              : index === 2
+            className={`text-xs ${
+              index < 2
+                ? 'text-green-600'
+                : index === 2
                 ? 'text-blue-600'
                 : 'text-gray-500'
-              }`}
+            }`}
           >
             {index + 1 < phase
               ? 'Completed'
               : index + 1 == phase
-                ? 'In Progress'
-                : index + 1 <= phase + 1
-                  ? 'Upcoming'
-                  : 'Not Started'}
+              ? 'In Progress'
+              : index + 1 <= phase + 1
+              ? 'Upcoming'
+              : 'Not Started'}
           </div>
           <div className="text-sm font-medium">{milestone}</div>
         </div>
       )
     );
-
-  }
+  };
   const getFixedPriceProgressTemplate = (data: TypeProject) => {
     return (
       <div className="space-y-4">
@@ -204,13 +212,20 @@ export default function ProjectDetailModal({
         </div>
         <div className="w-full bg-gray-100 rounded-full h-1.5">
           <div
-            className={`bg-${data.package_type === 'smm' ? 'purple' : 'rose'
-              }-500 h-1.5 rounded-full`}
+            className={`bg-${
+              data.package_type === 'smm' ? 'purple' : 'rose'
+            }-500 h-1.5 rounded-full`}
             style={{ width: `${Math.floor(((phase - 1) * 100) / 4)}%` }}
           />
         </div>
-        <div className="grid grid-cols-4 gap-2 mt-4">
+        <div className="grid grid-cols-5 gap-2 mt-4">
           {getMilestonesTemplate(data)}
+          <div
+            className={`cursor-pointer text-center p-2 bg-green-300 rounded-lg content-center`}
+            onClick={(e) => updateProjectStatus(data, 4)}
+          >
+            <div className="text-sm font-medium ">Completed</div>
+          </div>
         </div>
       </div>
     );
@@ -357,25 +372,26 @@ export default function ProjectDetailModal({
     console.log(data);
     return (
       <>
-        {
-          data.projectHasLogs?.map((log: Logs, index) => {
-            return (
-              <div>
-                <div className="relative pl-10 pb-6  border-gray-300/50 border-l-2">
-                  <div className="absolute -left-2 -top-1 w-4 h-4 rounded-full bg-brand-500" />
-                  <div className="text-sm space-x-2">
-                    <span className="font-medium text-gray-900">{log.user_name}</span>
-                    <span className="text-gray-500">
-                      logged {`{${convertMin2HourMin(Number(log.log_hour))}}`} hours for TASK : {log.task_name}
-                    </span>
-                  </div>
-                  <span className="text-xs text-gray-400">{log.createdAt}</span>
+        {data.projectHasLogs?.map((log: Logs, index) => {
+          return (
+            <div>
+              <div className="relative pl-10 pb-6  border-gray-300/50 border-l-2">
+                <div className="absolute -left-2 -top-1 w-4 h-4 rounded-full bg-brand-500" />
+                <div className="text-sm space-x-2">
+                  <span className="font-medium text-gray-900">
+                    {log.user_name}
+                  </span>
+                  <span className="text-gray-500">
+                    logged {`{${convertMin2HourMin(Number(log.log_hour))}}`}{' '}
+                    hours for TASK : {log.task_name}
+                  </span>
                 </div>
                 <span className="text-xs text-gray-400">{log.createdAt}</span>
               </div>
-
-            );
-          })}
+              <span className="text-xs text-gray-400">{log.createdAt}</span>
+            </div>
+          );
+        })}
 
         {/* <div className="relative pl-10 pb-6  border-gray-300/50 border-l-2 ">
           <div className="absolute -left-2 -top-1 w-4 h-4 rounded-full bg-gray-200" />
@@ -415,8 +431,9 @@ export default function ProjectDetailModal({
             <div className="flex items-center gap-4">
               <div
                 id="projectTypeIcon"
-                className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconMap[data.package_type || ''].bg
-                  }`}
+                className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                  iconMap[data.package_type || ''].bg
+                }`}
               >
                 {/* <!-- Icon will be inserted dynamically --> */}
                 <svg
@@ -442,7 +459,7 @@ export default function ProjectDetailModal({
                   {data.title}
                 </h2>
                 <p id="clientName" className="text-sm text-gray-500">
-                  {data.projectClient?.full_name || ""}
+                  {data.projectClient?.full_name || ''}
                 </p>
               </div>
             </div>
@@ -477,8 +494,9 @@ export default function ProjectDetailModal({
               <div className="flex items-center gap-3">
                 <span
                   id="projectStatus"
-                  className={`inline-flex items-center ${statusColorMap[status || 0]
-                    } px-2.5 py-1 rounded-lg text-xs font-medium`}
+                  className={`inline-flex items-center ${
+                    statusColorMap[status || 0]
+                  } px-2.5 py-1 rounded-lg text-xs font-medium`}
                 >
                   {/* <!-- Status will be inserted dynamically --> */}
                   {status}
@@ -563,7 +581,7 @@ export default function ProjectDetailModal({
               </h3>
               <div id="activityTimeline" className="space-y-4">
                 {/* <!-- Timeline will be inserted dynamically --> */}
-                {data.projectHasLogs?.length == 0 && (
+                {data.projectHasLogs?.length === 0 && (
                   <div className="text-gray-500 flex justify-center items-center">
                     No Activity Logs
                   </div>
@@ -598,6 +616,4 @@ export default function ProjectDetailModal({
       </div>
     </div>
   );
-
 }
-

@@ -1,13 +1,13 @@
-import type { TypeTask } from '@/lib/types';
+import type { TypeInvoice } from '@/lib/types';
 import Image from 'next/image';
 import type React from 'react';
 import { useState, useEffect } from 'react';
 
-interface TaskTableProps {
-  data: TypeTask[];
+interface InvoiceTableProps {
+  data: TypeInvoice[];
 }
 
-const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
+const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -32,7 +32,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
 
     const updatedCheckedItems = Object.keys(checkedItems).reduce(
       (acc, curr) => {
-        acc[parseInt(curr)] = isChecked;
+        acc[Number.parseInt(curr)] = isChecked;
         return acc;
       },
       {} as { [key: number]: boolean }
@@ -53,26 +53,19 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
   }, [checkedItems]);
 
   return (
-    <div id="tasks-panel" role="tabpanel" className="h-[400px]">
+    <div id="clients-panel" role="tabpanel" className="h-full">
       <table className="w-full border-spacing-0">
         <thead>
-          <tr>
-            {/* <th className="w-12 p-4 bg-gray-50/50">
-              <input
-                type="checkbox"
-                className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                checked={isSelectAllChecked}
-                onChange={handleSelectAllChange}
-              />
-            </th> */}
+          <tr className="text-right">
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Task
+                Contact Person
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden={true}
                 >
                   <path
                     strokeLinecap="round"
@@ -85,12 +78,13 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Assignee
+                Amount
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden={true}
                 >
                   <path
                     strokeLinecap="round"
@@ -103,12 +97,13 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Priority
+                Amount Paid
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden={true}
                 >
                   <path
                     strokeLinecap="round"
@@ -121,12 +116,13 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Due Date
+                Amount Remaining
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden={true}
                 >
                   <path
                     strokeLinecap="round"
@@ -139,12 +135,32 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
             </th>
             <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
-                Project
+                Amount Shipping
                 <svg
                   className="w-4 h-4 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden={true}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </th>
+            <th className="px-4 py-3 bg-gray-50/50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <div className="flex items-center gap-2 table-cell-hover rounded-lg p-1 -ml-1">
+                Currency Type
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden={true}
                 >
                   <path
                     strokeLinecap="round"
@@ -163,6 +179,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden={true}
                 >
                   <path
                     strokeLinecap="round"
@@ -178,21 +195,8 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
         <tbody className="divide-y divide-gray-100">
           {data.map((item, index) => {
             return (
-              <tr className="table-row-hover">
-                {/* <td className="p-4 whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
-                      checked={checkedItems[1] || false}
-                      onChange={(e) => handleCheckboxChange(e, 1)}
-                    />
-                  </td> */}
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="font-medium text-gray-900">
-                    {item.title}
-                  </span>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap">
+              <tr className="table-row-hover text-right">
+                <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/images/person1.jpg"
@@ -201,24 +205,35 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
                       height={32}
                       className="w-6 h-6 rounded-full"
                     />
-                    <span className="text-gray-600">Anatoly Belik</span>
+                    <span className="text-gray-600">
+                      {item.customer_name || 'Undefined'}
+                    </span>
                   </div>
                 </td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
-                    {item.priority}
+                <td className="px-4 py-3">
+                  <span className="text-gray-900 font-medium">
+                    {(item.amount_due / 100).toFixed(2)}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-gray-600">{item.due_date}</td>
-                <td className="px-4 py-3 text-gray-600">
-                  {item.taskProject?.title}
+                <td className="px-4 py-3 text-gray-900 font-medium">
+                  {(item.amount_paid / 100).toFixed(2)}
                 </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-green-700">
-                      {item.state}
-                    </span>
+                <td className="px-4 py-3 text-gray-900 font-medium">
+                  {(item.amount_remaining / 100).toFixed(2)}
+                </td>
+                <td className="px-4 py-3 text-gray-900 font-medium">
+                  {(item.amount_shipping / 100).toFixed(2)}
+                </td>
+                <td className="px-4 py-3 text-gray-900 font-medium text-center">
+                  {item.currency?.toUpperCase()}
+                </td>
+                <td className="px-4 py-3 justify-center">
+                  <div className="flex justify-center items-center gap-1.5">
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        item.paid ? 'bg-emerald-500' : 'bg-red-500'
+                      }`}
+                    />
                   </div>
                 </td>
               </tr>
@@ -230,4 +245,4 @@ const TaskTable: React.FC<TaskTableProps> = ({ data }) => {
   );
 };
 
-export default TaskTable;
+export default InvoiceTable;

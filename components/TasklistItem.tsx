@@ -1,14 +1,8 @@
 'use client';
 
-import { PauseIcon, PlayIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useTimerContext } from '@/hooks/use-store-hooks';
-import StopWatch from './timer/StopWatch';
-import { useDispatch, useSelector } from 'react-redux';
-import { addRecord } from '@/reducer/timerReducer';
-import { useEffect } from 'react';
-import { RootState } from '@/reducer';
-import customFetch from '@/lib/api/customFetch';
+import { useDispatch } from 'react-redux';
 
 interface TasklistItemProps {
   id: number;

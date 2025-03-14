@@ -83,7 +83,7 @@ export interface KanbanTask {
   label?: string;
   status?: string;
   user_id?: number;
-  deleted?:boolean
+  deleted?: boolean;
 }
 
 export interface TypeProject {
@@ -157,8 +157,50 @@ export interface TypeDocument {
   file_path: string;
 }
 
+export interface TypeReport {
+  id?: number;
+  porject_id: number;
+  project_name?: string;
+  project_type?: string;
+  client_name?: string;
+  client_id?: number;
+  file_name?: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface TypeInvoice {
+  id?: string;
+  invoice_pdf?: string;
+  account_country?: string;
+  account_name?: string;
+  amount_due?: number;
+  amount_paid?: number;
+  amount_remaining?: number;
+  amount_shipping: number;
+  customer_email?: string;
+  customer_name?: number;
+  currency?: string;
+  finalized_at?: string;
+  paid_at?: number;
+  status?: string;
+  paid?: boolean;
+  project_id?: number;
+  project_title?: string;
+  project_type?: string;
+  webhooks_delivered_at?: number;
+}
+
+export interface TypeAllInvoice {
+  project_id?: number;
+  project_title?: string;
+  project_type?: string;
+  client_id?: number;
+  client_name?: string;
+  stripe_invoice?: TypeInvoice;
+}
+
 export interface TypeChartData {
   date?: string;
   count?: number;
 }
-
