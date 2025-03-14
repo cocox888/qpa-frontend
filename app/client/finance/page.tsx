@@ -24,6 +24,7 @@ export default function Notes() {
   const [loading, setLoading] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const [invoices, setInvoices] = useState<TypeInvoice[]>();
+  const [fresh, setFresh] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('refresh_token');
@@ -43,7 +44,12 @@ export default function Notes() {
       setInvoices(data?.invoices);
     };
     fetchInvoice();
-  }, []);
+  }, [fresh]);
+
+  const onClick = () => {
+    console.log('ok');
+    setFresh((prev) => !prev);
+  };
 
   return (
     <div className="pt-20 pl-64 pr-6 min-h-screen w-screen overflow-x-hidden">
@@ -123,7 +129,7 @@ export default function Notes() {
 
           <div className="bg-white rounded-xl border border-gray-100">
             <div className="p-4 gap-4">
-              <InvoiceTable data={invoices || []} />
+              <InvoiceTable data={invoices || []} onClick={onClick} />
             </div>
           </div>
         </div>
