@@ -71,7 +71,8 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
       );
       const paymentMethods = await resp.json();
       console.log(paymentMethods.hasPaymentMethod);
-      if (paymentMethods.hasPaymentMethod === false) {
+      if (paymentMethods.hasPaymentMethod !== true) {
+        console.log('pl1')
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/client/pay-invoice`,
           {
