@@ -1,3 +1,4 @@
+'use client';
 import type { TypeInvoice } from '@/lib/types';
 import Image from 'next/image';
 import type React from 'react';
@@ -6,8 +7,32 @@ import { useState, useEffect } from 'react';
 interface InvoiceTableProps {
   data: TypeInvoice[];
 }
-
 const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
+  const [pdfUrl, setUrl] = useState('');
+  const [preview, setPreview] = useState(false);
+
+  const viewInvoice = async (id: string) => {
+    const token = localStorage.getItem('refresh_token');
+    const req = await fetch(
+      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/InvoiceById`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          invoice_id: id
+        })
+      }
+    );
+
+    const invoiceUrl = await req.json();
+    const fileUrl = `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/invoices/${invoiceUrl.invoice.file_path}`;
+    setUrl(fileUrl);
+    setPreview(true);
+  };
+
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
     {}
   );
@@ -195,7 +220,10 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
         <tbody className="divide-y divide-gray-100">
           {data.map((item, index) => {
             return (
-              <tr className="table-row-hover text-right">
+              <tr
+                className="table-row-hover text-right"
+                onClick={(e) => viewInvoice(item.id)}
+              >
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <Image
@@ -241,6 +269,19 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data }) => {
           })}
         </tbody>
       </table>
+      {pdfUrl && preview && (
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 w-[650px] max-h-[90vh] overflow-y-auto z-[101] transition-all duration-300">
+          <iframe src={pdfUrl} width="100%" height="600px"></iframe>
+          <div className=" flex gap-3 justify-end">
+            <div
+              onClick={(e) => setPreview((prev) => !prev)}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-200 text-gray-600 rounded-b-lg hover:bg-gray-50 transition-colors"
+            >
+              Close
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
