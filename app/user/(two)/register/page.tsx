@@ -879,14 +879,24 @@ export default function Onboarding() {
                 type="text"
                 placeholder="Set your Password"
                 className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-                {...register('password')}
+                {...register('password', { required: "Password is Required" })}
               />
+              {errors.password && (
+                <div className="mt-0.5 text-xs text-red-600">
+                  {errors.password.message}
+                </div>
+              )}
               <input
                 type="text"
                 placeholder="Confirm Password"
                 className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#84b894]/20"
-                {...register('confpassword')}
+                {...register('confpassword', { required: "Password is Required" })}
               />
+              {errors.confpassword && (
+                <div className="mt-0.5 text-xs text-red-600">
+                  {errors.confpassword.message}
+                </div>
+              )}
               {errors.agree_to_terms && (
                 <div className="mt-0.5 text-xs text-red-600">
                   {errors.agree_to_terms.message}
@@ -1017,8 +1027,8 @@ export default function Onboarding() {
                   {loading
                     ? 'Processing...'
                     : currentStep === totalSteps
-                    ? 'Submit'
-                    : 'Next'}
+                      ? 'Submit'
+                      : 'Next'}
                   {!loading && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
