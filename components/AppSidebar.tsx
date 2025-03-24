@@ -31,21 +31,27 @@ export default function AppSidebar() {
 
   // Finance submenu items
   const financeMenuItems = [
-    { url: `/${role}/finance`, title: 'Overview' },
+    { url: `/${role}/finance`, title: 'Overview' }
     // { url: `/${role}/finance/packages`, title: 'Package Management' },
     // { url: `/${role}/finance/client-billing`, title: 'Client Billing' },
     // { url: `/${role}/finance/payroll`, title: 'Payroll' },
     // { url: `/${role}/finance/expenses`, title: 'Expenses' },
     // { url: `/${role}/finance/invoices`, title: 'Invoices' },
-    { url: `/${role}/finance/reports`, title: 'Financial Reports' }
   ];
+
+  const financeReport = {
+    url: `/${role}/finance/reports`,
+    title: 'Financial Reports'
+  };
 
   // const timerMenuItems = [
   //   { url: `/${role}/timer`, title: 'Start Timer' },
   //   { url: `/${role}/timer/report`, title: 'Report' }
   // ];
 
-  const isFinanceActive = currentPath.startsWith(`/${role}/finance`);
+  const isFinanceActive =
+    currentPath.startsWith(`/${role}/finance`) &&
+    currentPath !== `/${role}/finance/reports`;
   const isTimerActive = currentPath.startsWith(`/${role}/timer`);
 
   useEffect(() => {
@@ -148,6 +154,12 @@ export default function AppSidebar() {
                     </div>
                   </div>
                 )}
+                <SidebarItem
+                  url={financeReport.url}
+                  title={financeReport.title}
+                  icon={TaskIcon}
+                  isActive={financeReport.url === currentPath}
+                />
               </div>
             )}
 
