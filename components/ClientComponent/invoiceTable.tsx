@@ -194,13 +194,13 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
                   {item.project_title || 'Untitled'}
                 </td>
                 <td className="px-4 py-3">
-                  {(item.amount_due / 100).toFixed(2)}
+                  {(item.amount_due || 0 / 100).toFixed(2)}
                 </td>
                 <td className="px-4 py-3 text-gray-900 font-medium">
-                  {(item.amount_paid / 100).toFixed(2)}
+                  {(item.amount_paid || 0 / 100).toFixed(2)}
                 </td>
                 <td className="px-4 py-3 text-gray-900 font-medium">
-                  {(item.amount_remaining / 100).toFixed(2)}
+                  {(item.amount_remaining || 0 / 100).toFixed(2)}
                 </td>
                 <td className="px-4 py-3 text-gray-900 font-medium">
                   {(item.amount_shipping / 100).toFixed(2)}
@@ -210,18 +210,24 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
                 </td>
                 <td className="px-4 py-3 justify-center">
                   <div
-                    className={`w-3 h-3 rounded-full ${
-                      item.paid ? 'bg-emerald-500' : 'bg-red-500'
-                    }`}
+                    className={`w-3 h-3 rounded-full ${item.paid ? 'bg-emerald-500' : 'bg-red-500'
+                      }`}
                   />
                 </td>
                 <td className="px-4 py-3">
                   {!item.paid ? (
+<<<<<<< HEAD
+                    <button
+                      className={`flex justify-center items-center gap-1.5 px-2 bg-green-400 hover:bg-green-300 ${item.paid ? 'disabled' : ''
+                        }`}
+                      id={item?.id.toString()}
+=======
                     <div
                       className={`px-2 bg-green-400 hover:bg-green-300 ${
                         item.paid ? 'disabled' : ''
                       }`}
                       id={item.id.toString()}
+>>>>>>> 5a0f939388685f32b0e087d559acf8470f541513
                       onClick={(e) => handlePayment(e.currentTarget.id)}
                     >
                       Pay Now
