@@ -16,6 +16,8 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
   const [isSelectAllChecked, setIsSelectAllChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentMethodSaved, setIsPaymentMethodSaved] = useState(false);
+  const [preview, setPreview] = useState(false);
+  const [pdfUrl, setUrl] = useState('');
 
   interface CheckboxChangeEvent {
     target: {
@@ -25,6 +27,28 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
 
   const close = () => {
     setIsModalOpen(false);
+  };
+
+  const handlePreviewInvoice = async (id: string) => {
+    const token = localStorage.getItem('refresh_token');
+    const req = await fetch(
+      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/client/InvoiceById`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          invoice_id: id
+        })
+      }
+    );
+
+    const invoiceUrl = await req.json();
+    const fileUrl = `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/invoices/${invoiceUrl.invoice.file_path}`;
+    setUrl(fileUrl);
+    setPreview(true);
   };
 
   const handlePaymentMethodCreated = async (paymentMethodId: string) => {
@@ -88,7 +112,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
         }
       );
       const data = await response.json();
-      alert(`Successfully Paid!`);
+      alert('Successfully Paid!');
       if (onClick) onClick();
     } catch (error) {
       console.error('Payment error:', error);
@@ -163,7 +187,10 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
           {data.map((item, index) => {
             return (
               <tr key={item.id} className="table-row-hover text-center">
-                <td className="px-4 py-3">
+                <td
+                  className="px-4 py-3"
+                  onClick={(e) => handlePreviewInvoice(item.id)}
+                >
                   {item.project_title || 'Untitled'}
                 </td>
                 <td className="px-4 py-3">
@@ -187,19 +214,27 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
                       }`}
                   />
                 </td>
-                <td className="px-4 py-3 justify-center">
+                <td className="px-4 py-3">
                   {!item.paid ? (
+<<<<<<< HEAD
                     <button
                       className={`flex justify-center items-center gap-1.5 px-2 bg-green-400 hover:bg-green-300 ${item.paid ? 'disabled' : ''
                         }`}
                       id={item?.id.toString()}
+=======
+                    <div
+                      className={`px-2 bg-green-400 hover:bg-green-300 ${
+                        item.paid ? 'disabled' : ''
+                      }`}
+                      id={item.id.toString()}
+>>>>>>> 5a0f939388685f32b0e087d559acf8470f541513
                       onClick={(e) => handlePayment(e.currentTarget.id)}
                     >
                       Pay Now
-                    </button>
+                    </div>
                   ) : (
-                    <div className="bg-blue-400 hover:bg-blue-300">
-                      Already Paid
+                    <div className="px-2 bg-blue-400 hover:bg-blue-300">
+                      Paid
                     </div>
                   )}
                 </td>
@@ -208,6 +243,19 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
           })}
         </tbody>
       </table>
+      {pdfUrl && preview && (
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 w-[650px] max-h-[90vh] overflow-y-auto z-[101] transition-all duration-300">
+          <iframe src={pdfUrl} width="100%" height="600px"></iframe>
+          <div className=" flex gap-3 justify-end">
+            <div
+              onClick={(e) => setPreview((prev) => !prev)}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-200 text-gray-600 rounded-b-lg hover:bg-gray-50 transition-colors"
+            >
+              Close
+            </div>
+          </div>
+        </div>
+      )}
       {isModalOpen && (
         <AddNewMethod
           onPaymentMethodCreated={handlePaymentMethodCreated}

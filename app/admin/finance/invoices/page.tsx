@@ -1,8 +1,5 @@
 'use client';
 
-import api from '@/app/api/customApi';
-import apiForFile from '@/app/api/customApiForFile';
-import Toast from '@/components/toast';
 import type {
   TypeClient,
   TypeInvoice,
@@ -13,8 +10,6 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer } from 'react-toastify';
-import { fileSizeFormat } from '@/lib/utils/fileUtils';
-import { getAllProjects } from '../../reducers/projects';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../reducers/store';
 import Image from 'next/image';
@@ -25,6 +20,7 @@ export default function Notes() {
   const [totalReports, setTotalReports] = useState<TypeReport[]>([]);
   const [loading, setLoading] = useState(false);
   const [pdfUrl, setPdfUrl] = useState('');
+  const [filePaths, setFilePaths] = useState('');
   const [viewPreview, setViewPreview] = useState(false);
   const [project, setProject] = useState(0);
   const dispatch: AppDispatch = useDispatch();
@@ -42,6 +38,7 @@ export default function Notes() {
   const [description, setDescription] = useState('');
   const [invoices, setInvoices] = useState<TypeInvoice[]>();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const token = localStorage.getItem('refresh_token');
     const fetchClient = async () => {
@@ -82,8 +79,8 @@ export default function Notes() {
     fetchProject();
   }, [client]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    console.log(client);
     const token = localStorage.getItem('refresh_token');
     const fetchInvoice = async () => {
       const pro_res = await fetch(
@@ -101,17 +98,16 @@ export default function Notes() {
       setInvoices(proj.data);
     };
     fetchInvoice();
-  }, [client]);
+  }, [client, reFetch]);
 
   const newReportHandle = async () => {
-    console.log('ok');
     if (!client) {
       console.log('Please Select Client!');
       return;
     }
     const token = localStorage.getItem('refresh_token');
     const report = await fetch(
-      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/newInvoice`,
+      `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/generateInvoice`,
       {
         method: 'POST',
         headers: {
@@ -119,27 +115,29 @@ export default function Notes() {
           authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          clientId: client,
-          project_id: project,
-          amount,
+          client,
+          project,
+          revenue: amount,
           currencyType,
-          description,
-          startDate,
-          endDate
+          description
         })
       }
     );
     const filePath = await report.json();
-    const fileUrl = `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/reports/${filePath}`;
-    console.log(filePath);
+    const fileUrl = `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/invoices/${filePath}`;
+    setFilePaths(filePath);
     setPdfUrl(fileUrl);
+    setViewPreview((prev) => !prev);
   };
 
   const sendToClient = async () => {
     const token = localStorage.getItem('refresh_token');
+
+    console.log(client, project, amount, currencyType);
+
     if (project && pdfUrl) {
       const report = await fetch(
-        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/sendReport`,
+        `${process.env.NEXT_PUBLIC_PRODUCT_BACKEND_URL}/admin/newInvoice`,
         {
           method: 'POST',
           headers: {
@@ -147,10 +145,12 @@ export default function Notes() {
             authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
+            clientId: client,
             project_id: project,
-            pdfUrl,
-            startDate,
-            endDate
+            amount,
+            currencyType,
+            description,
+            filePath: filePaths
           })
         }
       );
@@ -295,6 +295,12 @@ export default function Notes() {
             <div className="w-1/3 flex justify-center gap-2">
               <div
                 onClick={newReportHandle}
+                className="flex items-center gap-2 px-4 py-2 bg-green-100 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Preview
+              </div>
+              <div
+                onClick={sendToClient}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <svg
@@ -345,12 +351,6 @@ export default function Notes() {
               </div>
             </div>
           </div>
-
-          <div className="bg-white rounded-xl border border-gray-100">
-            <div className="p-4 gap-4">
-              <InvoiceTable data={invoices || []} />
-            </div>
-          </div>
           {pdfUrl && viewPreview && (
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 w-[650px] max-h-[90vh] overflow-y-auto z-[101] transition-all duration-300">
               <iframe src={pdfUrl} width="100%" height="600px"></iframe>
@@ -359,10 +359,10 @@ export default function Notes() {
                   onClick={sendToClient}
                   className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-200 text-gray-600 rounded-b-lg hover:bg-gray-50 transition-colors"
                 >
-                  Send to Client
+                  Send Invoice
                 </div>
                 <div
-                  onClick={() => setViewPreview((prev) => !prev)}
+                  onClick={(e) => setViewPreview((prev) => !prev)}
                   className="flex items-center gap-2 px-4 py-2 bg-gray-100 border border-gray-200 text-gray-600 rounded-b-lg hover:bg-gray-50 transition-colors"
                 >
                   Close
@@ -370,6 +370,11 @@ export default function Notes() {
               </div>
             </div>
           )}
+          <div className="bg-white rounded-xl border border-gray-100">
+            <div className="p-4 gap-4">
+              <InvoiceTable data={invoices || []} />
+            </div>
+          </div>
         </div>
       )}
     </div>
