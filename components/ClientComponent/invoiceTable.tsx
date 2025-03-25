@@ -189,7 +189,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
               <tr key={item.id} className="table-row-hover text-center">
                 <td
                   className="px-4 py-3"
-                  onClick={(e) => handlePreviewInvoice(item.id)}
+                  onClick={(e) => handlePreviewInvoice(item.id || "")}
                 >
                   {item.project_title || 'Untitled'}
                 </td>
@@ -216,18 +216,11 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ data, onClick }) => {
                 </td>
                 <td className="px-4 py-3">
                   {!item.paid ? (
-<<<<<<< HEAD
-                    <button
-                      className={`flex justify-center items-center gap-1.5 px-2 bg-green-400 hover:bg-green-300 ${item.paid ? 'disabled' : ''
-                        }`}
-                      id={item?.id.toString()}
-=======
                     <div
                       className={`px-2 bg-green-400 hover:bg-green-300 ${
                         item.paid ? 'disabled' : ''
                       }`}
-                      id={item.id.toString()}
->>>>>>> 5a0f939388685f32b0e087d559acf8470f541513
+                      id={item.id?.toString()}
                       onClick={(e) => handlePayment(e.currentTarget.id)}
                     >
                       Pay Now

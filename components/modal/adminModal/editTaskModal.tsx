@@ -41,14 +41,16 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   data
 }) => {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const vas = useSelector((state: RootState) => state.users.users);
   // const projectsData = useSelector((state: RootState) => state.projects.projects);
   const { title } = data;
+  console.log(new Date().toISOString().split('T')[0])
   const dispatch: AppDispatch = useDispatch();
   const [projectID, setProjectID] = useState(0);
   const [taskName, setTaskName] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('low');
-  const [members, setMembers] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8]);
+  const [members, setMembers] = useState<number[]>([]);
   const [memberError, setMemberError] = useState(false);
   const [projects, setProjects] = useState<ProjectProps[]>([]);
   const [description, setDescription] = useState('');
@@ -76,9 +78,17 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
       }
     );
     const data = await response.json();
-    setTotalMembers(data.assignedProjectUser);
-  };
+    // setTotalMembers(data.assignedProjectUser);
+    const userId = localStorage.getItem("userId") || 0;
+    setMembers([Number(userId)]);
 
+    setOneVAs();
+
+  };
+  const setOneVAs = () => {
+    const userId = localStorage.getItem("userId") || 0;
+    setTotalMembers(vas.filter((item) => item.id == userId));
+  }
   const cleanMembers = () => {
     setMembers([]);
   };
@@ -122,24 +132,28 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
     // console.log("member:" + members.includes(1));
 
     fetchProjects();
+
   }, []);
 
   useEffect(() => {
     const editData = tasks.find((task) => task.id === data.task_id);
     setTaskName(editData?.title || '');
     setProjectID(editData?.project_id || 0);
-    setDueDate(editData?.due_date || '');
+    setDueDate(editData?.due_date || new Date().toISOString().split('T')[0]);
     setPriority(editData?.priority || 'low');
 
+    const userId = localStorage.getItem("userId") || 0;
     setMembers(
-      editData?.assignedTaskUser?.map((user) => Number(user.id)) || []
+      editData?.assignedTaskUser?.map((user) => Number(user.id)) || [Number(userId)]
     );
+    setOneVAs();
     setDescription(editData?.description || '');
     setEstimateHour(Math.floor(Number(editData?.estimated_time) / 60) || 0);
     setEstimateMinute(Number(editData?.estimated_time) % 60 || 0);
   }, []);
 
   const onSubmit = async () => {
+
     members.length === 0 ? setMemberError(true) : setMemberError(false);
     estimateMinute == 0 && estimateHour == 0
       ? setErrorEstimate(true)
@@ -149,6 +163,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
       try {
         const user_name = localStorage.getItem('username');
         const user_id = localStorage.getItem('userId');
+
         const payload = {
           data: {
             title: taskName,
@@ -162,6 +177,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
           },
           members
         };
+
         const role = localStorage.getItem('role');
         const res = await client(`http://localhost:5173/${role}/createTask`, {
           body: JSON.stringify(payload)
